@@ -8,12 +8,12 @@
 voxNoiseScale = .5;
 NTFbaseline = 0;
 p.NTFamp = 1;
-p.NTFsig = .35 
+p.NTFsig = .35; 
 % GainFactor = [1.5 2]; % medium and high factors by which NTFs are multiplied for 'correct' trials (in off-channels)
 % parameters of simulation (not usually changed)
 normedNTF = 1;
 p.notchwidth = 8; %must be an even number. governs width of off-channel 'notch' that undergoes gain. higher is narrower.
-p.gainFactor = 4; %must be  <1 if using method 2 (slope of NTF) but >1 if using method 1 (sin wave function) see splice_NTFresponses function
+p.gainFactor = 2; %must be  <1 if using method 2 (slope of NTF) but >1 if using method 1 (sin wave function) see splice_NTFresponses function
 p.nVox = 100;
 p.nNTFs = 180;
 p.stimOrient = [0 20 40 60 80 100 120 140 160];% 200  240 280 320 360]'; % or add in that each is shown plus or minus 5 deg?
@@ -46,7 +46,7 @@ for sub = 1:p.nSubs
     % calculate NTF responses
     for NTF = 1:p.nNTFs
         if normedNTF ==1 % normalize area under the NTF
-            NTFresponses_Baseline(:,NTF) = (1/sqrt(2*pi*(NTFsig)^2)) * p.NTFamp * exp(-(mod((x-p.NTFcenters(NTF)+pi/2),pi)-pi/2).^2 / (2*p.NTFsig^2)) + NTFbaseline;
+            NTFresponses_Baseline(:,NTF) = (1/sqrt(2*pi*(p.NTFsig)^2)) * p.NTFamp * exp(-(mod((x-p.NTFcenters(NTF)+pi/2),pi)-pi/2).^2 / (2*p.NTFsig^2)) + NTFbaseline;
             if sub==1 && mod(NTF,20)==1, plot([1:9], NTFresponses_Baseline(:,NTF)); end
         elseif normedNTF==0 % do not normalize
             NTFresponses_Baseline(:,NTF) = p.NTFamp * exp(-(mod((x-p.NTFcenters(NTF)+pi/2),pi)-pi/2).^2 / (2*p.NTFsig^2)) + NTFbaseline;
@@ -65,8 +65,9 @@ for sub = 1:p.nSubs
 
 
         fig_num = 3;
-        clf(fig_num)
         figure(fig_num)
+        clf(fig_num)
+        
         plot([1:180],NTFresponses_Baseline(3,:))
         title('Orient #3 Responses across all NTFs');
     end

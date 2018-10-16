@@ -24,7 +24,7 @@ clf(9)
 hold on
 %make design matrix (with channels - same number as Ho et al.)
 for ii=1:p.nChans
-    m.u = p.cCenters(ii);
+    m.u = m.cCenters(ii);
     % HALF SIN WAVE RAISED TO POWER 6
     resp = m.a * sin(mod((m.x-m.u+pi/2),pi)).^m.sinPower + m.b;
 %     pred = p.a * exp(-(mod((p.x-p.u+pi/2),pi)-pi/2).^2 / (2*p.sig^2)) + p.b;
