@@ -4,7 +4,19 @@
     % nTrials is likely 288 (8 runs of 4 presentations of 9 orientations)
 subtract_mean_chan = 0; % 0 or 1
 Scolari = 1; %if Scolari sim, plot the data differently
+data = load('AC_DataType3_LorR1_numVoxels235_nOrients9_AC-LH-V1_Betas.mat');
+%data = load('AC_DataType3_LorR0_numVoxels137_nOrients9_AC-RH-V3_Betas.mat');
+%data = load('AC_DataType3_LorR0_numVoxels269_nOrients9_AC-RH-V1_Betas.mat');
+%data = load('AC_DataType3_LorR1_numVoxels97_nOrients9_AC-LH-V2_Betas.mat');
+%data = load('AC_DataType3_LorR1_numVoxels235_nOrients9_AC-RH-V1_Betas.mat');
+%data = load('AC_DataType3_LorR1_numVoxels235_nOrients9_AC-RH-V2_Betas.mat');
+%data = load('AC_DataType3_LorR1_numVoxels235_nOrients9_AC-RH-V3_Betas.mat');
 
+%data = load('AA_DataType3_LorR1_numVoxels235_nOrients9_AA-LH-V2d_Betas.mat');
+%data = load('AA_DataType3_LorR1_numVoxels118_nOrients9_AA-LH-V2v_Betas.mat');
+%data = load('AA_DataType3_LorR1_numVoxels118_nOrients9_AA-RH-V2v_Betas.mat');
+%data = load('AA_DataType3_LorR0_numVoxels234_nOrients9_AA-RH-V1_Betas.mat');
+%data = load('AA_DataType3_LorR1_numVoxels118_nOrients9_AA-RH-V2d_Betas.mat');
 
 m.a = 1; % channel amplitude
 m.b = 0; % channel baseline (additive constant)
@@ -34,31 +46,49 @@ for ii=1:p.nChans
 end
 title('Channels, C1')
 
-for sub = 1:p.nSubs
-
+%for sub = 1:p.nSubs
+for sub = 1:1
     %split data into training and test
 %     trn = p.data(sub).voxResp; %[nTrials nVox]
     rCnt=1;
     
     if sub == 1
-        meanAcc = mean(mean(p.data(sub).voxResp(p.g==1,:)));
-        meanInacc =  mean(mean(p.data(sub).voxResp(p.g==2,:)));
+        %meanAcc = mean(mean(p.data(sub).voxResp(p.g==1,:)));
+        meanAcc = mean(mean(data.bEst(data.g==1,:)));
+        
+        %meanInacc =  mean(mean(p.data(sub).voxResp(p.g==2,:)));
+        meanInacc =  mean(mean(data.bEst(data.g==2,:)));
+
     end
     
     for run = 1:p.nRuns/2 % just go through runs 1 - 4, then hold out run and run+nRuns/2, so that 2 runs held out each time
                             % note this ensures that 1 acc and 1 inacc run are held out, but only if the data are ordered with all runs of one type in first half of runs
-        trnSet = ones(size(p.or));
+        %trnSet = ones(size(p.or));
+        trnSet = ones(size(data.o));
+        
         trnSet(p.runs==run) = 0;
         trnSet(p.runs==run+p.nRuns/2) = 0;
 
-        trn = p.data(sub).voxResp(trnSet == 1,:);     % data from training scans
-        tst = p.data(sub).voxResp(trnSet == 0,:);     % data from test scan
-        trnor = p.or(trnSet == 1);
-        tstor = p.or(trnSet == 0);
+        %trn = p.data(sub).voxResp(trnSet == 1,:);     % data from training scans
+        trn = data.bEst(trnSet == 1,:);     % data from training scans
+        
+        %tst = p.data(sub).voxResp(trnSet == 0,:);     % data from test scan
+        tst = data.bEst(trnSet == 0,:);     % data from test scan
+        
+        %trnor = p.or(trnSet == 1);
+        %tstor = p.or(trnSet == 0);
+        trnor = data.o(trnSet == 1);
+        tstor = data.o(trnSet == 0);
+        
         trns = p.runs(trnSet == 1);
         tsts = p.runs(trnSet == 0);  
-        trng = p.g(trnSet == 1);
-        tstg = p.g(trnSet == 0);
+        
+        %trng = p.g(trnSet == 1);
+        %tstg = p.g(trnSet == 0);
+        
+        trng = data.g(trnSet == 1);
+        tstg = data.g(trnSet == 0);
+
 
         % first, average over all like orientations in the training set from each run.
         % stack them on top of each other
@@ -122,12 +152,18 @@ for sub = 1:p.nSubs
 
     % circular shift
     % recenter the response matrix (each row centered on the stimulus on that trial)
+    C2_centered = zeros(size(C2, 1), p.nOrients);
     for ii=1:size(C2,1)
-       C2_centered(ii,:) = wshift('1D', C2(ii,:), overOr(ii)-ceil(p.nOrients/2));
+       %C2_centered(ii,:) = wshift('1D', C2(ii,:), overOr(ii)-ceil(p.nOrients/2));
+       C2_centered(ii,:) = circshift(C2(ii,:), overOr(ii)-ceil(p.nOrients/2));
+
     end
 
     accVTF=(nanmean(C2_centered(task==1, :)));%;+nanmean(lowMean);
     inaccVTF=(nanmean(C2_centered(task==2, :)));%+nanmean(highMean);
+
+    %accVTF=(nanmean(C2(task==1, :)));%;+nanmean(lowMean);
+    %inaccVTF=(nanmean(C2(task==2, :)));%+nanmean(highMean);
 
     accData(sub,:) = accVTF;
     inaccData(sub,:) = inaccVTF;
