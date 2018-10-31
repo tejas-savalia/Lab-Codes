@@ -17,16 +17,19 @@ data = load('AC_DataType3_LorR1_numVoxels235_nOrients9_AC-LH-V1_Betas.mat');
 %data = load('AA_DataType3_LorR1_numVoxels118_nOrients9_AA-RH-V2v_Betas.mat');
 %data = load('AA_DataType3_LorR0_numVoxels234_nOrients9_AA-RH-V1_Betas.mat');
 %data = load('AA_DataType3_LorR1_numVoxels118_nOrients9_AA-RH-V2d_Betas.mat');
-
+p.nChans = 9;
 m.a = 1; % channel amplitude
 m.b = 0; % channel baseline (additive constant)
-m.sinPower = 30; % with sinPower above about 8 or 10, the channels are narrow enough to NOT get rank deficient matrix
+m.sinPower = 15; % with sinPower above about 8 or 10, the channels are narrow enough to NOT get rank deficient matrix
 m.x = linspace(0, pi-pi/(p.nOrients), p.nOrients);
 m.cCenters = linspace(0, pi-pi/p.nChans, p.nChans);%  + 0.5*pi/p.nOrients;
 C = zeros(p.nOrients*(p.nRuns-2), p.nChans);
 % C = zeros(p.nOrients*(p.nRuns-1), p.nChans);
 accData = zeros(p.nSubs,p.nChans);
 inaccData = zeros(p.nSubs,p.nChans);
+%accData = zeros(1,p.nChans);
+%inaccData = zeros(1,p.nChans);
+
 
 % C2_unshifted = zeros(p.nSubs,p.nTrials,p.nChans);
 % W_unshifted = zeros(p.nSubs,p.nOrients*p.nRuns/2,p.nVox);
@@ -35,7 +38,9 @@ figure(9)
 clf(9)
 hold on
 %make design matrix (with channels - same number as Ho et al.)
+%p.nChans = 6; %playing
 for ii=1:p.nChans
+    
     m.u = m.cCenters(ii);
     % HALF SIN WAVE RAISED TO POWER 6
     resp = m.a * sin(mod((m.x-m.u+pi/2),pi)).^m.sinPower + m.b;
@@ -61,14 +66,16 @@ for sub = 1:1
 
     end
     
-    for run = 1:p.nRuns/2 % just go through runs 1 - 4, then hold out run and run+nRuns/2, so that 2 runs held out each time
-                            % note this ensures that 1 acc and 1 inacc run are held out, but only if the data are ordered with all runs of one type in first half of runs
+    %for run = 1:p.nRuns/2 % just go through runs 1 - 4, then hold out run and run+nRuns/2, so that 2 runs held out each time
+    for run = 1:max(data.scans)/2                        % note this ensures that 1 acc and 1 inacc run are held out, but only if the data are ordered with all runs of one type in first half of runs
+    %for run = 1:4
         %trnSet = ones(size(p.or));
         trnSet = ones(size(data.o));
         
-        trnSet(p.runs==run) = 0;
-        trnSet(p.runs==run+p.nRuns/2) = 0;
-
+        %trnSet(p.runs==run) = 0;
+        trnSet(data.scans == run) = 0;
+        %trnSet(p.runs==run+p.nRuns/2) = 0;
+        trnSet(data.scans == run + data.scans/2) = 0;
         %trn = p.data(sub).voxResp(trnSet == 1,:);     % data from training scans
         trn = data.bEst(trnSet == 1,:);     % data from training scans
         
@@ -80,9 +87,10 @@ for sub = 1:1
         trnor = data.o(trnSet == 1);
         tstor = data.o(trnSet == 0);
         
-        trns = p.runs(trnSet == 1);
-        tsts = p.runs(trnSet == 0);  
-        
+        %trns = p.runs(trnSet == 1);
+        trns = data.scans(trnSet == 1);
+        %tsts = p.runs(trnSet == 0);  
+        tsts = data.scans(trnSet == 0);
         %trng = p.g(trnSet == 1);
         %tstg = p.g(trnSet == 0);
         
@@ -155,7 +163,7 @@ for sub = 1:1
     C2_centered = zeros(size(C2, 1), p.nOrients);
     for ii=1:size(C2,1)
        %C2_centered(ii,:) = wshift('1D', C2(ii,:), overOr(ii)-ceil(p.nOrients/2));
-       C2_centered(ii,:) = circshift(C2(ii,:), overOr(ii)-ceil(p.nOrients/2));
+       C2_centered(ii,:) = circshift(C2(ii,:), ceil(p.nOrients/2) - overOr(ii));
 
     end
 
@@ -206,7 +214,7 @@ set(gca, 'XTick', [-80:40:90]);
 plot(get(gca, 'XLim'), [0,0], 'k-', 'LineWidth', 2)        
 xlabel('Offset from stimulus <deg>')
 ylabel('Channel response (a.u.)')
-legend({'Inacc Trials', 'Acc Trials'})
+legend({'Low Contrast', 'High Contrast'})
 legend boxoff
 
 % next do the folded VTFs on each trial type (low contrast, high contrast)
@@ -246,7 +254,7 @@ set(gca, 'XTick', [0:40:90]);
 plot(get(gca, 'XLim'), [0,0], 'k-', 'LineWidth', 2)        
 xlabel('Offset from stimulus abs(<deg>)')
 ylabel('Channel response (a.u.)')
-legend({'Inacc Trials', 'Acc Trials'})
+legend({'Low Contrast', 'High Contrast'})
 legend boxoff         
 
 
