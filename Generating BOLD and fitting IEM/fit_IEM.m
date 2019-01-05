@@ -20,7 +20,7 @@ data = load('AC_DataType3_LorR1_numVoxels235_nOrients9_AC-LH-V1_Betas.mat');
 p.nChans = 9;
 m.a = 1; % channel amplitude
 m.b = 0; % channel baseline (additive constant)
-m.sinPower = 15; % with sinPower above about 8 or 10, the channels are narrow enough to NOT get rank deficient matrix
+m.sinPower = -1; % with sinPower above about 8 or 10, the channels are narrow enough to NOT get rank deficient matrix
 m.x = linspace(0, pi-pi/(p.nOrients), p.nOrients);
 m.cCenters = linspace(0, pi-pi/p.nChans, p.nChans);%  + 0.5*pi/p.nOrients;
 C = zeros(p.nOrients*(p.nRuns-2), p.nChans);
@@ -30,7 +30,7 @@ inaccData = zeros(p.nSubs,p.nChans);
 %accData = zeros(1,p.nChans);
 %inaccData = zeros(1,p.nChans);
 
-
+m.sig = [0.5, 0.1, 0.05, 0.05, 0.005, 0.05, 0.05, 0.1, 0.5];
 % C2_unshifted = zeros(p.nSubs,p.nTrials,p.nChans);
 % W_unshifted = zeros(p.nSubs,p.nOrients*p.nRuns/2,p.nVox);
 
@@ -42,9 +42,13 @@ hold on
 for ii=1:p.nChans
     
     m.u = m.cCenters(ii);
+    
+    sig = m.sig(ii);
+    %print(sig)
     % HALF SIN WAVE RAISED TO POWER 6
-    resp = m.a * sin(mod((m.x-m.u+pi/2),pi)).^m.sinPower + m.b;
+    %resp = m.a * sin(mod((m.x-m.u+pi/2),pi)).^m.sinPower + m.b;
 %     pred = p.a * exp(-(mod((p.x-p.u+pi/2),pi)-pi/2).^2 / (2*p.sig^2)) + p.b;
+    resp = m.a * exp(-(mod((m.x-m.u+pi/2),pi)-pi/2).^2 / (2*sig^2)) + m.b;
     plot([1:9], resp)
     C(:,ii) = repmat(resp', (p.nRuns-2),1);      
 %     C(:,ii) = repmat(resp', (p.nRuns-1),1);      
@@ -211,7 +215,8 @@ errorbar(x_axis, d, sem, 'o-', 'LineWidth', 2, 'MarkerSize', 10);
 set(gca, 'FontSize', 20);
 set(gca, 'XLim', [x_axis(1)-5, x_axis(end)+5]);
 set(gca, 'XTick', [-80:40:90]);
-plot(get(gca, 'XLim'), [0,0], 'k-', 'LineWidth', 2)        
+plot(get(gca, 'XLim'), [0,0], 'k-', 'LineWidth', 2) 
+text(-80, 0.01, 'Sinpower 100')
 xlabel('Offset from stimulus <deg>')
 ylabel('Channel response (a.u.)')
 legend({'Low Contrast', 'High Contrast'})
