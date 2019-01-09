@@ -1,3 +1,11 @@
+%Trial Structure
+%Only one square at a time.
+%90 degree rotation.
+%Two cases: Gradual and Sudden
+%RMSE, IDE and MT
+%After effects stage
+%Auditory cue
+%Color change on hit
 sca;
 close all;
 clearvars;
@@ -27,6 +35,8 @@ HideCursor();
 rotateBy = pi/4;
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
+Xs = [];
+Ys = [];
 for frame = 1:numFrames
     Screen('FillRect', window, [0, 0.5, 0.5]);
     [x, y, buttons] = GetMouse(window);
@@ -61,6 +71,14 @@ for frame = 1:numFrames
         %SetMouse(x + r*cos(theta+pi/4), y + r*sin(theta+pi/4), window);
         newX = (x-xCenter)*cos(rotateBy) + (y-yCenter)*sin(rotateBy);
         newY = -(x-xCenter)*sin(rotateBy) + (y-yCenter)*cos(rotateBy);
+        Xs = [Xs newX];
+        Ys = [Ys newY];
+        %Change color when in rectangle. Will work with only one rectangle
+        %shown
+        if IsInRect(newX, newY, allRects)
+            allColors = [0 1 0];
+        end
+
 
         Screen('DrawDots', window, [xCenter+newX, yCenter+newY], dotSizePix, dotColor, [], 2);        
     end
@@ -69,7 +87,6 @@ for frame = 1:numFrames
         Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);        
     end
         
-    
     Screen('Flip', window);
     
 end
@@ -81,3 +98,5 @@ Screen('Flip', window);
 KbStrokeWait;
     
 sca;
+
+scatter(Xs, -Ys);
