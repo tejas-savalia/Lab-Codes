@@ -1,7 +1,7 @@
 %Trial Structure. Done.
 %Inter trial and inter block interval code.
 %Only one square at a time. Done
-%90 degree rotation.
+%90 degree rotation. Done
 %Two cases: Gradual and Sudden
 %RMSE, IDE and MT
 %After effects stage
@@ -36,8 +36,8 @@ HideCursor();
 rotateBy = pi/4;
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
-Xs = [];
-Ys = [];
+Xs = {};
+Ys = {};
 
 baseRect = [0 0 100 100];
 numRects = 8;
@@ -54,13 +54,19 @@ randomSquare = CenterRectOnPointd(baseRect, randomSquareXpos, randomSquareYpos);
 
 %Screen('Flip', window);
 
-numBlocks = 1;
-numTrials = 2;
+numBlocks = 2;
+numTrials = 5;
+
+totalScore = 0;
 
 for block = 1:numBlocks
     %Code for inter block interval
+    newXs = [];
+    newYs = [];
+    blockScore = 0;
     for trial = 1:numTrials
         %Code for inter-trial-interval
+        %Auditary cue. 
         for frame = 1:numFrames
         
             Screen('FillRect', window, [0, 0.5, 0.5]);
@@ -72,6 +78,8 @@ for block = 1:numBlocks
             % Draw the rect to the screen
             %Screen('FillRect', window, allColors, allRects);
             Screen('FillRect', window, randomSquareColor, randomSquare);
+            Screen('TextSize', window, 30);
+            DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
 
 
 
@@ -80,8 +88,8 @@ for block = 1:numBlocks
                 %SetMouse(x + r*cos(theta+pi/4), y + r*sin(theta+pi/4), window);
                 newX = (x-xCenter)*cos(rotateBy) + (y-yCenter)*sin(rotateBy);
                 newY = -(x-xCenter)*sin(rotateBy) + (y-yCenter)*cos(rotateBy);
-                Xs = [Xs newX];
-                Ys = [Ys newY];
+                newXs = [newXs newX];
+                newYs = [newYs newY];
                 %Change color when in rectangle. Will work with only one rectangle
                 %shown
                 inside = IsInRect(newX+xCenter, newY+yCenter, randomSquare);
@@ -94,6 +102,7 @@ for block = 1:numBlocks
 
                     randomSquareColor = [1, 0, 0];
                     randomSquare = CenterRectOnPointd(baseRect, randomSquareXpos, randomSquareYpos);
+                    blockScore = blockScore + 1;
                     break;
                 end
 
@@ -104,10 +113,14 @@ for block = 1:numBlocks
                 SetMouse(xCenter, yCenter, window);
                 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);        
             end
-
             Screen('Flip', window);
         end
+        Xs{block} = newXs;
+        Ys{block} = newYs;
+        %display score
     end
+    %display leaderboard.
+    totalScore = totalScore + blockScore;
  end
 %SetMouse(400, 400, window)
 KbStrokeWait;
@@ -118,4 +131,4 @@ KbStrokeWait;
     
 sca;
 
-scatter(Xs, -Ys);
+scatter(Xs{1}, -Ys{1});
