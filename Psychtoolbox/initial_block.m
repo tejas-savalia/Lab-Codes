@@ -33,7 +33,7 @@ SetMouse(xCenter, yCenter, window);
 dotColor = [1, 0, 0];
 dotSizePix = 20;
 HideCursor();
-rotateBy = pi/2;
+rotateBy = 0;
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
 Xs = {};
