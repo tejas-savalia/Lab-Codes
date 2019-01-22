@@ -16,6 +16,7 @@ PsychDefaultSetup(2);
 screens = Screen('Screens');
 %screenNumber = max(screens);
 screenNumber = 1;
+
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
 grey = white/2;
@@ -45,7 +46,7 @@ numRects = 4;
 %Screen('Flip', window);
 
 numBlocks = 1;
-numTrials = numRects*10;
+numTrials = numRects*4;
 
 
 
@@ -177,10 +178,11 @@ KbStrokeWait;
     
 sca;
 
+% Convert cell to a table and use first row as variable names
 TX = cell2table(Xs);
 TY = cell2table(Ys); 
 % Write the table to a CSV file
-writetable(TX,'initialX.csv');
-writetable(TY,'initialY.csv');
+writetable(TX,'afterEffectsX.csv');
+writetable(TY,'afterEffectsY.csv');
 
 %scatter(Xs{1}, -Ys{1});

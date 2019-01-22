@@ -14,7 +14,8 @@ clearvars;
 PsychDefaultSetup(2);
 
 screens = Screen('Screens');
-screenNumber = max(screens);
+%screenNumber = max(screens);
+screenNumber = 1;
 
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
@@ -44,8 +45,8 @@ numRects = 4;
 
 %Screen('Flip', window);
 
-numBlocks = 2;
-numTrials = numRects*2;
+numBlocks = 10;
+numTrials = numRects*15;
 
 
 
@@ -66,7 +67,7 @@ for block = 1:numBlocks
     Screen('FillRect', window, [0.5, 0.5, 0.5]);        
     Screen('TextSize', window, 30);
     DrawFormattedText(window, 'Ready?', xCenter - 100, yCenter, [1 0 0]);
-    DrawFormattedText(window, 'Press any key to Continue', xCenter-350, yCenter + 100, [1 0 0]);
+    DrawFormattedText(window, 'Press any key to Continue', xCenter-200, yCenter + 100, [1 0 0]);
     Screen('Flip', window);
     KbStrokeWait;
     
@@ -83,10 +84,13 @@ for block = 1:numBlocks
         %Screen('FillRect', window, randomSquareColor, randomSquare);
         Screen('TextSize', window, 30);
         Screen('FillRect', window, [0, 0.5, 0.5])
-        DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
+        %DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
         Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);        
         Screen('Flip', window);    
         
+        GetClicks();
+        rand_interval = 0.2 + rand(1, 1)*(2 - 0.2);
+        pause(rand_interval);
         beep;
         tic;
         first_flag = true;
@@ -103,7 +107,7 @@ for block = 1:numBlocks
             %Screen('FillRect', window, allColors, allRects);
             Screen('FillRect', window, randomSquareColor, randomSquare);
             Screen('TextSize', window, 30);
-            DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
+            %DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
 
 
 
@@ -157,8 +161,8 @@ for block = 1:numBlocks
     Screen('FillRect', window, [0.5, 0.5, 0.5]);        
     totalScore = totalScore + blockScore;
     Screen('TextSize', window, 30);
-    DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
-    DrawFormattedText(window, 'Chill Out. Press any key to Continue', xCenter-450, yCenter + 100, [1 0 0]);
+    %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
+    DrawFormattedText(window, 'Chill Out. Press any key to Continue', xCenter-250, yCenter + 100, [1 0 0]);
     
     Screen('Flip', window);
     KbStrokeWait;
@@ -172,5 +176,10 @@ Screen('Flip', window);
 KbStrokeWait;
     
 sca;
+TX = cell2table(Xs);
+TY = cell2table(Ys); 
+% Write the table to a CSV file
+writetable(TX,'practiceX.csv');
+writetable(TY,'practiceY.csv');
 
 scatter(Xs{1}, -Ys{1});
