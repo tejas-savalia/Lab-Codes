@@ -1,12 +1,4 @@
-%Trial Structure. Done.
-%Inter trial and inter block interval code. Done. Pretty much. 
-%Only one square at a time. Done
-%90 degree rotation. Done
-%Two cases: Gradual and Sudden
-%RMSE, IDE and MT
-%After effects stage
-%Auditory cue. Almost done. 
-%Color change on hit. Changed random squares on hit. Done.
+
 sca;
 close all;
 clearvars;
@@ -45,7 +37,7 @@ numRects = 4;
 %Screen('Flip', window);
 
 numBlocks = 1;
-numTrials = numRects*10;
+numTrials = numRects*1;
 
 
 
@@ -91,7 +83,7 @@ for block = 1:numBlocks
         rand_interval = 0.2 + rand(1, 1)*(2 - 0.2);
         pause(rand_interval);
         
-        beep;
+        
         tic;
         first_flag = true;
         while true
@@ -151,8 +143,8 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        Xs{block} = newXs;
-        Ys{block} = newYs;
+        Xs{block}{trial} = newXs;
+        Ys{block}{trial} = newYs;
         %display score
     end
     %display leaderboard.
@@ -169,11 +161,11 @@ for block = 1:numBlocks
     
  end
 %SetMouse(400, 400, window)
-KbStrokeWait;
+%KbStrokeWait;
 
 % Flip to the screen
 Screen('Flip', window);
-KbStrokeWait;
+%KbStrokeWait;
     
 sca;
 

@@ -1,15 +1,7 @@
-%Trial Structure. Done.
-%Inter trial and inter block interval code. Done. Pretty much. 
-%Only one square at a time. Done
-%90 degree rotation. Done
-%Two cases: Gradual and Sudden
-%RMSE, IDE and MT
-%After effects stage
-%Auditory cue. Almost done. 
-%Color change on hit. Changed random squares on hit. Done.
-sca;
-close all;
-clearvars;
+
+%sca;
+%close all;
+%clearvars;
 
 PsychDefaultSetup(2);
 
@@ -25,10 +17,10 @@ grey = white/2;
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 [xCenter, yCenter] = RectCenter(windowRect);
 
-ifi = Screen('GetFlipInterval', window);
-numSecs = 10;
-numFrames = round(numSecs/ifi);
-vb1 = Screen('Flip', window);
+%ifi = Screen('GetFlipInterval', window);
+%numSecs = 10;
+%numFrames = round(numSecs/ifi);
+%vb1 = Screen('Flip', window);
 SetMouse(xCenter, yCenter, window);
 
 dotColor = [1, 0, 0];
@@ -46,7 +38,7 @@ numRects = 4;
 %Screen('Flip', window);
 
 numBlocks = 1;
-numTrials = numRects*4;
+numTrials = numRects*1;
 
 
 
@@ -92,7 +84,7 @@ for block = 1:numBlocks
         rand_interval = 0.2 + rand(1, 1)*(2 - 0.2);
         pause(rand_interval);
         
-        beep;
+        
         tic;
         first_flag = true;
         while true

@@ -1,18 +1,14 @@
-%Trial Structure. Done.
-%Inter trial and inter block interval code. Done. Pretty much. 
-%Only one square at a time. Done
-%90 degree rotation. Done
-%Two cases: Gradual and Sudden
-%RMSE, IDE and MT
-%After effects stage
-%Auditory cue. Almost done. 
-%Color change on hit. Changed random squares on hit. Done.
-sca;
-close all;
-clearvars;
+%Store variables
+%Two conditions: Gradual and Sudden
+%Instructions
+%Calculate Scores
+%Single File Flow
+%sca;
+%close all;
+%clearvars;
 
-PsychDefaultSetup(2);
-
+%PsychDefaultSetup(2);
+oldEnableFlag = Screen('Preference', 'SkipSyncTests', 0);
 screens = Screen('Screens');
 %screenNumber = max(screens);
 screenNumber = 1;
@@ -21,14 +17,15 @@ white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
 grey = white/2;
 
+
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, grey);
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 [xCenter, yCenter] = RectCenter(windowRect);
 
-ifi = Screen('GetFlipInterval', window);
-numSecs = 10;
-numFrames = round(numSecs/ifi);
-vb1 = Screen('Flip', window);
+%ifi = Screen('GetFlipInterval', window);
+%numSecs = 10;
+%numFrames = round(numSecs/ifi);
+%vb1 = Screen('Flip', window);
 SetMouse(xCenter, yCenter, window);
 
 dotColor = [1, 0, 0];
@@ -45,8 +42,8 @@ numRects = 4;
 
 %Screen('Flip', window);
 
-numBlocks = 10;
-numTrials = numRects*15;
+numBlocks = 1;
+numTrials = numRects*1;
 
 
 
@@ -91,7 +88,7 @@ for block = 1:numBlocks
         GetClicks();
         rand_interval = 0.2 + rand(1, 1)*(2 - 0.2);
         pause(rand_interval);
-        beep;
+        
         tic;
         first_flag = true;
         while true
@@ -173,9 +170,9 @@ KbStrokeWait;
 
 % Flip to the screen
 Screen('Flip', window);
-KbStrokeWait;
+%KbStrokeWait;
     
-sca;
+%sca;
 TX = cell2table(Xs);
 TY = cell2table(Ys); 
 % Write the table to a CSV file
