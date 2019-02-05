@@ -29,8 +29,8 @@ HideCursor();
 rotateBy = 0;
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
-Xs = {};
-Ys = {};
+afterXs = {};
+afterYs = {};
 
 baseRect = [0 0 100 100];
 numRects = 4;
@@ -144,8 +144,8 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        Xs{block} = newXs;
-        Ys{block} = newYs;
+        afterXs{block} = newXs;
+        afterYs{block} = newYs;
         %display score
     end
     %display leaderboard.
@@ -171,8 +171,8 @@ KbStrokeWait;
 sca;
 
 % Convert cell to a table and use first row as variable names
-TX = cell2table(Xs);
-TY = cell2table(Ys); 
+TX = cell2table(afterXs);
+TY = cell2table(afterYs); 
 % Write the table to a CSV file
 writetable(TX,'afterEffectsX.csv');
 writetable(TY,'afterEffectsY.csv');

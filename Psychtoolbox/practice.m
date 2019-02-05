@@ -3,21 +3,22 @@
 %Instructions
 %Calculate Scores
 %Single File Flow
+
 %sca;
 %close all;
 %clearvars;
 
-%PsychDefaultSetup(2);
-oldEnableFlag = Screen('Preference', 'SkipSyncTests', 0);
+PsychDefaultSetup(2);
+%oldEnableFlag = Screen('Preference', 'SkipSyncTests', 0);
 screens = Screen('Screens');
-%screenNumber = max(screens);
-screenNumber = 1;
+screenNumber = max(screens);
+%screenNumber = 1;
 
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
 grey = white/2;
 
-
+   
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, grey);
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 [xCenter, yCenter] = RectCenter(windowRect);
@@ -34,8 +35,8 @@ HideCursor();
 rotateBy = pi/2;
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
-Xs = {};
-Ys = {};
+practiceXs = {};
+practiceYs = {};
 
 baseRect = [0 0 100 100];
 numRects = 4;
@@ -49,12 +50,16 @@ numTrials = numRects*1;
 
 totalScore = 0;
 times = zeros(numBlocks, numTrials);
+practiceSquares = zeros(numBlocks, numTrials);
 initial_time = zeros(numBlocks, numTrials);
+
 for block = 1:numBlocks
     
+    %Square locations randomized
     squareTheta = repelem([pi/4, 3*pi/4, 5*pi/4, 7*pi/4], numTrials/4);
     i = randperm(length(squareTheta));
     randomSquareThetaVec = squareTheta(:, i);
+    practiceSquares(block, :) = randomSquareThetaVec;
 
     %Code for inter block interval
     newXs = [];
@@ -148,8 +153,8 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        Xs{block} = newXs;
-        Ys{block} = newYs;
+        practiceXs{block} = newXs;
+        practiceYs{block} = newYs;
         %display score
     end
     %display leaderboard.
@@ -173,10 +178,10 @@ Screen('Flip', window);
 %KbStrokeWait;
     
 %sca;
-TX = cell2table(Xs);
-TY = cell2table(Ys); 
+TX = cell2table(practiceXs, 'VariableNames', 'block, trial');
+TY = cell2table(practiceYs, 'VariableNames', 'block, trial'); 
 % Write the table to a CSV file
 writetable(TX,'practiceX.csv');
 writetable(TY,'practiceY.csv');
 
-scatter(Xs{1}, -Ys{1});
+scatter(practiceXs{1}, -practiceYs{1});
