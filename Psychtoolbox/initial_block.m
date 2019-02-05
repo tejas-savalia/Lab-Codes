@@ -51,7 +51,7 @@ for block = 1:numBlocks
     i = randperm(length(squareTheta));
     randomSquareThetaVec = squareTheta(:, i);
     %ibsquares(block, :) = randomSquareThetaVec;
-    participant(1).block(block).ibsquares = randomSquareThetaVec;
+    participant(participant_number).block(block).ibsquares = randomSquareThetaVec;
     %Code for inter block interval
     newXs = [];
     newYs = [];
@@ -107,7 +107,7 @@ for block = 1:numBlocks
 
             if buttons(1)
                 if first_flag
-                    participant(1).block(block).trial(trial).initial_time = toc;
+                    participant(participant_number).block(block).trial(trial).initial_time = toc;
                     first_flag = false;
                 end
                 HideCursor();
@@ -130,7 +130,7 @@ for block = 1:numBlocks
 
 
                     %blockScore = blockScore + 1;
-                    participant(1).block(block).trial(trial).movementTime = toc; 
+                    participant(participant_number).block(block).trial(trial).movementTime = toc; 
                     break;
                 end
 
@@ -145,8 +145,8 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        participant(1).block(block).trial(trial).ib.xTrajectory = newXs;
-        participant(1).block(block).trial(trial).ib.yTrajectory = newYs;
+        participant(participant_number).block(block).trial(trial).ib.xTrajectory = newXs;
+        participant(participant_number).block(block).trial(trial).ib.yTrajectory = newYs;
         %display score
         blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
     end
@@ -155,7 +155,7 @@ for block = 1:numBlocks
     
     Screen('FillRect', window, [0.5, 0.5, 0.5]);
     
-    participant(1).blockScore(block) = blockScore;
+    participant(participant_number).blockScore(block) = blockScore;
     Screen('TextSize', window, 30);
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
     DrawFormattedText(window, 'Chill Out. Press any key to Continue', xCenter-450, yCenter, [1 0 0]);
@@ -171,12 +171,12 @@ for block = 1:numBlocks
 Screen('Flip', window);
 %KbStrokeWait;
     
-sca;
+%sca;
 
-TX = cell2table(ibXs, 'VariableNames', {'block' 'trial'});
-TY = cell2table(ibYs, 'VariableNames', {'block' 'trial'}); 
+%TX = cell2table(ibXs, 'VariableNames', {'block' 'trial'});
+%TY = cell2table(ibYs, 'VariableNames', {'block' 'trial'}); 
 % Write the table to a CSV file
-writetable(TX,'initialX.csv');
-writetable(TY,'initialY.csv');
+%writetable(TX,'initialX.csv');
+%writetable(TY,'initialY.csv');
 
 %scatter(Xs{1}, -Ys{1});

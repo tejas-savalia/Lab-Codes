@@ -1,14 +1,13 @@
 
-%sca;
-%close all;
-%clearvars;
+sca;
+close all;
+clearvars;
 
 PsychDefaultSetup(2);
 
 screens = Screen('Screens');
-%screenNumber = max(screens);
-screenNumber = 1;
-
+screenNumber = max(screens);
+%screenNumber = 1;
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
 grey = white/2;
@@ -17,40 +16,42 @@ grey = white/2;
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 [xCenter, yCenter] = RectCenter(windowRect);
 
-%ifi = Screen('GetFlipInterval', window);
-%numSecs = 10;
-%numFrames = round(numSecs/ifi);
-%vb1 = Screen('Flip', window);
+ifi = Screen('GetFlipInterval', window);
+numSecs = 10;
+numFrames = round(numSecs/ifi);
+vb1 = Screen('Flip', window);
 SetMouse(xCenter, yCenter, window);
 
 dotColor = [1, 0, 0];
-dotSizePix = 20;
+dotSizePix = 20; 
 HideCursor();
 rotateBy = 0;
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
-afterXs = {};
-afterYs = {};
+ibXs = {};
+ibYs = {};
 
 baseRect = [0 0 100 100];
 numRects = 4;
 
 %Screen('Flip', window);
 
-numBlocks = 1;
+numBlocks = 2;
 numTrials = numRects*1;
 
 
 
 totalScore = 0;
 times = zeros(numBlocks, numTrials);
+ibsquares = zeros(numBlocks, numTrials);
 initial_time = zeros(numBlocks, numTrials);
 for block = 1:numBlocks
     
     squareTheta = repelem([pi/4, 3*pi/4, 5*pi/4, 7*pi/4], numTrials/4);
     i = randperm(length(squareTheta));
     randomSquareThetaVec = squareTheta(:, i);
-
+    %ibsquares(block, :) = randomSquareThetaVec;
+    participant(participant_number).block(block).ibsquares = randomSquareThetaVec;
     %Code for inter block interval
     newXs = [];
     newYs = [];
@@ -106,7 +107,7 @@ for block = 1:numBlocks
 
             if buttons(1)
                 if first_flag
-                    initial_time(block, trial) = toc;
+                    participant(participant_number).block(block).trial(trial).initial_time = toc;
                     first_flag = false;
                 end
                 HideCursor();
@@ -128,8 +129,8 @@ for block = 1:numBlocks
                     %randomSquare = CenterRectOnPointd(baseRect, randomSquareXpos, randomSquareYpos);
 
 
-                    blockScore = blockScore + 1;
-                    times(block, trial) = toc; 
+                    %blockScore = blockScore + 1;
+                    participant(participant_number).block(block).trial(trial).movementTime = toc; 
                     break;
                 end
 
@@ -144,15 +145,17 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        afterXs{block} = newXs;
-        afterYs{block} = newYs;
+        participant(participant_number).block(block).trial(trial).ib.xTrajectory = newXs;
+        participant(participant_number).block(block).trial(trial).ib.yTrajectory = newYs;
         %display score
+        blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
     end
     %display leaderboard.
    
     
-    Screen('FillRect', window, [0.5, 0.5, 0.5]);        
-    totalScore = totalScore + blockScore;
+    Screen('FillRect', window, [0.5, 0.5, 0.5]);
+    
+    participant(participant_number).blockScore(block) = blockScore;
     Screen('TextSize', window, 30);
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
     DrawFormattedText(window, 'Chill Out. Press any key to Continue', xCenter-450, yCenter, [1 0 0]);
@@ -162,19 +165,18 @@ for block = 1:numBlocks
     
  end
 %SetMouse(400, 400, window)
-KbStrokeWait;
+%KbStrokeWait;
 
 % Flip to the screen
 Screen('Flip', window);
-KbStrokeWait;
+%KbStrokeWait;
     
 sca;
 
-% Convert cell to a table and use first row as variable names
-TX = cell2table(afterXs);
-TY = cell2table(afterYs); 
+%TX = cell2table(ibXs, 'VariableNames', {'block' 'trial'});
+%TY = cell2table(ibYs, 'VariableNames', {'block' 'trial'}); 
 % Write the table to a CSV file
-writetable(TX,'afterEffectsX.csv');
-writetable(TY,'afterEffectsY.csv');
+%writetable(TX,'initialX.csv');
+%writetable(TY,'initialY.csv');
 
 %scatter(Xs{1}, -Ys{1});

@@ -25,7 +25,7 @@ SetMouse(xCenter, yCenter, window);
 dotColor = [1, 0, 0];
 dotSizePix = 20; 
 HideCursor();
-rotateBy = 90;
+rotateBy = 0;
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
 ibXs = {};
@@ -51,7 +51,7 @@ for block = 1:numBlocks
     i = randperm(length(squareTheta));
     randomSquareThetaVec = squareTheta(:, i);
     %ibsquares(block, :) = randomSquareThetaVec;
-    participant(participant_number).block(block).ibsquares = randomSquareThetaVec;
+    participant(p.participant_number).block(block).ibsquares = randomSquareThetaVec;
     %Code for inter block interval
     newXs = [];
     newYs = [];
@@ -107,7 +107,7 @@ for block = 1:numBlocks
 
             if buttons(1)
                 if first_flag
-                    participant(participant_number).block(block).trial(trial).initial_time = toc;
+                    participant(p.participant_number).block(block).trial(trial).initial_time = toc;
                     first_flag = false;
                 end
                 HideCursor();
@@ -130,7 +130,7 @@ for block = 1:numBlocks
 
 
                     %blockScore = blockScore + 1;
-                    participant(participant_number).block(block).trial(trial).movementTime = toc; 
+                    participant(p.participant_number).block(block).trial(trial).movementTime = toc; 
                     break;
                 end
 
@@ -145,8 +145,8 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        participant(participant_number).block(block).trial(trial).practice.xTrajectory = newXs;
-        participant(participant_number).block(block).trial(trial).practice.yTrajectory = newYs;
+        participant(p.participant_number).block(block).trial(trial).ib.xTrajectory = newXs;
+        participant(participant_number).block(block).trial(trial).ib.yTrajectory = newYs;
         %display score
         blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
     end
@@ -171,7 +171,7 @@ for block = 1:numBlocks
 Screen('Flip', window);
 %KbStrokeWait;
     
-sca;
+%sca;
 
 %TX = cell2table(ibXs, 'VariableNames', {'block' 'trial'});
 %TY = cell2table(ibYs, 'VariableNames', {'block' 'trial'}); 
