@@ -1,7 +1,6 @@
-
 sca;
 close all;
-clearvars;
+%clearvars;
 
 PsychDefaultSetup(2);
 
