@@ -23,7 +23,7 @@ vb1 = Screen('Flip', window);
 SetMouse(xCenter, yCenter, window);
 
 dotColor = [1, 0, 0];
-dotSizePix = 20;
+dotSizePix = 20; 
 HideCursor();
 rotateBy = 0;
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
@@ -129,7 +129,7 @@ for block = 1:numBlocks
                     %randomSquare = CenterRectOnPointd(baseRect, randomSquareXpos, randomSquareYpos);
 
 
-                    blockScore = blockScore + 1;
+                    %blockScore = blockScore + 1;
                     participant(1).block(block).trial(trial).movementTime = toc; 
                     break;
                 end
@@ -148,7 +148,7 @@ for block = 1:numBlocks
         participant(1).block(block).trial(trial).ib.xTrajectory = newXs;
         participant(1).block(block).trial(trial).ib.yTrajectory = newYs;
         %display score
-        blockScore = blockScore + 100/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
+        blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
     end
     %display leaderboard.
    
