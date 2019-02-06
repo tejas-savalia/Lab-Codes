@@ -42,7 +42,7 @@ numTrials = numRects*1;
 
 totalScore = 0;
 times = zeros(numBlocks, numTrials);
-ibsquares = zeros(numBlocks, numTrials);
+%aesquares = zeros(numBlocks, numTrials);
 initial_time = zeros(numBlocks, numTrials);
 for block = 1:numBlocks
     
@@ -50,7 +50,7 @@ for block = 1:numBlocks
     i = randperm(length(squareTheta));
     randomSquareThetaVec = squareTheta(:, i);
     %ibsquares(block, :) = randomSquareThetaVec;
-    participant(participant_number).block(block).ibsquares = randomSquareThetaVec;
+    participant(participant_number).block(block).aesquares = randomSquareThetaVec;
     %Code for inter block interval
     newXs = [];
     newYs = [];
@@ -144,8 +144,8 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        participant(participant_number).block(block).trial(trial).ib.xTrajectory = newXs;
-        participant(participant_number).block(block).trial(trial).ib.yTrajectory = newYs;
+        participant(participant_number).block(block).trial(trial).ae.xTrajectory = newXs;
+        participant(participant_number).block(block).trial(trial).ae.yTrajectory = newYs;
         %display score
         blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
     end
@@ -157,7 +157,9 @@ for block = 1:numBlocks
     participant(participant_number).blockScore(block) = blockScore;
     Screen('TextSize', window, 30);
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
-    DrawFormattedText(window, 'Chill Out. Press any key to Continue', xCenter-450, yCenter, [1 0 0]);
+    DrawFormattedText(window, sprintf('Your score: %d\n', blockScore) , xCenter-450, yCenter - 100, [1 0 0]);
+
+    DrawFormattedText(window, 'Take a break. Press any key to Continue', xCenter-450, yCenter + 100, [1 0 0]);
     
     Screen('Flip', window);
     KbStrokeWait;

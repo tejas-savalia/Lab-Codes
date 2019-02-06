@@ -158,7 +158,9 @@ for block = 1:numBlocks
     participant(participant_number).blockScore(block) = blockScore;
     Screen('TextSize', window, 30);
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
-    DrawFormattedText(window, 'Chill Out. Press any key to Continue', xCenter-450, yCenter, [1 0 0]);
+    DrawFormattedText(window, sprintf('Your score: %d\n', blockScore) , xCenter-450, yCenter - 100, [1 0 0]);
+    DrawFormattedText(window, sprintf('%d more to go!', numBlocks-block+1), xCenter-450, yCenter , [1 0 0]);    
+    DrawFormattedText(window, 'Take a Break! Press any key to Continue', xCenter-450, yCenter + 100, [1 0 0]);
     
     Screen('Flip', window);
     KbStrokeWait;

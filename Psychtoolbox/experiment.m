@@ -2,7 +2,7 @@
 %         Speed = 0.         Accuracy = 1.
 global participant_number 
 participant_number = input("Participant Number?");
-participant(participant_number).condition = 001;
+participant(participant_number).condition = 00;
 initial_block;
 practice;
 after_effects;
