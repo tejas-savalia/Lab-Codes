@@ -36,7 +36,7 @@ numRects = 4;
 
 %Screen('Flip', window);
 
-numBlocks = 2;
+numBlocks = 1;
 numTrials = numRects*1;
 
 
@@ -51,7 +51,7 @@ for block = 1:numBlocks
     i = randperm(length(squareTheta));
     randomSquareThetaVec = squareTheta(:, i);
     %ibsquares(block, :) = randomSquareThetaVec;
-    participant(participant_number).block(block).ibsquares = randomSquareThetaVec;
+    participant(participant_number).ib.block(block).squares = randomSquareThetaVec;
     %Code for inter block interval
     newXs = [];
     newYs = [];
@@ -107,7 +107,7 @@ for block = 1:numBlocks
 
             if buttons(1)
                 if first_flag
-                    participant(participant_number).block(block).trial(trial).initial_time = toc;
+                    participant(participant_number).ib.block(block).trial(trial).initial_time = toc;
                     first_flag = false;
                 end
                 HideCursor();
@@ -130,7 +130,7 @@ for block = 1:numBlocks
 
 
                     %blockScore = blockScore + 1;
-                    participant(participant_number).block(block).trial(trial).movementTime = toc; 
+                    participant(participant_number).ib.block(block).trial(trial).movementTime = toc; 
                     break;
                 end
 
@@ -145,8 +145,8 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        participant(participant_number).block(block).trial(trial).ib.xTrajectory = newXs;
-        participant(participant_number).block(block).trial(trial).ib.yTrajectory = newYs;
+        participant(participant_number).ib.block(block).trial(trial).xTrajectory = newXs;
+        participant(participant_number).ib.block(block).trial(trial).yTrajectory = newYs;
         %display score
         blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
     end
@@ -155,7 +155,7 @@ for block = 1:numBlocks
     
     Screen('FillRect', window, [0.5, 0.5, 0.5]);
     
-    participant(participant_number).blockScore(block) = blockScore;
+    participant(participant_number).ib.blockScore(block) = blockScore;
     Screen('TextSize', window, 30);
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
     DrawFormattedText(window, 'Chill Out. Press any key to Continue', xCenter-450, yCenter, [1 0 0]);

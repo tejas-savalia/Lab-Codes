@@ -25,7 +25,7 @@ SetMouse(xCenter, yCenter, window);
 dotColor = [1, 0, 0];
 dotSizePix = 20; 
 HideCursor();
-rotateBy = 90;
+
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
 ibXs = {};
@@ -36,8 +36,15 @@ numRects = 4;
 
 %Screen('Flip', window);
 
-numBlocks = 2;
+numBlocks = 10;
 numTrials = numRects*1;
+
+%Gradual vs Sudden change
+if participant(participant_number).change == 0
+    participant(participant_number).rotateBy(1:numBlocks) = 90;
+elseif participant(participant_number).change == 1
+    participant(participant_number).rotateBy = [10:90/(numBlocks-1):90 90];
+end
 
 
 
@@ -51,7 +58,7 @@ for block = 1:numBlocks
     i = randperm(length(squareTheta));
     randomSquareThetaVec = squareTheta(:, i);
     %ibsquares(block, :) = randomSquareThetaVec;
-    participant(participant_number).block(block).ibsquares = randomSquareThetaVec;
+    participant(participant_number).practice.block(block).squares = randomSquareThetaVec;
     %Code for inter block interval
     newXs = [];
     newYs = [];
@@ -107,13 +114,13 @@ for block = 1:numBlocks
 
             if buttons(1)
                 if first_flag
-                    participant(participant_number).block(block).trial(trial).initial_time = toc;
+                    participant(participant_number).practice.block(block).trial(trial).initial_time = toc;
                     first_flag = false;
                 end
                 HideCursor();
                 %SetMouse(x + r*cos(theta+pi/4), y + r*sin(theta+pi/4), window);
-                newX = (x-xCenter)*cos(rotateBy) + (y-yCenter)*sin(rotateBy);
-                newY = -(x-xCenter)*sin(rotateBy) + (y-yCenter)*cos(rotateBy);
+                newX = (x-xCenter)*cosd(participant(participant_number).rotateBy(block)) + (y-yCenter)*sind(participant(participant_number).rotateBy(block));
+                newY = -(x-xCenter)*sind(participant(participant_number).rotateBy(block)) + (y-yCenter)*cosd(participant(participant_number).rotateBy(block));
                 newXs = [newXs newX];
                 newYs = [newYs newY];
                 
@@ -130,7 +137,7 @@ for block = 1:numBlocks
 
 
                     %blockScore = blockScore + 1;
-                    participant(participant_number).block(block).trial(trial).movementTime = toc; 
+                    participant(participant_number).practice.block(block).trial(trial).movementTime = toc; 
                     break;
                 end
 
@@ -145,8 +152,8 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        participant(participant_number).block(block).trial(trial).practice.xTrajectory = newXs;
-        participant(participant_number).block(block).trial(trial).practice.yTrajectory = newYs;
+        participant(participant_number).practice.block(block).trial(trial).xTrajectory = newXs;
+        participant(participant_number).practice.block(block).trial(trial).yTrajectory = newYs;
         %display score
         blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
     end
@@ -155,7 +162,7 @@ for block = 1:numBlocks
     
     Screen('FillRect', window, [0.5, 0.5, 0.5]);
     
-    participant(participant_number).blockScore(block) = blockScore;
+    participant(participant_number).practice.blockScore(block) = blockScore;
     Screen('TextSize', window, 30);
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
     DrawFormattedText(window, sprintf('Your score: %d\n', blockScore) , xCenter-450, yCenter - 100, [1 0 0]);
