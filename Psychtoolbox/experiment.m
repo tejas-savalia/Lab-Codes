@@ -6,6 +6,7 @@ participant_number = input("Participant Number?");
 participant(participant_number).change = 1;
 participant(participant_number).emphasis = 0;
 participant.pNo = participant_number;
+start;
 initial_block;
 practice;
 after_effects;
