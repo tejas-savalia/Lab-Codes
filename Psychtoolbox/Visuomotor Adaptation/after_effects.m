@@ -67,6 +67,7 @@ for block = 1:numBlocks
         randomSquareYpos = 300*sin(randomSquareTheta) + yCenter;
 
         randomSquareColor = [1, 0, 0];
+        changeSquareColor = [0, 1, 0];
         randomSquare = CenterRectOnPointd(baseRect, randomSquareXpos, randomSquareYpos);
 
         %Code for inter-trial-interval
@@ -77,10 +78,16 @@ for block = 1:numBlocks
         %DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
         Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);        
         Screen('Flip', window);    
-       
-        GetClicks();
-        rand_interval = 0.2 + rand(1, 1)*(2 - 0.2);
-        pause(rand_interval);
+        [clicks, tempx, tempy, buttons] = GetClicks(window);
+        
+            if buttons(1)
+                Screen('FillRect', window, randomSquareColor, randomSquare);
+                Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
+                Screen('Flip', window);    
+            end
+
+            rand_interval = 1 + rand(1, 1)*(3 - 1);
+            pause(rand_interval);
         
         
         tic;
@@ -96,7 +103,7 @@ for block = 1:numBlocks
 
             % Draw the rect to the screen
             %Screen('FillRect', window, allColors, allRects);
-            Screen('FillRect', window, randomSquareColor, randomSquare);
+            Screen('FillRect', window, changeSquareColor, randomSquare);
             Screen('TextSize', window, 30);
             %DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
 
