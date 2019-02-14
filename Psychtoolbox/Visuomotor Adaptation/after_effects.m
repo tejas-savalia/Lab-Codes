@@ -29,12 +29,12 @@ Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
 
 baseRect = [0 0 100 100];
-numRects = 4;
+numRects = 16;
 
 %Screen('Flip', window);
 
 numBlocks = 1;
-numTrials = numRects*1;
+numTrials = numRects*4;
 
 
 
@@ -44,9 +44,9 @@ times = zeros(numBlocks, numTrials);
 initial_time = zeros(numBlocks, numTrials);
 for block = 1:numBlocks
     
-    squareTheta = repelem([pi/4, 3*pi/4, 5*pi/4, 7*pi/4], numTrials/4);
-    i = randperm(length(squareTheta));
-    randomSquareThetaVec = squareTheta(:, i);
+    squareTheta = repelem([pi/4, 3*pi/4, 5*pi/4, 7*pi/4], numTrials/16);
+    %i = randperm(length(squareTheta));
+    randomSquareThetaVec = [squareTheta(:, randperm(length(squareTheta))) squareTheta(:, randperm(length(squareTheta))) squareTheta(:, randperm(length(squareTheta))) squareTheta(:, randperm(length(squareTheta)))];
     %ibsquares(block, :) = randomSquareThetaVec;
     participant(participant_number).ae.block(block).squares = randomSquareThetaVec;
     %Code for inter block interval
