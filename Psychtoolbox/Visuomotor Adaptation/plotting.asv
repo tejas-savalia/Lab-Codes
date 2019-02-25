@@ -1,0 +1,11 @@
+it = zeros(10, 64);
+for block = 1:10
+    for i = 1:64
+    it(block, i) = participant(3).practice.block(block).trial(i).initial_time;
+    end
+end
+rmse = zeros(10, 64);
+for block = 1:10
+    rmse(block, :) = RMSEfromtrial(participant, block);
+end
+scatter(it, rmse);

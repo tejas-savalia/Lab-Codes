@@ -60,8 +60,6 @@ for block = 1:numBlocks
     %ibsquares(block, :) = randomSquareThetaVec;
     participant(participant_number).practice.block(block).squares = randomSquareThetaVec;
     %Code for inter block interval
-    newXs = [];
-    newYs = [];
     blockScore = 0;
 
     Screen('FillRect', window, [0.5, 0.5, 0.5]);        
@@ -72,6 +70,8 @@ for block = 1:numBlocks
     KbStrokeWait;
     
     for trial = 1:numTrials
+        newXs = [];
+        newYs = [];
         randomSquareTheta = randomSquareThetaVec(trial);
         randomSquareXpos = 300*cos(randomSquareTheta) + xCenter;
         randomSquareYpos = 300*sin(randomSquareTheta) + yCenter;
@@ -89,16 +89,9 @@ for block = 1:numBlocks
         Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);        
         
         Screen('Flip', window);    
-        [clicks, tempx, tempy, buttons] = GetClicks(window);
-        
-            if buttons(1)
-                Screen('FillRect', window, randomSquareColor, randomSquare);
-                Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
-                Screen('Flip', window);    
-            end
 
-            rand_interval = 1 + rand(1, 1)*(3 - 1);
-            pause(rand_interval);
+        rand_interval = 1 + rand(1, 1)*(3 - 1);
+        pause(rand_interval);
         
         
         tic;
@@ -114,7 +107,7 @@ for block = 1:numBlocks
 
             % Draw the rect to the screen
             %Screen('FillRect', window, allColors, allRects);
-            Screen('FillRect', window, changeSquareColor, randomSquare);
+            Screen('FillRect', window, randomSquareColor, randomSquare);
             Screen('TextSize', window, 30);
             %DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
 
@@ -160,9 +153,11 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        participant(participant_number).practice.block(block).trial(trial).xTrajectory = newXs;
-        participant(participant_number).practice.block(block).trial(trial).yTrajectory = newYs;
+        participant(participant_number).practice.block(block).trial(trial).xTrajectory = newX;
+        participant(participant_number).practice.block(block).trial(trial).yTrajectory = newY;
+        
         %display score
+        
         blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
     end
     %display leaderboard.
@@ -173,7 +168,11 @@ for block = 1:numBlocks
     participant(participant_number).practice.blockScore(block) = blockScore;
     Screen('TextSize', window, 30);
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
-    DrawFormattedText(window, sprintf('Your score: %d\n', blockScore) , xCenter-450, yCenter - 100, [1 0 0]);
+    if participant(participant_number).emphasis
+        DrawFormattedText(window, sprintf('Your score: %d\n. You can always increase your score by doing it more accurately!', blockScore) , xCenter-450, yCenter - 100, [1 0 0]);
+    elseif ~participant(participant_number).emphasis
+        DrawFormattedText(window, sprintf('Your score: %d\n. You can always increase your score by doing it faster!', blockScore) , xCenter-450, yCenter - 100, [1 0 0]);
+    end
     DrawFormattedText(window, sprintf('%d more to go!', numBlocks-block+1), xCenter-450, yCenter , [1 0 0]);    
     DrawFormattedText(window, 'Take a Break! Press any key to Continue', xCenter-450, yCenter + 100, [1 0 0]);
     

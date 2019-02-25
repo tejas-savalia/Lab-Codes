@@ -1,6 +1,15 @@
-last = length(participant(1).ae.block.trial(64).xTrajectory);
-cut_off = length(participant(1).ae.block.trial(54).xTrajectory);
-last_few = cut_off - last;
-scatter(participant(1).practice.block(5).trial(64).xTrajectory, participant(1).practice.block(5).trial(64).yTrajectory); 
-%hold on;
-%scatter(participant(1).ae.block.trial(10).xTrajectory, participant(1).ae.block.trial(10).yTrajectory); 
+mt = zeros(10, 64);
+for block = 1:10
+    for i = 1:64
+    mt(block, i) = participant(1).practice.block(block).trial(i).movementTime;
+    end
+end
+rmse = zeros(10, 64);
+for block = 1:10
+    rmse(block, :) = RMSEfromtrial(participant, block);
+end
+for block = 1:10
+    scatter(mt(block, :), rmse(block, :))
+    hold on;
+end
+
