@@ -81,17 +81,9 @@ for block = 1:numBlocks
         Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
         Screen('Flip', window);    
         %DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
-        [clicks, tempx, tempy, buttons] = GetClicks(window);
-        
-        
-            if buttons(1)
-                Screen('FillRect', window, randomSquareColor, randomSquare);
-                Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
-                Screen('Flip', window);    
-            end
 
-            rand_interval = 1 + rand(1, 1)*(3 - 1);
-            pause(rand_interval);
+        rand_interval = 1 + rand(1, 1)*(3 - 1);
+        pause(rand_interval);
         
         tic;
         first_flag = true;
@@ -106,7 +98,7 @@ for block = 1:numBlocks
 
             % Draw the rect to the screen
             %Screen('FillRect', window, allColors, allRects);
-            Screen('FillRect', window, changeSquareColor, randomSquare);
+            Screen('FillRect', window, randomSquareColor, randomSquare);
             Screen('TextSize', window, 30);
             %DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
 
