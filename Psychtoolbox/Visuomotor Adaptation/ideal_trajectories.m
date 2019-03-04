@@ -1,0 +1,14 @@
+function [idealXs, idealYs] = ideal_trajectories(participant, block)
+xCenter = 960;
+yCenter = 540;
+[x, y] = trial_traj(participant, block);
+
+for i = 1:64
+    randomSquareTheta = participant(2).practice.block(block).squares(i)   ;
+    randomSquareXpos = 300*cos(randomSquareTheta) + xCenter;
+    randomSquareYpos = 300*sin(randomSquareTheta) + yCenter;
+    samples = length(x{i});
+    idealXs{i} = linspace(0, randomSquareXpos - xCenter, samples);
+    idealYs{i} = linspace(0, randomSquareYpos - yCenter, samples);
+end
+end

@@ -32,12 +32,12 @@ ibXs = {};
 ibYs = {};
 
 baseRect = [0 0 100 100];
-numRects = 16;
+numRects = 4;
 
 %Screen('Flip', window);
 
 numBlocks = 1;
-numTrials = numRects*4;
+numTrials = numRects*16;
 
 
 
