@@ -1,15 +1,14 @@
-mt = zeros(10, 64);
-for block = 1:10
-    for i = 1:64
-    mt(block, i) = participant(1).practice.block(block).trial(i).movementTime;
-    end
-end
-rmse = zeros(10, 64);
-for block = 1:10
-    rmse(block, :) = RMSEfromtrial(participant, block);
-end
-for block = 1:10
-    scatter(mt(block, :), rmse(block, :))
-    hold on;
-end
 
+
+%for i = 1:10
+%[x, y] = trial_traj(participant, i);
+%fname = sprintf('python_scripts\\data\\pilot\\pilot_1\\actual_trajectories\\trajectories%d',i);
+%save(fname, 'x', 'y');
+%end
+
+for i = 1:1
+load('C:\Users\Tejas\Documents\Research\Lab-Codes\Psychtoolbox\Visuomotor Adaptation\Data\Pilot\Pilot_1\pilot_1.mat');
+[idealXs, idealYs] = ideal_trajectories(participant, 1, i);
+fname = sprintf('python_scripts\\data\\pilot\\pilot_1\\ideal_trajectories\\ideal_trajectories11');
+save(fname, 'idealXs', 'idealYs');
+end
