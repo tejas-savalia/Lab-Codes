@@ -32,6 +32,7 @@ ibXs = {};
 ibYs = {};
 
 baseRect = [0 0 100 100];
+maxDiameter = max(baseRect)*1.01;
 numRects = 4;
 
 %Screen('Flip', window);
@@ -107,7 +108,7 @@ for block = 1:numBlocks
 
             % Draw the rect to the screen
             %Screen('FillRect', window, allColors, allRects);
-            Screen('FillRect', window, randomSquareColor, randomSquare);
+            Screen('FillOval', window, randomSquareColor, randomSquare, maxDiameter);
             Screen('TextSize', window, 30);
             %DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
 
@@ -146,6 +147,10 @@ for block = 1:numBlocks
                 Screen('DrawDots', window, [xCenter+newX, yCenter+newY], dotSizePix, dotColor, [], 2);        
             end
             if ~buttons(1)
+        participant(participant_number).practice.block(block).trial(trial).yTrajectory = newY;
+        
+        %display score
+        
                 SetMouse(xCenter, yCenter, window);
                 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);        
             end
@@ -154,10 +159,6 @@ for block = 1:numBlocks
         
         Screen('Flip', window);
         participant(participant_number).practice.block(block).trial(trial).xTrajectory = newX;
-        participant(participant_number).practice.block(block).trial(trial).yTrajectory = newY;
-        
-        %display score
-        
         blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
     end
     %display leaderboard.
