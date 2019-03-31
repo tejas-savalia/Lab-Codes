@@ -1,6 +1,6 @@
 clearvars;
 %Sudden_change = 0. Gradual change = 1.
-%Speed = 0.         Accuracy = 1.
+%Accuracy = 1         Speed = 0.
 global participant_number; 
 input = inputdlg('Participant Number?');
 participant_number = str2double(input{1});

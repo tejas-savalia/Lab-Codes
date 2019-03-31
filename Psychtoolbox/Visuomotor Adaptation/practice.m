@@ -32,13 +32,13 @@ ibXs = {};
 ibYs = {};
 
 baseRect = [0 0 100 100];
-maxDiameter = max(baseRect)*1.01;
+maxDiameter = max(baseRect)*1.05;
 numRects = 4;
 
 %Screen('Flip', window);
 
 numBlocks = 10;
-numTrials = numRects*16  ;
+numTrials = numRects*4  ;
 
 %Gradual vs Sudden change
 if participant(participant_number).change == 0
@@ -147,7 +147,7 @@ for block = 1:numBlocks
                 Screen('DrawDots', window, [xCenter+newX, yCenter+newY], dotSizePix, dotColor, [], 2);        
             end
             if ~buttons(1)
-        participant(participant_number).practice.block(block).trial(trial).yTrajectory = newY;
+
         
         %display score
         
@@ -158,21 +158,39 @@ for block = 1:numBlocks
         end
         
         Screen('Flip', window);
-        participant(participant_number).practice.block(block).trial(trial).xTrajectory = newX;
-        blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
+        if participant(participant_number).emphasis
+            blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
+        elseif ~participant(participant_number).emphasis
+            blockScore = blockScore + 1/participant(participant_number).practice.block(block).trial(trial).initial_time;
+        end
+       participant(participant_number).practice.block(block).trial(trial).yTrajectory = newYs;
+       participant(participant_number).practice.block(block).trial(trial).xTrajectory = newXs;    
     end
     %display leaderboard.
-   
+
     
     Screen('FillRect', window, [0.5, 0.5, 0.5]);
     
     participant(participant_number).practice.blockScore(block) = blockScore;
     Screen('TextSize', window, 30);
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
+    %sb = load('scoreboard.mat');
+    %sortedboard = sort([round(sb.scoreboard(block, :)) round(blockScore)]);
+    scoreboard = normrnd(round(blockScore), round(blockScore)/5, [4, 1]);
+    sortedBoard = sort([round(blockScore), transpose(round(scoreboard))]);
+    DrawFormattedText(window, sprintf('Scoreboard: \n'), xCenter - 150, yCenter - 250, [1 0 0]);
+    for sortedScore = 1:5
+        if sortedBoard(sortedScore) == round(blockScore)
+            DrawFormattedText(window, sprintf('%d\n', sortedBoard(sortedScore)), xCenter - 100, yCenter - (200/sortedScore), [0 1 0]);
+        else
+            DrawFormattedText(window, sprintf('%d\n', sortedBoard(sortedScore)), xCenter - 100, yCenter - (200/sortedScore), [1 0 0]);
+        end
+    end
+    
     if participant(participant_number).emphasis
-        DrawFormattedText(window, sprintf('Your score: %d\n. You can always increase your score by doing it more accurately!', blockScore) , xCenter-450, yCenter - 100, [1 0 0]);
+        DrawFormattedText(window, sprintf('You can always increase your score by doing it more accurately!'), xCenter-450, yCenter + 50, [1 0 0]);
     elseif ~participant(participant_number).emphasis
-        DrawFormattedText(window, sprintf('Your score: %d\n. You can always increase your score by doing it faster!', blockScore) , xCenter-450, yCenter - 100, [1 0 0]);
+        DrawFormattedText(window, sprintf('You can always increase your score by doing it faster!'), xCenter-450, yCenter + 50, [1 0 0]);
     end
     DrawFormattedText(window, sprintf('%d more to go!', numBlocks-block+1), xCenter-450, yCenter , [1 0 0]);    
     DrawFormattedText(window, 'Take a Break! Press any key to Continue', xCenter-450, yCenter + 100, [1 0 0]);
