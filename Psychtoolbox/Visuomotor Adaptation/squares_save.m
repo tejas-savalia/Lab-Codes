@@ -1,10 +1,10 @@
 pno = 1;
-fload = sprintf('C:\\Users\\Tejas\\Documents\\Research\\Lab-Codes\\Psychtoolbox\\Visuomotor Adaptation\\Data\\Pilot\\Pilot_%d\\pilot_%d.mat', pno, pno);
+fload = sprintf('C:\\Users\\Tejas\\Documents\\Research\\Lab-Codes\\Psychtoolbox\\Visuomotor Adaptation\\python_scripts\\data\\participants\\data%d\\master\\data%d.mat', pno, pno);
 load(fload);
 squares = zeros(64, 1);
 xCenter = 960;
 yCenter = 540;
-for i = 1:10
+for i = 1:10 
     squares = participant(pno).practice.block(i).squares;  
     squareX = 300*cos(squares);
     squareY = 300*sin(squares);
