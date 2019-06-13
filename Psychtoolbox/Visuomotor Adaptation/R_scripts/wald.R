@@ -9,7 +9,7 @@ N=1000
 # each simulated trial
 # This one is slow to run, but much
 # more interpretable in terms of how
-# the RTs are being generated for each
+# the RTs are being genreated for each
 # trial.
 waldSim2=function(a,v,N){
   #time steps for random walk (in seconds)
