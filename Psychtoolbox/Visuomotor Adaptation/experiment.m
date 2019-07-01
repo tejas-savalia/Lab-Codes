@@ -4,7 +4,7 @@ clearvars;
 global participant_number; 
 input = inputdlg('Participant Number?');
 participant_number = str2double(input{1});
-if mod(participant_number,4) == 0
+if mod(participant_number,4) == 0   
     participant(participant_number).change = 0;
     participant(participant_number).emphasis = 0;
 elseif mod(participant_number,4) == 1
