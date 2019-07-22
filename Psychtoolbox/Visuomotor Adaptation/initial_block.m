@@ -38,7 +38,7 @@ numRects = 4;
 %Screen('Flip', window);
 
 numBlocks = 1;
-numTrials = numRects*4;
+numTrials = numRects*16;
 
 
 

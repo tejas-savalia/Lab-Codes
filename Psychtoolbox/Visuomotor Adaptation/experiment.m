@@ -1,3 +1,4 @@
+Screen('Preference', 'SkipSyncTests', 1);
 clearvars;
 %Sudden_change = 0. Gradual change = 1.
 %Accuracy = 1         Speed = 0.
@@ -22,3 +23,6 @@ start;
 initial_block;
 practice;
 after_effects;
+fname = sprintf('Data/data%d.mat', participant_number);
+save(fname, 'participant');
+

@@ -38,7 +38,7 @@ numRects = 4;
 %Screen('Flip', window);
 
 numBlocks = 10;
-numTrials = numRects*4  ;
+numTrials = numRects*16  ;
 
 %Gradual vs Sudden change
 if participant(participant_number).change == 0
