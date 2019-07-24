@@ -115,8 +115,8 @@ for block = 1:numBlocks
                 end
                 HideCursor();
                 %SetMouse(x + r*cos(theta+pi/4), y + r*sin(theta+pi/4), window);
-                newX = (x-xCenter)*cos(rotateBy) + (y-yCenter)*sin(rotateBy) + xCenter - xCenter_;
-                newY = -(x-xCenter)*sin(rotateBy) + (y-yCenter)*cos(rotateBy) + yCenter - yCenter_;
+                newX = (x-xCenter)*cos(rotateBy) + (y-yCenter)*sin(rotateBy);
+                newY = -(x-xCenter)*sin(rotateBy) + (y-yCenter)*cos(rotateBy);
                 newXs = [newXs newX];
                 newYs = [newYs newY];
                 
@@ -138,7 +138,7 @@ for block = 1:numBlocks
                 end
 
 
-                Screen('DrawDots', window, [xCenter+newX, yCenter+newY], dotSizePix, dotColor, [], 2);        
+                Screen('DrawDots', window, [xCenter+newX + xCenter - xCenter_, yCenter+newY + yCenter - yCenter_], dotSizePix, dotColor, [], 2);        
             end
             if ~buttons(1)
                 SetMouse(xCenter, yCenter, window);

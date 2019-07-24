@@ -1,10 +1,10 @@
 %Function to obtain trial trajectories from xTrajectory and yTrajectory
 %variables
 function[xtrial_traj, ytrial_traj] = trial_traj(participant, pno, block)
-
+%{
 for i = 1:64
-    xtrial_traj{i} = participant(pno).ae.block(block).trial(i).xTrajectory;
-    ytrial_traj{i} = participant(pno).ae.block(block).trial(i).yTrajectory;
+    xtrial_traj{i} = participant(pno).practice.block(block).trial(i).xTrajectory;
+    ytrial_traj{i} = participant(pno).practice.block(block).trial(i).yTrajectory;
 end
 
 %{
@@ -20,7 +20,7 @@ for i = 1:63
 end
 
 %Calculate xCenter yCenter from the screeen first
-%}
+
 end
 
 %}
