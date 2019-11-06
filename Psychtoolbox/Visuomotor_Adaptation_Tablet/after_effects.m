@@ -29,7 +29,7 @@ Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
 
 baseRect = [0 0 100 100];
-maxDiameter = max(baseRect)*1.01;
+maxDiameter = max(baseRect)*1.05;
 numRects = 4;
 
 %Screen('Flip', window);
@@ -63,6 +63,8 @@ for block = 1:numBlocks
     KbStrokeWait;
     
     for trial = 1:numTrials
+        newXs = [];
+        newYs = [];
         randomSquareTheta = randomSquareThetaVec(trial);
         randomSquareXpos = 300*cos(randomSquareTheta) + xCenter;
         randomSquareYpos = 300*sin(randomSquareTheta) + yCenter;
@@ -107,14 +109,13 @@ for block = 1:numBlocks
                 if first_flag
                     participant(participant_number).ae.block(block).trial(trial).initial_time = toc;
                     xCenter_ = x;
-                    yCenter_ = y;                  
-                    
+                    yCenter_ = y;
                     first_flag = false;
                 end
                 HideCursor();
                 %SetMouse(x + r*cos(theta+pi/4), y + r*sin(theta+pi/4), window);
-                newX = (x-xCenter)*cos(rotateBy) + (y-yCenter)*sin(rotateBy)+ xCenter - xCenter_;
-                newY = -(x-xCenter)*sin(rotateBy) + (y-yCenter)*cos(rotateBy) + yCenter - yCenter_;
+                newX = (x-xCenter_)*cos(rotateBy) + (y-yCenter_)*sin(rotateBy);
+                newY = -(x-xCenter_)*sin(rotateBy) + (y-yCenter_)*cos(rotateBy);
                 newXs = [newXs newX];
                 newYs = [newYs newY];
                 
@@ -141,6 +142,10 @@ for block = 1:numBlocks
             if ~buttons(1)
                 SetMouse(xCenter, yCenter, window);
                 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);        
+                if ~first_flag
+                    first_flag = true;
+                    continue;
+                end
             end
             Screen('Flip', window);
         end
@@ -161,7 +166,7 @@ for block = 1:numBlocks
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
     DrawFormattedText(window, sprintf('Your score: %d\n', blockScore) , xCenter-450, yCenter - 100, [1 0 0]);
 
-    DrawFormattedText(window, 'Take a break. Press any key to Continue', xCenter-450, yCenter + 100, [1 0 0]);
+    DrawFormattedText(window, 'Thank you for your Participation! Press any key to End.', xCenter-450, yCenter + 100, [1 0 0]);
     
     Screen('Flip', window);
     KbStrokeWait;

@@ -117,12 +117,15 @@ for block = 1:numBlocks
             if buttons(1)
                 if first_flag
                     participant(participant_number).practice.block(block).trial(trial).initial_time = toc;
+                    xCenter_ = x;
+                    yCenter_ = y;                  
+
                     first_flag = false;
                 end
                 HideCursor();
                 %SetMouse(x + r*cos(theta+pi/4), y + r*sin(theta+pi/4), window);
-                newX = (x-xCenter)*cosd(participant(participant_number).rotateBy(block)) + (y-yCenter)*sind(participant(participant_number).rotateBy(block));
-                newY = -(x-xCenter)*sind(participant(participant_number).rotateBy(block)) + (y-yCenter)*cosd(participant(participant_number).rotateBy(block));
+                newX = (x-xCenter)*cosd(participant(participant_number).rotateBy(block)) + (y-yCenter)*sind(participant(participant_number).rotateBy(block)) + xCenter - xCenter_;
+                newY = -(x-xCenter)*sind(participant(participant_number).rotateBy(block)) + (y-yCenter)*cosd(participant(participant_number).rotateBy(block)) + yCenter - yCenter_;
                 newXs = [newXs newX];
                 newYs = [newYs newY];
                 

@@ -25,20 +25,27 @@ SetMouse(xCenter, yCenter, window);
 dotColor = [1, 0, 0];
 dotSizePix = 20; 
 HideCursor();
-rotateBy = 0;
+
 Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
 Screen('Flip', window);    
 ibXs = {};
 ibYs = {};
 
 baseRect = [0 0 100 100];
-maxDiameter = max(baseRect)*1.01;
+maxDiameter = max(baseRect)*1.05;
 numRects = 4;
 
 %Screen('Flip', window);
 
-numBlocks = 1;
+numBlocks = 10;
 numTrials = numRects*16;
+
+%Gradual vs Sudden change
+if participant(participant_number).change == 0
+    participant(participant_number).rotateBy(1:numBlocks) = 90;
+elseif participant(participant_number).change == 1
+    participant(participant_number).rotateBy = [10:90/(numBlocks-1):90 90];
+end
 
 
 
@@ -52,10 +59,8 @@ for block = 1:numBlocks
     %i = randperm(length(squareTheta));
     randomSquareThetaVec = [squareTheta(:, randperm(length(squareTheta))) squareTheta(:, randperm(length(squareTheta))) squareTheta(:, randperm(length(squareTheta))) squareTheta(:, randperm(length(squareTheta)))];
     %ibsquares(block, :) = randomSquareThetaVec;
-    participant(participant_number).ib.block(block).squares = randomSquareThetaVec;
+    participant(participant_number).practice.block(block).squares = randomSquareThetaVec;
     %Code for inter block interval
-    newXs = [];
-    newYs = [];
     blockScore = 0;
 
     Screen('FillRect', window, [0.5, 0.5, 0.5]);        
@@ -66,6 +71,8 @@ for block = 1:numBlocks
     KbStrokeWait;
     
     for trial = 1:numTrials
+        newXs = [];
+        newYs = [];
         randomSquareTheta = randomSquareThetaVec(trial);
         randomSquareXpos = 300*cos(randomSquareTheta) + xCenter;
         randomSquareYpos = 300*sin(randomSquareTheta) + yCenter;
@@ -79,12 +86,14 @@ for block = 1:numBlocks
         %Screen('FillRect', window, randomSquareColor, randomSquare);
         Screen('TextSize', window, 30);
         Screen('FillRect', window, [0, 0.5, 0.5])
-        Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);
-        Screen('Flip', window);    
         %DrawFormattedText(window, num2str(blockScore), screenXpixels*0.80 ,screenYpixels * 0.15, [1 0 0]);
+        Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);        
+        
+        Screen('Flip', window);    
 
         rand_interval = 1 + rand(1, 1)*(3 - 1);
         pause(rand_interval);
+        
         
         tic;
         first_flag = true;
@@ -107,16 +116,15 @@ for block = 1:numBlocks
 
             if buttons(1)
                 if first_flag
-                    participant(participant_number).ib.block(block).trial(trial).initial_time = toc;
-                    %Shift center for tablet mode
+                    participant(participant_number).practice.block(block).trial(trial).initial_time = toc;
                     xCenter_ = x;
-                    yCenter_ = y;                  
+                    yCenter_ = y;
                     first_flag = false;
                 end
                 HideCursor();
                 %SetMouse(x + r*cos(theta+pi/4), y + r*sin(theta+pi/4), window);
-                newX = (x-xCenter)*cos(rotateBy) + (y-yCenter)*sin(rotateBy);
-                newY = -(x-xCenter)*sin(rotateBy) + (y-yCenter)*cos(rotateBy);
+                newX = (x-xCenter_)*cosd(participant(participant_number).rotateBy(block)) + (y-yCenter_)*sind(participant(participant_number).rotateBy(block));
+                newY = -(x-xCenter_)*sind(participant(participant_number).rotateBy(block)) + (y-yCenter_)*cosd(participant(participant_number).rotateBy(block));
                 newXs = [newXs newX];
                 newYs = [newYs newY];
                 
@@ -133,35 +141,65 @@ for block = 1:numBlocks
 
 
                     %blockScore = blockScore + 1;
-                    participant(participant_number).ib.block(block).trial(trial).movementTime = toc; 
+                    participant(participant_number).practice.block(block).trial(trial).movementTime = toc; 
                     break;
                 end
 
 
-                Screen('DrawDots', window, [xCenter+newX + xCenter - xCenter_, yCenter+newY + yCenter - yCenter_], dotSizePix, dotColor, [], 2);        
+                Screen('DrawDots', window, [xCenter+newX, yCenter+newY], dotSizePix, dotColor, [], 2);        
             end
             if ~buttons(1)
+
+        
+        %display score
+        
                 SetMouse(xCenter, yCenter, window);
-                Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2);        
+                Screen('DrawDots', window, [xCenter, yCenter], dotSizePix, dotColor, [], 2); 
+                if ~first_flag
+                    first_flag = true;
+                    continue;
+                end
             end
             Screen('Flip', window);
         end
         
         Screen('Flip', window);
-        participant(participant_number).ib.block(block).trial(trial).xTrajectory = newXs;
-        participant(participant_number).ib.block(block).trial(trial).yTrajectory = newYs;
-        %display score
-        blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
+        if participant(participant_number).emphasis
+            blockScore = blockScore + 1000/RMSE(newXs, newYs, xCenter, yCenter, randomSquareXpos, randomSquareYpos);
+        elseif ~participant(participant_number).emphasis
+            blockScore = blockScore + 1/participant(participant_number).practice.block(block).trial(trial).initial_time;
+        end
+       participant(participant_number).practice.block(block).trial(trial).yTrajectory = newYs;
+       participant(participant_number).practice.block(block).trial(trial).xTrajectory = newXs;    
     end
     %display leaderboard.
-   
+
     
     Screen('FillRect', window, [0.5, 0.5, 0.5]);
     
-    participant(participant_number).ib.blockScore(block) = blockScore;
+    participant(participant_number).practice.blockScore(block) = blockScore;
     Screen('TextSize', window, 30);
     %DrawFormattedText(window, num2str(totalScore), xCenter, yCenter, [1 0 0]);
-    DrawFormattedText(window, 'Chill Out. Press any key to Continue', xCenter-450, yCenter, [1 0 0]);
+    %sb = load('scoreboard.mat');
+    %sortedboard = sort([round(sb.scoreboard(block, :)) round(blockScore)]);
+    scoreboard = normrnd(round(blockScore), round(blockScore)/5, [4, 1]);
+    sortedBoard = sort([round(blockScore), transpose(round(scoreboard))]);
+    DrawFormattedText(window, sprintf('Scoreboard: \n'), xCenter - 150, yCenter - 250, [1 0 0]);
+    for sortedScore = 1:5
+        if sortedBoard(sortedScore) == round(blockScore)
+            DrawFormattedText(window, sprintf('%d\n', sortedBoard(sortedScore)), xCenter - 100, yCenter - (250-(sortedScore*40)), [0 1 0]);
+        else
+            DrawFormattedText(window, sprintf('%d\n', sortedBoard(sortedScore)), xCenter - 100, yCenter - (250-(sortedScore*40)), [1 0 0]);
+        end
+    end
+    
+    if participant(participant_number).emphasis
+        DrawFormattedText(window, sprintf('You can always increase your score by doing it more accurately!'), xCenter-450, yCenter + 50, [1 0 0]);
+    elseif ~participant(participant_number).emphasis
+        DrawFormattedText(window, sprintf('You can always increase your score by doing it faster!'), xCenter-450, yCenter + 50, [1 0 0]);
+    end
+    DrawFormattedText(window, sprintf('%d more to go!', numBlocks-block+1), xCenter-450, yCenter , [1 0 0]);    
+    DrawFormattedText(window, 'Take a Break! Press any key to Continue', xCenter-450, yCenter + 100, [1 0 0]);
     
     Screen('Flip', window);
     KbStrokeWait;
@@ -174,7 +212,7 @@ for block = 1:numBlocks
 Screen('Flip', window);
 %KbStrokeWait;
     
-%sca;
+sca;
 
 %TX = cell2table(ibXs, 'VariableNames', {'block' 'trial'});
 %TY = cell2table(ibYs, 'VariableNames', {'block' 'trial'}); 
@@ -183,4 +221,3 @@ Screen('Flip', window);
 %writetable(TY,'initialY.csv');
 
 %scatter(Xs{1}, -Ys{1});
-

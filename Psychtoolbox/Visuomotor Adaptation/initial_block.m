@@ -138,7 +138,7 @@ for block = 1:numBlocks
                 end
 
 
-                Screen('DrawDots', window, [xCenter+newX, yCenter+newY], dotSizePix, dotColor, [], 2);        
+                Screen('DrawDots', window, [(xCenter+newX), (yCenter+newY)], dotSizePix, dotColor, [], 2);        
             end
             if ~buttons(1)
                 SetMouse(xCenter, yCenter, window);
