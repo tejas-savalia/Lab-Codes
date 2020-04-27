@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v3.2.3),
-    on October 02, 2019, at 23:40
+    on February 18, 2020, at 09:28
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -80,44 +80,29 @@ defaultKeyboard = keyboard.Keyboard()
 
 # Initialize components for Routine "trial"
 trialClock = core.Clock()
-text_experiment_starts_now = visual.TextStim(win=win, name='text_experiment_starts_now',
-    text='Ready?\n\nThe experiment starts now!',
-    font='Arial',
-    pos=(0, 0), height=0.1, wrapWidth=None, ori=0, 
-    color='white', colorSpace='rgb', opacity=1, 
-    languageStyle='LTR',
-    depth=0.0);
-noise = visual.NoiseStim(
-    win=win, name='noise',
-    noiseImage=None, mask=None,
-    ori=0, pos=(0, 0), size=(0.5, 0.5), sf=None,
-    phase=0.0,
-    color=[1,1,1], colorSpace='rgb',     opacity=1, blendmode='avg', contrast=1.0,
-    texRes=128, filter=None,
-    noiseType='Binary', noiseElementSize=0.0625, 
-    noiseBaseSf=8.0, noiseBW=1,
-    noiseBWO=30, noiseOri=0.0,
-    noiseFractalPower=0.0,noiseFilterLower=1.0,
-    noiseFilterUpper=8.0, noiseFilterOrder=0.0,
-    noiseClip=3.0, imageComponent='Phase', interpolate=False, depth=-1.0)
-noise.buildNoise()
-circle = visual.Polygon(
-    win=win, name='circle',
-    edges=4000, size=(0.5, 0.5),
-    ori=0, pos=(0, 0),
+polygon = visual.Polygon(
+    win=win, name='polygon',
+    edges=400000, size=(0.01, 0.01),
+    ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=-2.0, interpolate=True)
+    opacity=1, depth=0.0, interpolate=True)
+polygon_2 = visual.Polygon(
+    win=win, name='polygon_2',
+    edges=40000, size=(0.2, 0.2),
+    ori=0, pos=(1, 2),
+    lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
+    fillColor=[1,1,1], fillColorSpace='rgb',
+    opacity=1, depth=-1.0, interpolate=True)
 
 # Create some handy timers
 globalClock = core.Clock()  # to track the time since experiment started
 routineTimer = core.CountdownTimer()  # to track time remaining of each (non-slip) routine 
 
 # ------Prepare to start Routine "trial"-------
-routineTimer.add(7.000000)
 # update component parameters for each repeat
 # keep track of which components have finished
-trialComponents = [text_experiment_starts_now, noise, circle]
+trialComponents = [polygon, polygon_2]
 for thisComponent in trialComponents:
     thisComponent.tStart = None
     thisComponent.tStop = None
@@ -133,7 +118,7 @@ frameN = -1
 continueRoutine = True
 
 # -------Run Routine "trial"-------
-while continueRoutine and routineTimer.getTime() > 0:
+while continueRoutine:
     # get current time
     t = trialClock.getTime()
     tThisFlip = win.getFutureFlipTime(clock=trialClock)
@@ -141,59 +126,33 @@ while continueRoutine and routineTimer.getTime() > 0:
     frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
     # update/draw components on each frame
     
-    # *text_experiment_starts_now* updates
-    if text_experiment_starts_now.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+    # *polygon* updates
+    if polygon.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
         # keep track of start time/frame for later
-        text_experiment_starts_now.frameNStart = frameN  # exact frame index
-        text_experiment_starts_now.tStart = t  # local t and not account for scr refresh
-        text_experiment_starts_now.tStartRefresh = tThisFlipGlobal  # on global time
-        win.timeOnFlip(text_experiment_starts_now, 'tStartRefresh')  # time at next scr refresh
-        text_experiment_starts_now.setAutoDraw(True)
-    if text_experiment_starts_now.status == STARTED:
-        # is it time to stop? (based on global clock, using actual start)
-        if tThisFlipGlobal > text_experiment_starts_now.tStartRefresh + 1.0-frameTolerance:
-            # keep track of stop time/frame for later
-            text_experiment_starts_now.tStop = t  # not accounting for scr refresh
-            text_experiment_starts_now.frameNStop = frameN  # exact frame index
-            win.timeOnFlip(text_experiment_starts_now, 'tStopRefresh')  # time at next scr refresh
-            text_experiment_starts_now.setAutoDraw(False)
+        polygon.frameNStart = frameN  # exact frame index
+        polygon.tStart = t  # local t and not account for scr refresh
+        polygon.tStartRefresh = tThisFlipGlobal  # on global time
+        win.timeOnFlip(polygon, 'tStartRefresh')  # time at next scr refresh
+        polygon.setAutoDraw(True)
+    if polygon.status == STARTED:  # only update if drawing
+        polygon.setPos((0, 0), log=False)
     
-    # *noise* updates
-    if noise.status == NOT_STARTED and tThisFlip >= 01.0-frameTolerance:
+    # *polygon_2* updates
+    if polygon_2.status == NOT_STARTED and tThisFlip >= 1.0-frameTolerance:
         # keep track of start time/frame for later
-        noise.frameNStart = frameN  # exact frame index
-        noise.tStart = t  # local t and not account for scr refresh
-        noise.tStartRefresh = tThisFlipGlobal  # on global time
-        win.timeOnFlip(noise, 'tStartRefresh')  # time at next scr refresh
-        noise.setAutoDraw(True)
-    if noise.status == STARTED:
+        polygon_2.frameNStart = frameN  # exact frame index
+        polygon_2.tStart = t  # local t and not account for scr refresh
+        polygon_2.tStartRefresh = tThisFlipGlobal  # on global time
+        win.timeOnFlip(polygon_2, 'tStartRefresh')  # time at next scr refresh
+        polygon_2.setAutoDraw(True)
+    if polygon_2.status == STARTED:
         # is it time to stop? (based on global clock, using actual start)
-        if tThisFlipGlobal > noise.tStartRefresh + 2.0-frameTolerance:
+        if tThisFlipGlobal > polygon_2.tStartRefresh + 3-frameTolerance:
             # keep track of stop time/frame for later
-            noise.tStop = t  # not accounting for scr refresh
-            noise.frameNStop = frameN  # exact frame index
-            win.timeOnFlip(noise, 'tStopRefresh')  # time at next scr refresh
-            noise.setAutoDraw(False)
-    if noise.status == STARTED:
-        if noise._needBuild:
-            noise.buildNoise()
-    
-    # *circle* updates
-    if circle.status == NOT_STARTED and tThisFlip >= 3.0-frameTolerance:
-        # keep track of start time/frame for later
-        circle.frameNStart = frameN  # exact frame index
-        circle.tStart = t  # local t and not account for scr refresh
-        circle.tStartRefresh = tThisFlipGlobal  # on global time
-        win.timeOnFlip(circle, 'tStartRefresh')  # time at next scr refresh
-        circle.setAutoDraw(True)
-    if circle.status == STARTED:
-        # is it time to stop? (based on global clock, using actual start)
-        if tThisFlipGlobal > circle.tStartRefresh + 4.0-frameTolerance:
-            # keep track of stop time/frame for later
-            circle.tStop = t  # not accounting for scr refresh
-            circle.frameNStop = frameN  # exact frame index
-            win.timeOnFlip(circle, 'tStopRefresh')  # time at next scr refresh
-            circle.setAutoDraw(False)
+            polygon_2.tStop = t  # not accounting for scr refresh
+            polygon_2.frameNStop = frameN  # exact frame index
+            win.timeOnFlip(polygon_2, 'tStopRefresh')  # time at next scr refresh
+            polygon_2.setAutoDraw(False)
     
     # check for quit (typically the Esc key)
     if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -216,12 +175,12 @@ while continueRoutine and routineTimer.getTime() > 0:
 for thisComponent in trialComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
-thisExp.addData('text_experiment_starts_now.started', text_experiment_starts_now.tStartRefresh)
-thisExp.addData('text_experiment_starts_now.stopped', text_experiment_starts_now.tStopRefresh)
-thisExp.addData('noise.started', noise.tStartRefresh)
-thisExp.addData('noise.stopped', noise.tStopRefresh)
-thisExp.addData('circle.started', circle.tStartRefresh)
-thisExp.addData('circle.stopped', circle.tStopRefresh)
+thisExp.addData('polygon.started', polygon.tStartRefresh)
+thisExp.addData('polygon.stopped', polygon.tStopRefresh)
+thisExp.addData('polygon_2.started', polygon_2.tStartRefresh)
+thisExp.addData('polygon_2.stopped', polygon_2.tStopRefresh)
+# the Routine "trial" was not non-slip safe, so reset the non-slip timer
+routineTimer.reset()
 
 # Flip one final time so any remaining win.callOnFlip() 
 # and win.timeOnFlip() tasks get executed before quitting

@@ -1,6 +1,7 @@
 %To save trajectories from practice trials, run this block.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for pno = 1000:1060
+%{    
     for i = 1:10
         fload = sprintf('Data\\data%d.mat', pno);
         load(fload);
@@ -18,7 +19,6 @@ for pno = 1000:1060
     end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%}
 %for pno = 1044:1048
 
     for i = 1:1
@@ -37,12 +37,12 @@ for pno = 1000:1060
         save(fname, 'idealXs', 'idealYs');
     end
 %end
-
+%}
 
 %for pno = 1044:1048
-    if pno == 22 || pno == 25 || pno == 27 || pno == 43
-        continue;
-    end
+    %if pno == 22 || pno == 25 || pno == 27 || pno == 43
+    %    continue;
+    %end
     for i = 1:1
         fload = sprintf('Data\\data%d.mat', pno);
         load(fload);

@@ -1,9 +1,0 @@
-11.6715 	WARNING 	User requested fullscreen with size [1024  768], but screen is actually [1920, 1080]. Using actual size
-12.8857 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, args=UNKNOWN, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color=array([0., 0., 0.]), colorSpace='rgb', fullscr=<method-wrapper '__getattribute__' of attributeSetter object at 0x00000236E5D8FFD0>, gamma=None, gammaErrorPolicy='raise', kwargs=UNKNOWN, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x00000236E5E4F2B0>, multiSample=False, name='window1', numSamples=2, pos=[0.0, 0.0], screen=0, size=array([1920, 1080]), stereo=False, units='height', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
-12.8857 	EXP 	window1: recordFrameIntervals = False
-13.0516 	EXP 	window1: recordFrameIntervals = True
-13.2345 	EXP 	window1: recordFrameIntervals = False
-13.5320 	EXP 	Created text_experiment_starts_now = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, languageStyle='LTR', name='text_experiment_starts_now', opacity=1.0, ori=0, pos=array([0., 0.]), rgb=array([255., 255., 255.]), text='Ready?\n\nThe experiment starts now!', units='height', win=Window(...), wrapWidth=1)
-13.5621 	EXP 	text_experiment_starts_now: autoDraw = True
-14.5495 	EXP 	text_experiment_starts_now: autoDraw = False
-14.5870 	EXP 	window1: mouseVisible = True
