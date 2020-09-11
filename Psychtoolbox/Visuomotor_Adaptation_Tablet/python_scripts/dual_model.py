@@ -12,62 +12,18 @@ from functools import partial
 import pickle
 import scipy
 import scipy.optimize
+from sklearn.metrics import *
+import scipy.stats as stat
+import matplotlib.pyplot as plt
+from scipy.ndimage import gaussian_filter1d
 
-# %%Calculate Curvatures
 
-def calc_angle(current_point, next_point, final_point):
-    #vec1 = next_point - current_point
-    vec1 = np.subtract(next_point, current_point)
-#    vec2 = final_point - current_point
-    vec2 = np.subtract(final_point, current_point)
-    vec1 = vec1.astype('float64')
-    vec2 = vec2.astype('float64')
-    cos_theta = np.dot(vec1, vec2)/(np.linalg.norm(vec1) * np.linalg.norm(vec2))
-    theta = np.degrees(np.arccos(cos_theta))
-    return theta
-
-def calc_curvature(data, block, trial, percentage_trajectory):
-    traj = scipy.io.loadmat('data/data{data}/actual_trajectories/trajectories{block}.mat'.format(block=str(block), data=str(data)))
-    trajx, trajy = traj['x'][0][trial][0], traj['y'][0][trial][0]
-    #targetx, targety = trajx[-1], trajy[-1]
-    partial_trajx, partial_trajy = get_partial_traj(data, block, trial, percentage_trajectory)
-    #print (partial_trajx)
-    #print (partial_trajy)
-    angles = list([0])
-    for i in range(len(partial_trajx[:-1])):
-        #print (trajx[i], trajy[i])
-        angles.append(calc_angle(np.array([partial_trajx[i], partial_trajy[i]]), np.array([partial_trajx[i+1], partial_trajy[i+1]]), np.array([trajx[-1], trajy[-1]])))
-    return np.nanmedian(angles)
-    #return calc_angle(np.array([partial_trajx[0], partial_trajy[0]]), np.array([partial_trajx[-1], partial_trajy[-1]]), np.array([trajx[-1], trajy[-1]]))
-
-def calc_curvature_wrapper(params):
-    return calc_curvature(params[0], params[1], params[2], params[3])
-
-def get_traj(data, block, trial):
-    traj = scipy.io.loadmat('data/data{data}/actual_trajectories/trajectories{block}.mat'.format(block=str(block), data=str(data)))
-    x_traj = traj['x'][0][trial][0]
-    y_traj = traj['y'][0][trial][0]
-    return x_traj, y_traj
-
-def get_partial_traj(data, block, trial, percentage_trajectory):
-    traj = get_traj(data, block, trial)
-    #dist_cutoff = percentage_trajectory*np.sqrt(traj[0][-1]**2 + traj[0][-1]**2, dtype = float)
-    #for i in range(len(traj[0])):
-        #dist_from_start = np.sqrt(traj[0][i]**2 + traj[1][i]**2, dtype = float)
-        #if dist_from_start > dist_cutoff:
-        #    break
-    i = int(len(traj[0])/2)
-    partial_trajx = traj[0][:i]
-    partial_trajy = traj[1][:i]
-        
-            
-    return partial_trajx, partial_trajy
 
 #%% Run this to compile dual state model functions
 
 def dual_model_sudden(num_trials, Af, Bf, As, Bs):
     errors = np.zeros((num_trials))
-    rotation = 90
+    rotation = 90/90.0
     fast_est = np.zeros((num_trials))
     slow_est = np.zeros((num_trials))
     rotation_est = np.zeros((num_trials))
@@ -90,9 +46,9 @@ def dual_model_gradual(num_trials, Af, Bf, As, Bs):
     rotation = 0
     for trial in range(num_trials - 1):
         if trial%64 == 0:
-            rotation = rotation + 10
-        if rotation > 90:
-            rotation = 90
+            rotation = rotation + 10/90.0
+        if rotation > 90/90.0:
+            rotation = 90/90.0
         errors[trial] = rotation - rotation_est[trial]
         #print(errors[trial])
         fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
@@ -115,7 +71,7 @@ def residuals_sudden(params, num_trials, data_errors):
 
 def residuals_gradual(params, num_trials, data_errors):
     model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
-    residual_error = np.sum(np.square(model_errors - data_errors))
+    residual_error = np.sqrt(np.sum(np.square(model_errors - data_errors))/len(model_errors))
     if params[0] > params[2]:
         residual_error = residual_error + 10000000
     if params[1] < params[3]:
@@ -161,11 +117,11 @@ def fit_participant(participant, curvatures, num_fits):
 
     for fit_parts in range(num_fits):
 
-        starting_points = np.array([[0.6, 0.5, 0.7, 0.1]])
+        starting_points = np.array([[0.5, 0.2, 0.6, 0.01]])
         for initial_point in starting_points:
             if participant%4 == 0 or participant%4 == 1:      
                 #fits = scipy.optimize.minimize(residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')            
-                fits = scipy.optimize.basinhopping(residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], minimizer_kwargs={'args': (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method': 'Nelder-Mead'})
+                fits = scipy.optimize.basinhopping(residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], minimizer_kwargs={'args': (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method':'Nelder-Mead'})
 
                 #if fits.fun < fit_V[participant][fit_parts]:
                 Af = fits.x[0]#fit_Af[participant][fit_parts] = fits.x[0]
@@ -176,7 +132,7 @@ def fit_participant(participant, curvatures, num_fits):
                 #fit_success[participant][fit_parts] = fits.success                
             else:
                 #fits = scipy.optimize.minimize(residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')         
-                fits = scipy.optimize.basinhopping(residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], minimizer_kwargs={'args': (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method': 'Nelder-Mead'})
+                fits = scipy.optimize.basinhopping(residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], minimizer_kwargs={'args': (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method':'Nelder-Mead'})
                 #if fits.fun < fit_V[participant][fit_parts]:
                 Af = fits.x[0]#fit_Af[participant][fit_parts] = fits.x[0]
                 Bf = fits.x[1]#fit_Bf[participant][fit_parts] = fits.x[1]
@@ -184,6 +140,7 @@ def fit_participant(participant, curvatures, num_fits):
                 Bs = fits.x[3]#fit_Bs[participant][fit_parts] = fits.x[3]
                 V = fits.fun#fit_V[participant][fit_parts] = fits.fun
                 #fit_success[participant][fit_parts] = fits.success
+            print (participant, V)
     return Af, Bf, As, Bs, V
 
 def run_fits_dual(curvatures, num_trials, part_size):
@@ -193,14 +150,47 @@ def run_fits_dual(curvatures, num_trials, part_size):
     #return fit_Af, fit_Bf, fit_As, fit_Bs, fit_V
     return res   
 
+#%% Load fit values
+
+fits = pickle.load(open('fit_dual_bound.pickle', 'rb'))
+fits_1 = pickle.load(open('fit_dual_bound_ontotalrt.pickle', 'rb'))
+#curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
+#curvatures_smooth = curvatures_smooth/90
+
+
+
+#%%
+"""
+r2_scores_save = np.zeros(60)
+r2_scores_save1 = np.zeros(60)
+
+for participant in range(60):
+    if participant%4 == 0 or participant%4 == 1:
+        y_pred = dual_model_sudden(640, fits[participant][0], fits[participant][1], fits[participant][2], fits[participant][3])[0]
+        y_pred1 = dual_model_sudden(640, fits_1[participant][0], fits_1[participant][1], fits_1[participant][2], fits_1[participant][3])[0]
+    else:
+        y_pred = dual_model_gradual(640, fits[participant][0], fits[participant][1], fits[participant][2], fits[participant][3])[0]
+        y_pred1 = dual_model_gradual(640, fits_1[participant][0], fits_1[participant][1], fits_1[participant][2], fits_1[participant][3])[0]
+    r2_scores_save[participant] = r2_score(np.ravel(curvatures_smooth[participant][1:-1]), y_pred)
+    r2_scores_save1[participant] = r2_score(np.ravel(curvatures_smooth[participant][1:-1]), y_pred1)
+
+plt.scatter(r2_scores_save, r2_scores_save1)
+"""
+
+#%%
+
 def main():
     
     #%%Parallelize curvature calculations
         
 #    paramlist = list(itertools.product(range(1000, 1060), range(12), range(64), range(1, 2)))
     #if __name__ == '__main__':
-    curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
-    
+    its = pickle.load(open('its.pickle', 'rb'))
+    mts = pickle.load(open('mts.pickle', 'rb'))
+    total_time = its+mts
+    #curvatures_smooth = curvatures_smooth/90
+    curvatures_smooth = gaussian_filter1d(total_time, 2)
+    curvatures_smooth = curvatures_smooth/np.max(curvatures_smooth)
     print("parallel curvatures successful")
     print (curvatures_smooth)
     
@@ -211,7 +201,7 @@ def main():
     
     #%% Parallel run and dump fits
     fits = run_fits_dual(curvatures_smooth, 640, 640)
-    with open('fit_dual_bound.pickle', 'wb') as f:
+    with open('fit_dual_bound_ontotalrt.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
         

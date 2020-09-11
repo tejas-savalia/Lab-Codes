@@ -58,6 +58,15 @@ def get_times():
             movement_times[participant, block] = mt
     return initial_times, movement_times
 
+its, mts = get_times()
+with open('its.pickle', 'wb') as f:
+    pickle.dump(its, f)
+f.close()
+
+with open('mts.pickle', 'wb') as f:
+    pickle.dump(mts, f)
+f.close()
+
 
 # %%Calculate Curvatures
 
