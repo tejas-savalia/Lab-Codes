@@ -188,6 +188,7 @@ def main():
     its = pickle.load(open('its.pickle', 'rb'))
     mts = pickle.load(open('mts.pickle', 'rb'))
     total_time = its+mts
+    #Test git and vscode
     #curvatures_smooth = curvatures_smooth/90
     curvatures_smooth = gaussian_filter1d(total_time, 2)
     curvatures_smooth = curvatures_smooth/np.max(curvatures_smooth)
