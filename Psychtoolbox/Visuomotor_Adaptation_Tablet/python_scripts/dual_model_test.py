@@ -92,7 +92,7 @@ def fit_participant(participant, curvatures, num_fits):
     train_indices = np.random.choice(640, 576, replace = False)
     for fit_parts in range(num_fits):
 
-        starting_points = np.array([[0.9, 0.2, 0.99, 0.01]])
+        starting_points = np.array([[0.9, 0.3, 0.99, 0.01]])
         for initial_point in starting_points:
             if participant%4 == 0 or participant%4 == 1:      
                 #fits = scipy.optimize.minimize(residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')            
@@ -121,12 +121,11 @@ def fit_participant(participant, curvatures, num_fits):
 def run_fits_dual(curvatures, num_trials, part_size):
     func = partial(fit_participant, curvatures = curvatures, num_fits = 1)
     pool = Pool()
-    res = np.reshape(np.array(pool.map(func, range(8))), (8, 6))
+    res = np.reshape(np.array(pool.map(func, range(60))), (60, 6))
     #return fit_Af, fit_Bf, fit_As, fit_Bs, fit_V
     return res   
 
 #%% Load fit values
-"""
 
 fits = pickle.load(open('fit_dual_bound_test.pickle', 'rb'))
 #fits_1 = pickle.load(open('fit_dual_bound_ontotalrt.pickle', 'rb'))
@@ -139,22 +138,79 @@ curvatures_smooth = curvatures_smooth/90
 #%%
 r2_scores_save = np.zeros(60)
 #r2_scores_save1 = np.zeros(60)
-
+train_data = np.zeros((60, 576))
+train_pred = np.zeros((60, 576))
+test_data = np.zeros((60, 64))
+test_data1 = np.zeros((60, 64))
+test_predictions = np.zeros((60, 64))
+test_predictions1 = np.zeros((60, 64))
 for participant in range(60):
+    mask = np.ones(640, bool)
+    mask[fits[participant][5]] = False
+    mask_train = np.zeros(640, bool)
+    mask_train[fits[participant][5]] = True
     if participant%4 == 0 or participant%4 == 1:
         y_pred = dual_model_sudden(640, fits[participant][0], fits[participant][1], fits[participant][2], fits[participant][3])[0]
-#       y_pred1 = dual_model_sudden(640, fits_1[participant][0], fits_1[participant][1], fits_1[participant][2], fits_1[participant][3])[0]
+        y_pred1 = dual_model_sudden(64, fits[participant][0], fits[participant][1], fits[participant][2], fits[participant][3])[0]
     else:
         y_pred = dual_model_gradual(640, fits[participant][0], fits[participant][1], fits[participant][2], fits[participant][3])[0]
-#        y_pred1 = dual_model_gradual(640, fits_1[participant][0], fits_1[participant][1], fits_1[participant][2], fits_1[participant][3])[0]
-    r2_scores_save[participant] = r2_score(np.ravel(curvatures_smooth[participant][1:-1]), y_pred)
+        y_pred1 = dual_model_sudden(64, fits[participant][0], fits[participant][1], fits[participant][2], fits[participant][3])[0]
+    train_data[participant] = np.ravel(curvatures_smooth[participant][1:-1])[mask_train]    
+    train_pred[participant] = y_pred[mask_train]
+    test_data[participant] = np.ravel(curvatures_smooth[participant][1:-1])[mask]
+    test_data1[participant] = np.ravel(curvatures_smooth[participant][-1])
+    test_predictions[participant] = y_pred[mask]
+    test_predictions1[participant] = y_pred1
+    r2_scores_save[participant] = r2_score(test_data1[participant], test_predictions1[participant])
+
 #    r2_scores_save1[participant] = r2_score(np.ravel(curvatures_smooth[participant][1:-1]), y_pred1)
 
 #plt.scatter(r2_scores_save, r2_scores_save1)
-"""
-
 #%%
 
+def plots(test_data, test_predictions, test_data1, test_predictions1):
+    fig, axes = plt.subplots(2, 2, sharex = True, sharey=True)
+    axes[0, 0].scatter(np.mean(test_data[0::4], axis = 0), np.mean(test_predictions[0::4], axis = 0))
+    axes[0, 1].scatter(np.mean(test_data[1::4], axis = 0), np.mean(test_predictions[1::4], axis = 0))
+    axes[1, 0].scatter(np.mean(test_data[2::4], axis = 0), np.mean(test_predictions[2::4], axis = 0))
+    axes[1, 1].scatter(np.mean(test_data[3::4], axis = 0), np.mean(test_predictions[3::4], axis = 0))
+    axes[0, 0].set_title('SS')
+    axes[0, 1].set_title('SA')
+    axes[1, 0].set_title('GS')
+    axes[1, 1].set_title('GA')
+
+    fig.suptitle('Performance on held out Data: Dual State Model')
+    fig.text(0.5, 0.04, 'Actual Errors', ha='center')
+    fig.text(0.04, 0.5, 'Predicted Errors', va='center', rotation='vertical')
+    #fig.set_xlabel('Actual Errors')
+
+    fig, axes = plt.subplots(2, 2, sharex=True)
+    axes[0, 0].plot(range(64), np.mean(test_data1[0::4], axis = 0), label = 'Actual Data')
+    axes[0, 0].plot(range(64), np.mean(test_predictions1[0::4], axis = 0), label = 'Predicted Data')
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    
+    axes[0, 1].plot(range(64), np.mean(test_data1[1::4], axis = 0), label = 'Actual Data')
+    axes[0, 1].plot(range(64), np.mean(test_predictions1[1::4], axis = 0), label = 'Predicted Data')
+    
+    axes[1, 0].plot(range(64), np.mean(test_data1[2::4], axis = 0), label = 'Actual Data')
+    axes[1, 0].plot(range(64), np.mean(test_predictions1[2::4], axis = 0), label = 'Predicted Data')
+    
+    axes[1, 1].plot(range(64), np.mean(test_data1[3::4], axis = 0), label = 'Actual Data')
+    axes[1, 1].plot(range(64), np.mean(test_predictions1[3::4], axis = 0), label = 'Predicted Data')
+
+    fig.legend(handles, labels, loc='top right', bbox_to_anchor=(0.5, 0.5))
+    axes[0, 0].set_title('SS')
+    axes[0, 1].set_title('SA')
+    axes[1, 0].set_title('GS')
+    axes[1, 1].set_title('GA')
+
+    fig.suptitle('Performance on Transfer phase: Dual State Model')
+    fig.text(0.5, 0.04, 'Transfer Trial Number', ha='center')
+    fig.text(0.04, 0.5, 'Transfer Errors', va='center', rotation='vertical')
+
+
+#%%
+"""
 def main():
     
     #%%Parallelize curvature calculations
@@ -187,3 +243,5 @@ def main():
     
 if __name__ == '__main__':
     main()
+
+"""
