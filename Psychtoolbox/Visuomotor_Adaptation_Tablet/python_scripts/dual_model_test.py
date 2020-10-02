@@ -124,7 +124,7 @@ def run_fits_dual(curvatures, num_trials, part_size):
     res = np.reshape(np.array(pool.map(func, range(60))), (60, 6))
     #return fit_Af, fit_Bf, fit_As, fit_Bs, fit_V
     return res   
-
+"""
 #%% Load fit values
 
 fits = pickle.load(open('fit_dual_bound_test.pickle', 'rb'))
@@ -244,4 +244,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-"""

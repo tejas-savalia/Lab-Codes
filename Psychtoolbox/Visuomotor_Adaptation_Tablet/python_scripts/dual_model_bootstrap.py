@@ -137,13 +137,13 @@ def run_fits_dual(curvatures, num_trials, part_size, num_participants):
 
 fits = pickle.load(open('fit_dual_bound.pickle', 'rb'))
 
-
-def get_bootstraps():
+#tot_bootstraps = 4000
+def get_bootstraps(tot_bootstraps):
   #print ("New function call")
   count = 0
   mean_curvatures = np.zeros((4, 640))
   sd_curvatures = np.zeros((4, 640))
-  bootstrapped_curvatures = np.zeros((1000, 640))
+  bootstrapped_curvatures = np.zeros((tot_bootstraps, 640))
   generated_curvatures = np.zeros((len(fits), 640))
   for fit in fits:
     if count%4 == 0 or count%4 == 1:
@@ -157,7 +157,7 @@ def get_bootstraps():
   print (np.shape(mean_curvatures))
   for trial in range(640):
     for condition in range(4):
-      bootstrapped_curvatures[condition::4, trial] = np.random.normal(mean_curvatures[condition][trial%4], sd_curvatures[condition][trial%4], size = 250)
+      bootstrapped_curvatures[condition::4, trial] = np.random.normal(mean_curvatures[condition][trial%4], sd_curvatures[condition][trial%4], size = int(tot_bootstraps/4))
   return bootstrapped_curvatures
 #%%
 
@@ -166,12 +166,13 @@ def main():
     
     curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
     curvatures_smooth = curvatures_smooth/90
+    tot_bootstraps = 4000
     print (curvatures_smooth)
     print ("Curvatures Loaded. In Fit routine")
     fits = pickle.load(open('fit_dual_bound.pickle', 'rb'))
-    bs = get_bootstraps()
+    bs = get_bootstraps(tot_bootstraps)
     print("Bootstrap instances created")
-    fits_bootstrap = run_fits_dual(bs, 640, 640, 1000)
+    fits_bootstrap = run_fits_dual(bs, 640, 640, tot_bootstraps)
     with open('fit_dual_bound_bootstrap.pickle', 'wb') as f:
         pickle.dump(fits_bootstrap, f)
     f.close()
