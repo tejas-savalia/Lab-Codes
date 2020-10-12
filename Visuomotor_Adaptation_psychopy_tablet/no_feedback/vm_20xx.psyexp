@@ -7,7 +7,7 @@
     <Param name="Data file delimiter" updates="None" val="auto" valType="str"/>
     <Param name="Data filename" updates="None" val="u'data/%s_%s_%s' % (expInfo['participant'], expName, expInfo['date'])" valType="code"/>
     <Param name="Enable Escape" updates="None" val="True" valType="bool"/>
-    <Param name="Experiment info" updates="None" val="{'participant':'', 'session':'001'}" valType="code"/>
+    <Param name="Experiment info" updates="None" val="{'participant': '', 'session': '001'}" valType="code"/>
     <Param name="Force stereo" updates="None" val="True" valType="bool"/>
     <Param name="Full-screen window" updates="None" val="True" valType="bool"/>
     <Param name="HTML path" updates="None" val="" valType="str"/>
@@ -24,7 +24,7 @@
     <Param name="Show mouse" updates="None" val="False" valType="bool"/>
     <Param name="Units" updates="None" val="height" valType="str"/>
     <Param name="Use version" updates="None" val="" valType="str"/>
-    <Param name="Window size (pixels)" updates="None" val="(1024, 768)" valType="code"/>
+    <Param name="Window size (pixels)" updates="None" val="[1920, 1080]" valType="code"/>
     <Param name="blendMode" updates="None" val="avg" valType="str"/>
     <Param name="color" updates="None" val="$[0,0,0]" valType="str"/>
     <Param name="colorSpace" updates="None" val="rgb" valType="str"/>
@@ -107,11 +107,11 @@
         <Param name="Before JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin JS Experiment" updates="constant" val="" valType="extendedCode"/>
-        <Param name="Begin JS Routine" updates="constant" val="baseline_fixation.opacity = 1;&amp;#10;baseline_fixation.pos = [0, 0];&amp;#10;mouse_center = baseline_mouse.getPos();&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin Routine" updates="constant" val="baseline_fixation.opacity = 1&amp;#10;baseline_fixation.pos = [0, 0]&amp;#10;mouse_center = baseline_mouse.getPos()" valType="extendedCode"/>
+        <Param name="Begin JS Routine" updates="constant" val="baseline_fixation.opacity = 1;&amp;#10;baseline_fixation.pos = [0, 0];&amp;#10;mouse_center = baseline_mouse.getPos();&amp;#10;first = true;&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin Routine" updates="constant" val="baseline_fixation.opacity = 1&amp;#10;baseline_fixation.pos = [0, 0]&amp;#10;mouse_center = baseline_mouse.getPos()&amp;#10;first = True" valType="extendedCode"/>
         <Param name="Code Type" updates="None" val="Auto-&gt;JS" valType="str"/>
-        <Param name="Each Frame" updates="constant" val="if baseline_mouse.getPressed()[0]:&amp;#10;    baseline_fixation.opacity = 0&amp;#10;    if euclidean_dist(baseline_mouse.getPos(), [0, 0]) &gt; 0.44:&amp;#10;        baseline_fixation.pos = baseline_mouse.getPos()&amp;#10;        baseline_fixation.opacity = 1&amp;#10;        continueRoutine = False&amp;#10;else:&amp;#10;    baseline_fixation.opacity = 1&amp;#10;    baseline_fixation.pos = [0, 0]&amp;#10;    mouse_center = baseline_mouse.getPos()&amp;#10;    baseline_mouse.setPos([0, 0])" valType="extendedCode"/>
-        <Param name="Each JS Frame" updates="constant" val="if (baseline_mouse.getPressed()[0]) {&amp;#10;    baseline_fixation.opacity = 0;&amp;#10;    if ((euclidean_dist(baseline_mouse.getPos(), [0, 0]) &gt; 0.44)) {&amp;#10;        baseline_fixation.pos = baseline_mouse.getPos();&amp;#10;        baseline_fixation.opacity = 1;&amp;#10;        continueRoutine = false;&amp;#10;    }&amp;#10;} else {&amp;#10;    baseline_fixation.opacity = 1;&amp;#10;    baseline_fixation.pos = [0, 0];&amp;#10;    mouse_center = baseline_mouse.getPos();&amp;#10;    baseline_mouse.setPos([0, 0]);&amp;#10;}&amp;#10;" valType="extendedCode"/>
+        <Param name="Each Frame" updates="constant" val="win.mouseVisible = False&amp;#10;if baseline_mouse.getPressed()[0]:&amp;#10;    if first:&amp;#10;        mouse_center = baseline_mouse.getPos()&amp;#10;        first = False&amp;#10;    baseline_fixation.opacity = 0&amp;#10;    if euclidean_dist(baseline_mouse.getPos() - mouse_center, [0, 0]) &gt; 0.44:&amp;#10;        baseline_fixation.pos = baseline_mouse.getPos() - mouse_center&amp;#10;        baseline_fixation.opacity = 1&amp;#10;        continueRoutine = False&amp;#10;else:&amp;#10;    first = True&amp;#10;    baseline_fixation.opacity = 1&amp;#10;    baseline_fixation.pos = [0, 0]&amp;#10;    baseline_mouse.setPos([0, 0])" valType="extendedCode"/>
+        <Param name="Each JS Frame" updates="constant" val="win.mouseVisible = false;&amp;#10;if (baseline_mouse.getPressed()[0]) {&amp;#10;    if (first) {&amp;#10;        mouse_center = baseline_mouse.getPos();&amp;#10;        first = false;&amp;#10;    }&amp;#10;    baseline_fixation.opacity = 0;&amp;#10;    if ((euclidean_dist((baseline_mouse.getPos() - mouse_center), [0, 0]) &gt; 0.44)) {&amp;#10;        baseline_fixation.pos = (baseline_mouse.getPos() - mouse_center);&amp;#10;        baseline_fixation.opacity = 1;&amp;#10;        continueRoutine = false;&amp;#10;    }&amp;#10;} else {&amp;#10;    first = true;&amp;#10;    baseline_fixation.opacity = 1;&amp;#10;    baseline_fixation.pos = [0, 0];&amp;#10;    baseline_mouse.setPos([0, 0]);&amp;#10;}&amp;#10;" valType="extendedCode"/>
         <Param name="End Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="End JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="End JS Routine" updates="constant" val="baseline_fixation.opacity = 1;&amp;#10;baseline_fix_end_pos = baseline_fixation.pos;&amp;#10;" valType="extendedCode"/>
@@ -192,13 +192,13 @@
       <CodeComponent name="rotated_code">
         <Param name="Before Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Before JS Experiment" updates="constant" val="" valType="extendedCode"/>
-        <Param name="Begin Experiment" updates="constant" val="def rotate(x, y, angle):&amp;#10;    radians = (pi/180)*angle&amp;#10;    cos_val = cos(radians)&amp;#10;    sin_val = sin(radians)&amp;#10;    nx = x*cos_val + y*sin_val&amp;#10;    ny = y*cos_val - x*sin_val&amp;#10;    return [nx, ny];" valType="extendedCode"/>
-        <Param name="Begin JS Experiment" updates="constant" val="function rotate(x, y, angle) {&amp;#10;    var cos_val, nx, ny, radians, sin_val;&amp;#10;    radians = ((pi / 180) * angle);&amp;#10;    cos_val = Math.cos(radians);&amp;#10;    sin_val = Math.sin(radians);&amp;#10;    nx = ((x * cos_val) + (y * sin_val));&amp;#10;    ny = ((y * cos_val) - (x * sin_val));&amp;#10;    return [nx, ny];&amp;#10;}&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin JS Routine" updates="constant" val="rotated_fixation.opacity = 1;&amp;#10;rotated_fixation.pos = [0, 0];&amp;#10;mouse_center = rotated_mouse.getPos();&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin Routine" updates="constant" val="rotated_fixation.opacity = 1&amp;#10;rotated_fixation.pos = [0, 0]&amp;#10;mouse_center = rotated_mouse.getPos()" valType="extendedCode"/>
+        <Param name="Begin Experiment" updates="constant" val="def rotate(x, y, angle):&amp;#10;    radians = (pi/180)*angle&amp;#10;    cos_val = cos(radians)&amp;#10;    sin_val = sin(radians)&amp;#10;    nx = x*cos_val + y*sin_val&amp;#10;    ny = y*cos_val - x*sin_val&amp;#10;    return [nx, ny];&amp;#10;    &amp;#10;count = 0" valType="extendedCode"/>
+        <Param name="Begin JS Experiment" updates="constant" val="function rotate(x, y, angle) {&amp;#10;    var cos_val, nx, ny, radians, sin_val;&amp;#10;    radians = ((pi / 180) * angle);&amp;#10;    cos_val = Math.cos(radians);&amp;#10;    sin_val = Math.sin(radians);&amp;#10;    nx = ((x * cos_val) + (y * sin_val));&amp;#10;    ny = ((y * cos_val) - (x * sin_val));&amp;#10;    return [nx, ny];&amp;#10;}&amp;#10;count = 0;&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin JS Routine" updates="constant" val="if (((Number.parseInt(expInfo[&quot;participant&quot;]) % 2) === 0)) {&amp;#10;    rotation = 90;&amp;#10;} else {&amp;#10;    count = (count + 1);&amp;#10;    rotation = (Number.parseInt(((count / 64) + 1)) * 10);&amp;#10;    if ((rotation &gt; 90)) {&amp;#10;        rotation = 90;&amp;#10;    }&amp;#10;}&amp;#10;rotated_fixation.opacity = 1;&amp;#10;rotated_fixation.pos = [0, 0];&amp;#10;first = true;&amp;#10;console.log(rotation);&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin Routine" updates="constant" val="if int(expInfo['participant'])%2 == 0:&amp;#10;    rotation = 90&amp;#10;else:&amp;#10;    count = count + 1&amp;#10;    rotation = int(count/64 + 1)*10&amp;#10;    if rotation &gt; 90:&amp;#10;        rotation = 90&amp;#10;rotated_fixation.opacity = 1&amp;#10;rotated_fixation.pos = [0, 0]&amp;#10;first = True&amp;#10;print(rotation)&amp;#10;" valType="extendedCode"/>
         <Param name="Code Type" updates="None" val="Auto-&gt;JS" valType="str"/>
-        <Param name="Each Frame" updates="constant" val="if rotated_mouse.getPressed()[0]:&amp;#10;    rotated_fixation.opacity = 0&amp;#10;    if euclidean_dist(rotated_mouse.getPos(), [0, 0]) &gt; 0.44:&amp;#10;        mouse_pos = rotated_mouse.getPos()&amp;#10;        rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], 90)&amp;#10;#        rotated_fixation.pos = rotated_mouse.getPos()&amp;#10;        rotated_fixation.opacity = 1&amp;#10;        continueRoutine = False&amp;#10;else:&amp;#10;    rotated_fixation.opacity = 1&amp;#10;    rotated_fixation.pos = [0, 0]&amp;#10;    mouse_center = rotated_mouse.getPos()&amp;#10;    rotated_mouse.setPos([0, 0])" valType="extendedCode"/>
-        <Param name="Each JS Frame" updates="constant" val="if (rotated_mouse.getPressed()[0]) {&amp;#10;    rotated_fixation.opacity = 0;&amp;#10;    if ((euclidean_dist(rotated_mouse.getPos(), [0, 0]) &gt; 0.44)) {&amp;#10;        mouse_pos = rotated_mouse.getPos();&amp;#10;        rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], 90);&amp;#10;        rotated_fixation.opacity = 1;&amp;#10;        continueRoutine = false;&amp;#10;    }&amp;#10;} else {&amp;#10;    rotated_fixation.opacity = 1;&amp;#10;    rotated_fixation.pos = [0, 0];&amp;#10;    mouse_center = rotated_mouse.getPos();&amp;#10;    rotated_mouse.setPos([0, 0]);&amp;#10;}&amp;#10;" valType="extendedCode"/>
+        <Param name="Each Frame" updates="constant" val="win.mouseVisible = False&amp;#10;if rotated_mouse.getPressed()[0]:&amp;#10;    if first:&amp;#10;        mouse_center = rotated_mouse.getPos()&amp;#10;        first = False&amp;#10;    rotated_fixation.opacity = 0&amp;#10;    if euclidean_dist(rotated_mouse.getPos()- mouse_center, [0, 0]) &gt; 0.44:&amp;#10;        mouse_pos = rotated_mouse.getPos() - mouse_center&amp;#10;        rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], rotation)&amp;#10;        rotated_fixation.opacity = 1&amp;#10;        continueRoutine = False&amp;#10;else:&amp;#10;    first = True&amp;#10;    rotated_fixation.opacity = 1&amp;#10;    rotated_fixation.pos = [0, 0]&amp;#10;    rotated_mouse.setPos([0, 0])" valType="extendedCode"/>
+        <Param name="Each JS Frame" updates="constant" val="win.mouseVisible = false;&amp;#10;if (rotated_mouse.getPressed()[0]) {&amp;#10;    if (first) {&amp;#10;        mouse_center = rotated_mouse.getPos();&amp;#10;        first = false;&amp;#10;    }&amp;#10;    rotated_fixation.opacity = 0;&amp;#10;    if ((euclidean_dist((rotated_mouse.getPos() - mouse_center), [0, 0]) &gt; 0.44)) {&amp;#10;        mouse_pos = (rotated_mouse.getPos() - mouse_center);&amp;#10;        rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], rotation);&amp;#10;        rotated_fixation.opacity = 1;&amp;#10;        continueRoutine = false;&amp;#10;    }&amp;#10;} else {&amp;#10;    first = true;&amp;#10;    rotated_fixation.opacity = 1;&amp;#10;    rotated_fixation.pos = [0, 0];&amp;#10;    rotated_mouse.setPos([0, 0]);&amp;#10;}&amp;#10;" valType="extendedCode"/>
         <Param name="End Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="End JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="End JS Routine" updates="constant" val="rotated_fixation.opacity = 1;&amp;#10;rotated_fix_end_pos = rotated_fixation.pos;&amp;#10;" valType="extendedCode"/>
@@ -228,7 +228,7 @@
         <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
         <Param name="stopVal" updates="constant" val="" valType="code"/>
         <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
-        <Param name="text" updates="constant" val="Take a break.&amp;#10;&amp;#10;Whenever you're ready, tap the pad to continue" valType="extendedStr"/>
+        <Param name="text" updates="constant" val="Take a break.&amp;#10;&amp;#10;Remember to try to be as accurate as possible by getting as close to the target coss as possible.&amp;#10;&amp;#10;If it helps, take your time to make the movement and be accurate.&amp;#10;&amp;#10;Scratch the tablet to continue whenever you're ready.&amp;#10;&amp;#10; " valType="extendedStr"/>
         <Param name="units" updates="None" val="from exp settings" valType="str"/>
         <Param name="wrapWidth" updates="constant" val="" valType="code"/>
       </TextComponent>
@@ -244,7 +244,7 @@
         <Param name="saveStartStop" updates="None" val="True" valType="bool"/>
         <Param name="startEstim" updates="None" val="" valType="code"/>
         <Param name="startType" updates="None" val="time (s)" valType="str"/>
-        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="startVal" updates="None" val="0.5" valType="code"/>
         <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
         <Param name="stopVal" updates="constant" val="" valType="code"/>
         <Param name="syncScreenRefresh" updates="None" val="False" valType="bool"/>
@@ -325,11 +325,11 @@
         <Param name="Before JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin JS Experiment" updates="constant" val="" valType="extendedCode"/>
-        <Param name="Begin JS Routine" updates="constant" val="transfer_fixation.opacity = 1;&amp;#10;transfer_fixation.pos = [0, 0];&amp;#10;mouse_center = transfer_mouse.getPos();&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin Routine" updates="constant" val="transfer_fixation.opacity = 1&amp;#10;transfer_fixation.pos = [0, 0]&amp;#10;mouse_center = transfer_mouse.getPos()" valType="extendedCode"/>
+        <Param name="Begin JS Routine" updates="constant" val="transfer_fixation.opacity = 1;&amp;#10;transfer_fixation.pos = [0, 0];&amp;#10;first = true;&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin Routine" updates="constant" val="transfer_fixation.opacity = 1&amp;#10;transfer_fixation.pos = [0, 0]&amp;#10;first = True" valType="extendedCode"/>
         <Param name="Code Type" updates="None" val="Auto-&gt;JS" valType="str"/>
-        <Param name="Each Frame" updates="constant" val="if transfer_mouse.getPressed()[0]:&amp;#10;    transfer_fixation.opacity = 0&amp;#10;    if euclidean_dist(transfer_mouse.getPos(), [0, 0]) &gt; 0.44:&amp;#10;        transfer_fixation.pos = transfer_mouse.getPos()&amp;#10;        transfer_fixation.opacity = 1&amp;#10;        continueRoutine = False&amp;#10;else:&amp;#10;    transfer_fixation.opacity = 1&amp;#10;    transfer_fixation.pos = [0, 0]&amp;#10;    mouse_center = transfer_mouse.getPos()&amp;#10;    transfer_mouse.setPos([0, 0])" valType="extendedCode"/>
-        <Param name="Each JS Frame" updates="constant" val="if (transfer_mouse.getPressed()[0]) {&amp;#10;    transfer_fixation.opacity = 0;&amp;#10;    if ((euclidean_dist(transfer_mouse.getPos(), [0, 0]) &gt; 0.44)) {&amp;#10;        transfer_fixation.pos = transfer_mouse.getPos();&amp;#10;        transfer_fixation.opacity = 1;&amp;#10;        continueRoutine = false;&amp;#10;    }&amp;#10;} else {&amp;#10;    transfer_fixation.opacity = 1;&amp;#10;    transfer_fixation.pos = [0, 0];&amp;#10;    mouse_center = transfer_mouse.getPos();&amp;#10;    transfer_mouse.setPos([0, 0]);&amp;#10;}&amp;#10;" valType="extendedCode"/>
+        <Param name="Each Frame" updates="constant" val="win.mouseVisible = False&amp;#10;if transfer_mouse.getPressed()[0]:&amp;#10;    if first:&amp;#10;        mouse_center = transfer_mouse.getPos()&amp;#10;        first = False&amp;#10;    transfer_fixation.opacity = 0&amp;#10;    if euclidean_dist(transfer_mouse.getPos()- mouse_center, [0, 0]) &gt; 0.44:&amp;#10;        transfer_fixation.pos = transfer_mouse.getPos() - mouse_center&amp;#10;        transfer_fixation.opacity = 1&amp;#10;        continueRoutine = False&amp;#10;else:&amp;#10;    first = False&amp;#10;    transfer_fixation.opacity = 1&amp;#10;    transfer_fixation.pos = [0, 0]&amp;#10;    transfer_mouse.setPos([0, 0])" valType="extendedCode"/>
+        <Param name="Each JS Frame" updates="constant" val="win.mouseVisible = false;&amp;#10;if (transfer_mouse.getPressed()[0]) {&amp;#10;    if (first) {&amp;#10;        mouse_center = transfer_mouse.getPos();&amp;#10;        first = false;&amp;#10;    }&amp;#10;    transfer_fixation.opacity = 0;&amp;#10;    if ((euclidean_dist((transfer_mouse.getPos() - mouse_center), [0, 0]) &gt; 0.44)) {&amp;#10;        transfer_fixation.pos = (transfer_mouse.getPos() - mouse_center);&amp;#10;        transfer_fixation.opacity = 1;&amp;#10;        continueRoutine = false;&amp;#10;    }&amp;#10;} else {&amp;#10;    first = false;&amp;#10;    transfer_fixation.opacity = 1;&amp;#10;    transfer_fixation.pos = [0, 0];&amp;#10;    transfer_mouse.setPos([0, 0]);&amp;#10;}&amp;#10;" valType="extendedCode"/>
         <Param name="End Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="End JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="End JS Routine" updates="constant" val="transfer_fixation.opacity = 1;&amp;#10;transfer_fix_end_pos = transfer_fixation.pos;&amp;#10;" valType="extendedCode"/>
@@ -403,7 +403,7 @@
         <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
         <Param name="stopVal" updates="constant" val="" valType="code"/>
         <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
-        <Param name="text" updates="constant" val="Welcome to Visuomotor Adaptation!&amp;#10;&amp;#10;Your task is to move a circle controlled by the pen to the target cross.  &amp;#10;&amp;#10;The circle will disappear once you start to move and reappear as you cover the distance required to hit the target. &amp;#10;&amp;#10;Try to hit the target as many times as possible. &amp;#10;&amp;#10;Tap on the tab to proceed to a demo." valType="extendedStr"/>
+        <Param name="text" updates="constant" val="Welcome to Visuomotor Adaptation!&amp;#10;&amp;#10;Your task is to move a circle controlled by the pen to the target cross.  &amp;#10;&amp;#10;The circle will disappear once you start to move and reappear as you cover the distance required to hit the target. &amp;#10;&amp;#10;Try to hit the target as many times as possible. &amp;#10;&amp;#10;Scratch on the tab using the pen to proceed to a demo." valType="extendedStr"/>
         <Param name="units" updates="None" val="from exp settings" valType="str"/>
         <Param name="wrapWidth" updates="constant" val="" valType="code"/>
       </TextComponent>
@@ -419,7 +419,7 @@
         <Param name="saveStartStop" updates="None" val="True" valType="bool"/>
         <Param name="startEstim" updates="None" val="" valType="code"/>
         <Param name="startType" updates="None" val="time (s)" valType="str"/>
-        <Param name="startVal" updates="None" val="2" valType="code"/>
+        <Param name="startVal" updates="None" val="0" valType="code"/>
         <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
         <Param name="stopVal" updates="constant" val="" valType="code"/>
         <Param name="syncScreenRefresh" updates="None" val="False" valType="bool"/>
@@ -500,11 +500,11 @@
         <Param name="Before JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin Experiment" updates="constant" val="def euclidean_dist(vec1, vec2):&amp;#10;    return sqrt((vec1[0] - vec2[0])**2 + (vec1[1] - vec2[1])**2)" valType="extendedCode"/>
         <Param name="Begin JS Experiment" updates="constant" val="function euclidean_dist(vec1, vec2) {&amp;#10;    return Math.sqrt((Math.pow((vec1[0] - vec2[0]), 2) + Math.pow((vec1[1] - vec2[1]), 2)));&amp;#10;}&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin JS Routine" updates="constant" val="demo_fixation.opacity = 1;&amp;#10;demo_fixation.pos = [0, 0];&amp;#10;mouse_center = demo_mouse.getPos();&amp;#10;win.mouseVisible = false;&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin Routine" updates="constant" val="demo_fixation.opacity = 1&amp;#10;demo_fixation.pos = [0, 0]&amp;#10;mouse_center = demo_mouse.getPos()&amp;#10;win.mouseVisible = False" valType="extendedCode"/>
+        <Param name="Begin JS Routine" updates="constant" val="demo_fixation.opacity = 1;&amp;#10;demo_fixation.pos = [0, 0];&amp;#10;first = true;&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin Routine" updates="constant" val="demo_fixation.opacity = 1&amp;#10;demo_fixation.pos = [0, 0]&amp;#10;first = True" valType="extendedCode"/>
         <Param name="Code Type" updates="None" val="Auto-&gt;JS" valType="str"/>
-        <Param name="Each Frame" updates="constant" val="if demo_mouse.getPressed()[0]:&amp;#10;    demo_fixation.opacity = 0&amp;#10;    if euclidean_dist(demo_mouse.getPos(), [0, 0]) &gt; 0.44:&amp;#10;        demo_fixation.pos = demo_mouse.getPos()&amp;#10;        demo_fixation.opacity = 1&amp;#10;        continueRoutine = False&amp;#10;else:&amp;#10;    demo_fixation.opacity = 1&amp;#10;    demo_fixation.pos = [0, 0]&amp;#10;    mouse_center = demo_mouse.getPos()&amp;#10;    demo_mouse.setPos([0, 0])" valType="extendedCode"/>
-        <Param name="Each JS Frame" updates="constant" val="if (demo_mouse.getPressed()[0]) {&amp;#10;    demo_fixation.opacity = 0;&amp;#10;    if ((euclidean_dist(demo_mouse.getPos(), [0, 0]) &gt; 0.44)) {&amp;#10;        demo_fixation.pos = demo_mouse.getPos();&amp;#10;        demo_fixation.opacity = 1;&amp;#10;        continueRoutine = false;&amp;#10;    }&amp;#10;} else {&amp;#10;    demo_fixation.opacity = 1;&amp;#10;    demo_fixation.pos = [0, 0];&amp;#10;    mouse_center = demo_mouse.getPos();&amp;#10;    demo_mouse.setPos([0, 0]);&amp;#10;}&amp;#10;" valType="extendedCode"/>
+        <Param name="Each Frame" updates="constant" val="win.mouseVisible = False&amp;#10;if demo_mouse.getPressed()[0]:&amp;#10;    if first:&amp;#10;        mouse_center = demo_mouse.getPos()&amp;#10;        first = False&amp;#10;    demo_fixation.opacity = 0&amp;#10;    if euclidean_dist(demo_mouse.getPos() - mouse_center, [0, 0]) &gt; 0.44:&amp;#10;        demo_fixation.pos = demo_mouse.getPos() - mouse_center&amp;#10;        demo_fixation.opacity = 1&amp;#10;        continueRoutine = False&amp;#10;else:&amp;#10;    first = True&amp;#10;    demo_fixation.opacity = 1&amp;#10;    demo_fixation.pos = [0, 0]&amp;#10;    demo_mouse.setPos([0, 0])" valType="extendedCode"/>
+        <Param name="Each JS Frame" updates="constant" val="win.mouseVisible = false;&amp;#10;if (demo_mouse.getPressed()[0]) {&amp;#10;    if (first) {&amp;#10;        mouse_center = demo_mouse.getPos();&amp;#10;        first = false;&amp;#10;    }&amp;#10;    demo_fixation.opacity = 0;&amp;#10;    if ((euclidean_dist((demo_mouse.getPos() - mouse_center), [0, 0]) &gt; 0.44)) {&amp;#10;        demo_fixation.pos = (demo_mouse.getPos() - mouse_center);&amp;#10;        demo_fixation.opacity = 1;&amp;#10;        continueRoutine = false;&amp;#10;    }&amp;#10;} else {&amp;#10;    first = true;&amp;#10;    demo_fixation.opacity = 1;&amp;#10;    demo_fixation.pos = [0, 0];&amp;#10;    demo_mouse.setPos([0, 0]);&amp;#10;}&amp;#10;" valType="extendedCode"/>
         <Param name="End Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="End JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="End JS Routine" updates="constant" val="demo_fixation.opacity = 1;&amp;#10;demo_fix_end_pos = demo_fixation.pos;&amp;#10;" valType="extendedCode"/>
@@ -534,7 +534,7 @@
         <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
         <Param name="stopVal" updates="constant" val="" valType="code"/>
         <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
-        <Param name="text" updates="constant" val="Let's try four more trials.&amp;#10;&amp;#10;Tap the tablet to continue." valType="extendedStr"/>
+        <Param name="text" updates="constant" val="Let's try four trials.&amp;#10;&amp;#10;Scratch the tablet to continue." valType="extendedStr"/>
         <Param name="units" updates="None" val="from exp settings" valType="str"/>
         <Param name="wrapWidth" updates="constant" val="" valType="code"/>
       </TextComponent>
@@ -578,7 +578,7 @@
         <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
         <Param name="stopVal" updates="constant" val="" valType="code"/>
         <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
-        <Param name="text" updates="constant" val="Start next block.&amp;#10;&amp;#10;Tap on the tablet to continue." valType="extendedStr"/>
+        <Param name="text" updates="constant" val="Start next block.&amp;#10;&amp;#10;Remember to try to be as accurate as possible by getting close to the target as many times as possible.&amp;#10;&amp;#10;If it helps, take your time to make the movement and be accurate.&amp;#10;&amp;#10;Scratch the tablet to continue whenever you're ready.&amp;#10;&amp;#10; " valType="extendedStr"/>
         <Param name="units" updates="None" val="from exp settings" valType="str"/>
         <Param name="wrapWidth" updates="constant" val="" valType="code"/>
       </TextComponent>
@@ -830,7 +830,7 @@
         <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
         <Param name="stopVal" updates="constant" val="" valType="code"/>
         <Param name="syncScreenRefresh" updates="None" val="True" valType="bool"/>
-        <Param name="text" updates="constant" val="Experiment starts now!&amp;#10;&amp;#10;Tap on the trackpad to continue" valType="extendedStr"/>
+        <Param name="text" updates="constant" val="Experiment starts now!&amp;#10;&amp;#10;Try to come as close to the target as possible even if you can't hit it.&amp;#10;&amp;#10;Scratch the trackpad to continue." valType="extendedStr"/>
         <Param name="units" updates="None" val="from exp settings" valType="str"/>
         <Param name="wrapWidth" updates="constant" val="" valType="code"/>
       </TextComponent>
@@ -846,17 +846,36 @@
         <Param name="saveStartStop" updates="None" val="True" valType="bool"/>
         <Param name="startEstim" updates="None" val="" valType="code"/>
         <Param name="startType" updates="None" val="time (s)" valType="str"/>
-        <Param name="startVal" updates="None" val="0.0" valType="code"/>
+        <Param name="startVal" updates="None" val="1" valType="code"/>
         <Param name="stopType" updates="None" val="duration (s)" valType="str"/>
         <Param name="stopVal" updates="constant" val="" valType="code"/>
         <Param name="syncScreenRefresh" updates="None" val="False" valType="bool"/>
         <Param name="timeRelativeTo" updates="constant" val="mouse onset" valType="str"/>
       </MouseComponent>
     </Routine>
+    <Routine name="set_rotation">
+      <CodeComponent name="code_2">
+        <Param name="Before Experiment" updates="constant" val="" valType="extendedCode"/>
+        <Param name="Before JS Experiment" updates="constant" val="" valType="extendedCode"/>
+        <Param name="Begin Experiment" updates="constant" val="" valType="extendedCode"/>
+        <Param name="Begin JS Experiment" updates="constant" val="" valType="extendedCode"/>
+        <Param name="Begin JS Routine" updates="constant" val="if (((Number.parseInt(expInfo[&quot;participant&quot;]) % 2) === 0)) {&amp;#10;    rotation = 90;&amp;#10;} else {&amp;#10;    count = (count + 1);&amp;#10;    if ((count &gt; 9)) {&amp;#10;        count = 9;&amp;#10;    }&amp;#10;    rotation = (count * 10);&amp;#10;}&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin Routine" updates="constant" val="if int(expInfo['participant'])%2 == 0:&amp;#10;    rotation = 90&amp;#10;else:&amp;#10;    count = count + 1&amp;#10;    if count &gt; 9:&amp;#10;        count = 9&amp;#10;    rotation = count*10" valType="extendedCode"/>
+        <Param name="Code Type" updates="None" val="Auto-&gt;JS" valType="str"/>
+        <Param name="Each Frame" updates="constant" val="" valType="extendedCode"/>
+        <Param name="Each JS Frame" updates="constant" val="" valType="extendedCode"/>
+        <Param name="End Experiment" updates="constant" val="" valType="extendedCode"/>
+        <Param name="End JS Experiment" updates="constant" val="" valType="extendedCode"/>
+        <Param name="End JS Routine" updates="constant" val="" valType="extendedCode"/>
+        <Param name="End Routine" updates="constant" val="" valType="extendedCode"/>
+        <Param name="disabled" updates="None" val="False" valType="bool"/>
+        <Param name="name" updates="None" val="code_2" valType="code"/>
+      </CodeComponent>
+    </Routine>
   </Routines>
   <Flow>
     <Routine name="instructions"/>
-    <LoopInitiator loopType="TrialHandler" name="trials_2">
+    <LoopInitiator loopType="TrialHandler" name="trials">
       <Param name="Selected rows" updates="None" val="" valType="str"/>
       <Param name="conditions" updates="None" val="None" valType="str"/>
       <Param name="conditionsFile" updates="None" val="" valType="str"/>
@@ -864,10 +883,11 @@
       <Param name="isTrials" updates="None" val="True" valType="bool"/>
       <Param name="loopType" updates="None" val="random" valType="str"/>
       <Param name="nReps" updates="None" val="2" valType="code"/>
-      <Param name="name" updates="None" val="trials_2" valType="code"/>
+      <Param name="name" updates="None" val="trials" valType="code"/>
       <Param name="random seed" updates="None" val="" valType="code"/>
     </LoopInitiator>
-    <LoopInitiator loopType="TrialHandler" name="demo_trials">
+    <Routine name="break_0"/>
+    <LoopInitiator loopType="TrialHandler" name="trials_2">
       <Param name="Selected rows" updates="None" val="" valType="str"/>
       <Param name="conditions" updates="None" val="[OrderedDict([('target_x', 0.3), ('target_y', 0.3), ('rotation', 0)]), OrderedDict([('target_x', -0.3), ('target_y', 0.3), ('rotation', 0)]), OrderedDict([('target_x', -0.3), ('target_y', -0.3), ('rotation', 0)]), OrderedDict([('target_x', 0.3), ('target_y', -0.3), ('rotation', 0)])]" valType="str"/>
       <Param name="conditionsFile" updates="None" val="conditions_demo.xlsx" valType="str"/>
@@ -875,14 +895,13 @@
       <Param name="isTrials" updates="None" val="True" valType="bool"/>
       <Param name="loopType" updates="None" val="random" valType="str"/>
       <Param name="nReps" updates="None" val="1" valType="code"/>
-      <Param name="name" updates="None" val="demo_trials" valType="code"/>
+      <Param name="name" updates="None" val="trials_2" valType="code"/>
       <Param name="random seed" updates="None" val="" valType="code"/>
     </LoopInitiator>
     <Routine name="demo"/>
     <Routine name="demo_feedback"/>
-    <LoopTerminator name="demo_trials"/>
-    <Routine name="break_0"/>
     <LoopTerminator name="trials_2"/>
+    <LoopTerminator name="trials"/>
     <Routine name="experiment_start"/>
     <LoopInitiator loopType="TrialHandler" name="baseline_trials">
       <Param name="Selected rows" updates="None" val="" valType="str"/>

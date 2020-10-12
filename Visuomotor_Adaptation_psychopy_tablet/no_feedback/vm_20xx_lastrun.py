@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2020.2.4),
-    on September 23, 2020, at 13:43
+    on October 07, 2020, at 08:48
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -65,7 +65,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 
 # Setup the Window
 win = visual.Window(
-    size=(1024, 768), fullscr=True, screen=0, 
+    size=[1920, 1080], fullscr=True, screen=0, 
     winType='pyglet', allowGUI=False, allowStencil=False,
     monitor='testMonitor', color=[0,0,0], colorSpace='rgb',
     blendMode='avg', useFBO=True, 
@@ -83,7 +83,7 @@ defaultKeyboard = keyboard.Keyboard()
 # Initialize components for Routine "instructions"
 instructionsClock = core.Clock()
 Welcome = visual.TextStim(win=win, name='Welcome',
-    text='Welcome to Visuomotor Adaptation!\n\nYour task is to move a circle controlled by the pen to the target cross.  \n\nThe circle will disappear once you start to move and reappear as you cover the distance required to hit the target. \n\nTry to hit the target as many times as possible. \n\nTap on the tab to proceed to a demo.',
+    text='Welcome to Visuomotor Adaptation!\n\nYour task is to move a circle controlled by the pen to the target cross.  \n\nThe circle will disappear once you start to move and reappear as you cover the distance required to hit the target. \n\nTry to hit the target as many times as possible. \n\nScratch on the tab using the pen to proceed to a demo.',
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -92,6 +92,19 @@ Welcome = visual.TextStim(win=win, name='Welcome',
 mouse = event.Mouse(win=win)
 x, y = [None, None]
 mouse.mouseClock = core.Clock()
+
+# Initialize components for Routine "break_0"
+break_0Clock = core.Clock()
+text = visual.TextStim(win=win, name='text',
+    text="Let's try four trials.\n\nScratch the tablet to continue.",
+    font='Arial',
+    pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
+    color='white', colorSpace='rgb', opacity=1, 
+    languageStyle='LTR',
+    depth=0.0);
+mouse_2 = event.Mouse(win=win)
+x, y = [None, None]
+mouse_2.mouseClock = core.Clock()
 
 # Initialize components for Routine "demo"
 demoClock = core.Clock()
@@ -132,23 +145,10 @@ demo_fixation_feedback = visual.Polygon(
     fillColor=[1,0,0], fillColorSpace='rgb',
     opacity=1, depth=-1.0, interpolate=True)
 
-# Initialize components for Routine "break_0"
-break_0Clock = core.Clock()
-text = visual.TextStim(win=win, name='text',
-    text="Let's try four more trials.\n\nTap the tablet to continue.",
-    font='Arial',
-    pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
-    color='white', colorSpace='rgb', opacity=1, 
-    languageStyle='LTR',
-    depth=0.0);
-mouse_2 = event.Mouse(win=win)
-x, y = [None, None]
-mouse_2.mouseClock = core.Clock()
-
 # Initialize components for Routine "experiment_start"
 experiment_startClock = core.Clock()
 text_3 = visual.TextStim(win=win, name='text_3',
-    text='Experiment starts now!\n\nTap on the trackpad to continue',
+    text="Experiment starts now!\n\nTry to come as close to the target as possible even if you can't hit it.\n\nScratch the trackpad to continue.",
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -198,7 +198,7 @@ baseline_fixation_feedback = visual.Polygon(
 # Initialize components for Routine "break_1"
 break_1Clock = core.Clock()
 text_2 = visual.TextStim(win=win, name='text_2',
-    text='Start next block.\n\nTap on the tablet to continue.',
+    text="Start next block.\n\nRemember to try to be as accurate as possible by getting close to the target as many times as possible.\n\nIf it helps, take your time to make the movement and be accurate.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -234,6 +234,8 @@ def rotate(x, y, angle):
     nx = x*cos_val + y*sin_val
     ny = y*cos_val - x*sin_val
     return [nx, ny];
+    
+count = 0
 
 # Initialize components for Routine "rotated_feedback"
 rotated_feedbackClock = core.Clock()
@@ -255,7 +257,7 @@ rotated_fixation_feedback = visual.Polygon(
 # Initialize components for Routine "break_2"
 break_2Clock = core.Clock()
 rotated_breaks = visual.TextStim(win=win, name='rotated_breaks',
-    text="Take a break.\n\nWhenever you're ready, tap the pad to continue",
+    text="Take a break.\n\nRemember to try to be as accurate as possible by getting as close to the target coss as possible.\n\nIf it helps, take your time to make the movement and be accurate.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -357,7 +359,7 @@ while continueRoutine:
         win.timeOnFlip(Welcome, 'tStartRefresh')  # time at next scr refresh
         Welcome.setAutoDraw(True)
     # *mouse* updates
-    if mouse.status == NOT_STARTED and t >= 2-frameTolerance:
+    if mouse.status == NOT_STARTED and t >= 0-frameTolerance:
         # keep track of start time/frame for later
         mouse.frameNStart = frameN  # exact frame index
         mouse.tStart = t  # local t and not account for scr refresh
@@ -403,42 +405,124 @@ thisExp.nextEntry()
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-trials_2 = data.TrialHandler(nReps=2, method='random', 
+trials = data.TrialHandler(nReps=2, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=[None],
-    seed=None, name='trials_2')
-thisExp.addLoop(trials_2)  # add the loop to the experiment
-thisTrial_2 = trials_2.trialList[0]  # so we can initialise stimuli with some values
-# abbreviate parameter names if possible (e.g. rgb = thisTrial_2.rgb)
-if thisTrial_2 != None:
-    for paramName in thisTrial_2:
-        exec('{} = thisTrial_2[paramName]'.format(paramName))
+    seed=None, name='trials')
+thisExp.addLoop(trials)  # add the loop to the experiment
+thisTrial = trials.trialList[0]  # so we can initialise stimuli with some values
+# abbreviate parameter names if possible (e.g. rgb = thisTrial.rgb)
+if thisTrial != None:
+    for paramName in thisTrial:
+        exec('{} = thisTrial[paramName]'.format(paramName))
 
-for thisTrial_2 in trials_2:
-    currentLoop = trials_2
+for thisTrial in trials:
+    currentLoop = trials
+    # abbreviate parameter names if possible (e.g. rgb = thisTrial.rgb)
+    if thisTrial != None:
+        for paramName in thisTrial:
+            exec('{} = thisTrial[paramName]'.format(paramName))
+    
+    # ------Prepare to start Routine "break_0"-------
+    continueRoutine = True
+    # update component parameters for each repeat
+    # setup some python lists for storing info about the mouse_2
+    gotValidClick = False  # until a click is received
+    # keep track of which components have finished
+    break_0Components = [text, mouse_2]
+    for thisComponent in break_0Components:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    break_0Clock.reset(-_timeToFirstFrame)  # t0 is time of first possible flip
+    frameN = -1
+    
+    # -------Run Routine "break_0"-------
+    while continueRoutine:
+        # get current time
+        t = break_0Clock.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=break_0Clock)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *text* updates
+        if text.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            text.frameNStart = frameN  # exact frame index
+            text.tStart = t  # local t and not account for scr refresh
+            text.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(text, 'tStartRefresh')  # time at next scr refresh
+            text.setAutoDraw(True)
+        # *mouse_2* updates
+        if mouse_2.status == NOT_STARTED and t >= 0.5-frameTolerance:
+            # keep track of start time/frame for later
+            mouse_2.frameNStart = frameN  # exact frame index
+            mouse_2.tStart = t  # local t and not account for scr refresh
+            mouse_2.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(mouse_2, 'tStartRefresh')  # time at next scr refresh
+            mouse_2.status = STARTED
+            mouse_2.mouseClock.reset()
+            prevButtonState = mouse_2.getPressed()  # if button is down already this ISN'T a new click
+        if mouse_2.status == STARTED:  # only update if started and not finished!
+            buttons = mouse_2.getPressed()
+            if buttons != prevButtonState:  # button state changed?
+                prevButtonState = buttons
+                if sum(buttons) > 0:  # state changed to a new click
+                    continueRoutine = False        
+        # check for quit (typically the Esc key)
+        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+            core.quit()
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in break_0Components:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+    
+    # -------Ending Routine "break_0"-------
+    for thisComponent in break_0Components:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    trials.addData('text.started', text.tStartRefresh)
+    trials.addData('text.stopped', text.tStopRefresh)
+    # store data for trials (TrialHandler)
+    trials.addData('mouse_2.started', mouse_2.tStart)
+    trials.addData('mouse_2.stopped', mouse_2.tStop)
+    # the Routine "break_0" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+    
+    # set up handler to look after randomisation of conditions etc
+    trials_2 = data.TrialHandler(nReps=1, method='random', 
+        extraInfo=expInfo, originPath=-1,
+        trialList=data.importConditions('conditions_demo.xlsx'),
+        seed=None, name='trials_2')
+    thisExp.addLoop(trials_2)  # add the loop to the experiment
+    thisTrial_2 = trials_2.trialList[0]  # so we can initialise stimuli with some values
     # abbreviate parameter names if possible (e.g. rgb = thisTrial_2.rgb)
     if thisTrial_2 != None:
         for paramName in thisTrial_2:
             exec('{} = thisTrial_2[paramName]'.format(paramName))
     
-    # set up handler to look after randomisation of conditions etc
-    demo_trials = data.TrialHandler(nReps=1, method='random', 
-        extraInfo=expInfo, originPath=-1,
-        trialList=data.importConditions('conditions_demo.xlsx'),
-        seed=None, name='demo_trials')
-    thisExp.addLoop(demo_trials)  # add the loop to the experiment
-    thisDemo_trial = demo_trials.trialList[0]  # so we can initialise stimuli with some values
-    # abbreviate parameter names if possible (e.g. rgb = thisDemo_trial.rgb)
-    if thisDemo_trial != None:
-        for paramName in thisDemo_trial:
-            exec('{} = thisDemo_trial[paramName]'.format(paramName))
-    
-    for thisDemo_trial in demo_trials:
-        currentLoop = demo_trials
-        # abbreviate parameter names if possible (e.g. rgb = thisDemo_trial.rgb)
-        if thisDemo_trial != None:
-            for paramName in thisDemo_trial:
-                exec('{} = thisDemo_trial[paramName]'.format(paramName))
+    for thisTrial_2 in trials_2:
+        currentLoop = trials_2
+        # abbreviate parameter names if possible (e.g. rgb = thisTrial_2.rgb)
+        if thisTrial_2 != None:
+            for paramName in thisTrial_2:
+                exec('{} = thisTrial_2[paramName]'.format(paramName))
         
         # ------Prepare to start Routine "demo"-------
         continueRoutine = True
@@ -455,8 +539,7 @@ for thisTrial_2 in trials_2:
         gotValidClick = False  # until a click is received
         demo_fixation.opacity = 1
         demo_fixation.pos = [0, 0]
-        mouse_center = demo_mouse.getPos()
-        win.mouseVisible = False
+        first = True
         # keep track of which components have finished
         demoComponents = [demo_target, demo_fixation, demo_mouse]
         for thisComponent in demoComponents:
@@ -517,16 +600,20 @@ for thisTrial_2 in trials_2:
                 demo_mouse.midButton.append(buttons[1])
                 demo_mouse.rightButton.append(buttons[2])
                 demo_mouse.time.append(demo_mouse.mouseClock.getTime())
+            win.mouseVisible = False
             if demo_mouse.getPressed()[0]:
+                if first:
+                    mouse_center = demo_mouse.getPos()
+                    first = False
                 demo_fixation.opacity = 0
-                if euclidean_dist(demo_mouse.getPos(), [0, 0]) > 0.44:
-                    demo_fixation.pos = demo_mouse.getPos()
+                if euclidean_dist(demo_mouse.getPos() - mouse_center, [0, 0]) > 0.44:
+                    demo_fixation.pos = demo_mouse.getPos() - mouse_center
                     demo_fixation.opacity = 1
                     continueRoutine = False
             else:
+                first = True
                 demo_fixation.opacity = 1
                 demo_fixation.pos = [0, 0]
-                mouse_center = demo_mouse.getPos()
                 demo_mouse.setPos([0, 0])
             
             # check for quit (typically the Esc key)
@@ -550,19 +637,19 @@ for thisTrial_2 in trials_2:
         for thisComponent in demoComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
-        demo_trials.addData('demo_target.started', demo_target.tStartRefresh)
-        demo_trials.addData('demo_target.stopped', demo_target.tStopRefresh)
-        demo_trials.addData('demo_fixation.started', demo_fixation.tStartRefresh)
-        demo_trials.addData('demo_fixation.stopped', demo_fixation.tStopRefresh)
-        # store data for demo_trials (TrialHandler)
-        demo_trials.addData('demo_mouse.x', demo_mouse.x)
-        demo_trials.addData('demo_mouse.y', demo_mouse.y)
-        demo_trials.addData('demo_mouse.leftButton', demo_mouse.leftButton)
-        demo_trials.addData('demo_mouse.midButton', demo_mouse.midButton)
-        demo_trials.addData('demo_mouse.rightButton', demo_mouse.rightButton)
-        demo_trials.addData('demo_mouse.time', demo_mouse.time)
-        demo_trials.addData('demo_mouse.started', demo_mouse.tStart)
-        demo_trials.addData('demo_mouse.stopped', demo_mouse.tStop)
+        trials_2.addData('demo_target.started', demo_target.tStartRefresh)
+        trials_2.addData('demo_target.stopped', demo_target.tStopRefresh)
+        trials_2.addData('demo_fixation.started', demo_fixation.tStartRefresh)
+        trials_2.addData('demo_fixation.stopped', demo_fixation.tStopRefresh)
+        # store data for trials_2 (TrialHandler)
+        trials_2.addData('demo_mouse.x', demo_mouse.x)
+        trials_2.addData('demo_mouse.y', demo_mouse.y)
+        trials_2.addData('demo_mouse.leftButton', demo_mouse.leftButton)
+        trials_2.addData('demo_mouse.midButton', demo_mouse.midButton)
+        trials_2.addData('demo_mouse.rightButton', demo_mouse.rightButton)
+        trials_2.addData('demo_mouse.time', demo_mouse.time)
+        trials_2.addData('demo_mouse.started', demo_mouse.tStart)
+        trials_2.addData('demo_mouse.stopped', demo_mouse.tStop)
         demo_fixation.opacity = 1
         demo_fix_end_pos = demo_fixation.pos
         # the Routine "demo" was not non-slip safe, so reset the non-slip timer
@@ -653,99 +740,17 @@ for thisTrial_2 in trials_2:
         for thisComponent in demo_feedbackComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
-        demo_trials.addData('demo_target_feedback.started', demo_target_feedback.tStartRefresh)
-        demo_trials.addData('demo_target_feedback.stopped', demo_target_feedback.tStopRefresh)
-        demo_trials.addData('demo_fixation_feedback.started', demo_fixation_feedback.tStartRefresh)
-        demo_trials.addData('demo_fixation_feedback.stopped', demo_fixation_feedback.tStopRefresh)
+        trials_2.addData('demo_target_feedback.started', demo_target_feedback.tStartRefresh)
+        trials_2.addData('demo_target_feedback.stopped', demo_target_feedback.tStopRefresh)
+        trials_2.addData('demo_fixation_feedback.started', demo_fixation_feedback.tStartRefresh)
+        trials_2.addData('demo_fixation_feedback.stopped', demo_fixation_feedback.tStopRefresh)
         thisExp.nextEntry()
         
-    # completed 1 repeats of 'demo_trials'
+    # completed 1 repeats of 'trials_2'
     
-    
-    # ------Prepare to start Routine "break_0"-------
-    continueRoutine = True
-    # update component parameters for each repeat
-    # setup some python lists for storing info about the mouse_2
-    gotValidClick = False  # until a click is received
-    # keep track of which components have finished
-    break_0Components = [text, mouse_2]
-    for thisComponent in break_0Components:
-        thisComponent.tStart = None
-        thisComponent.tStop = None
-        thisComponent.tStartRefresh = None
-        thisComponent.tStopRefresh = None
-        if hasattr(thisComponent, 'status'):
-            thisComponent.status = NOT_STARTED
-    # reset timers
-    t = 0
-    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
-    break_0Clock.reset(-_timeToFirstFrame)  # t0 is time of first possible flip
-    frameN = -1
-    
-    # -------Run Routine "break_0"-------
-    while continueRoutine:
-        # get current time
-        t = break_0Clock.getTime()
-        tThisFlip = win.getFutureFlipTime(clock=break_0Clock)
-        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
-        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
-        # update/draw components on each frame
-        
-        # *text* updates
-        if text.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            text.frameNStart = frameN  # exact frame index
-            text.tStart = t  # local t and not account for scr refresh
-            text.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(text, 'tStartRefresh')  # time at next scr refresh
-            text.setAutoDraw(True)
-        # *mouse_2* updates
-        if mouse_2.status == NOT_STARTED and t >= 0.5-frameTolerance:
-            # keep track of start time/frame for later
-            mouse_2.frameNStart = frameN  # exact frame index
-            mouse_2.tStart = t  # local t and not account for scr refresh
-            mouse_2.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(mouse_2, 'tStartRefresh')  # time at next scr refresh
-            mouse_2.status = STARTED
-            mouse_2.mouseClock.reset()
-            prevButtonState = mouse_2.getPressed()  # if button is down already this ISN'T a new click
-        if mouse_2.status == STARTED:  # only update if started and not finished!
-            buttons = mouse_2.getPressed()
-            if buttons != prevButtonState:  # button state changed?
-                prevButtonState = buttons
-                if sum(buttons) > 0:  # state changed to a new click
-                    continueRoutine = False        
-        # check for quit (typically the Esc key)
-        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
-            core.quit()
-        
-        # check if all components have finished
-        if not continueRoutine:  # a component has requested a forced-end of Routine
-            break
-        continueRoutine = False  # will revert to True if at least one component still running
-        for thisComponent in break_0Components:
-            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
-                continueRoutine = True
-                break  # at least one component has not yet finished
-        
-        # refresh the screen
-        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
-            win.flip()
-    
-    # -------Ending Routine "break_0"-------
-    for thisComponent in break_0Components:
-        if hasattr(thisComponent, "setAutoDraw"):
-            thisComponent.setAutoDraw(False)
-    trials_2.addData('text.started', text.tStartRefresh)
-    trials_2.addData('text.stopped', text.tStopRefresh)
-    # store data for trials_2 (TrialHandler)
-    trials_2.addData('mouse_2.started', mouse_2.tStart)
-    trials_2.addData('mouse_2.stopped', mouse_2.tStop)
-    # the Routine "break_0" was not non-slip safe, so reset the non-slip timer
-    routineTimer.reset()
     thisExp.nextEntry()
     
-# completed 2 repeats of 'trials_2'
+# completed 2 repeats of 'trials'
 
 
 # ------Prepare to start Routine "experiment_start"-------
@@ -786,7 +791,7 @@ while continueRoutine:
         win.timeOnFlip(text_3, 'tStartRefresh')  # time at next scr refresh
         text_3.setAutoDraw(True)
     # *mouse_6* updates
-    if mouse_6.status == NOT_STARTED and t >= 0.0-frameTolerance:
+    if mouse_6.status == NOT_STARTED and t >= 1-frameTolerance:
         # keep track of start time/frame for later
         mouse_6.frameNStart = frameN  # exact frame index
         mouse_6.tStart = t  # local t and not account for scr refresh
@@ -867,6 +872,7 @@ for thisBaseline_trial in baseline_trials:
     baseline_fixation.opacity = 1
     baseline_fixation.pos = [0, 0]
     mouse_center = baseline_mouse.getPos()
+    first = True
     # keep track of which components have finished
     baselineComponents = [baseline_target, baseline_fixation, baseline_mouse]
     for thisComponent in baselineComponents:
@@ -927,16 +933,20 @@ for thisBaseline_trial in baseline_trials:
             baseline_mouse.midButton.append(buttons[1])
             baseline_mouse.rightButton.append(buttons[2])
             baseline_mouse.time.append(baseline_mouse.mouseClock.getTime())
+        win.mouseVisible = False
         if baseline_mouse.getPressed()[0]:
+            if first:
+                mouse_center = baseline_mouse.getPos()
+                first = False
             baseline_fixation.opacity = 0
-            if euclidean_dist(baseline_mouse.getPos(), [0, 0]) > 0.44:
-                baseline_fixation.pos = baseline_mouse.getPos()
+            if euclidean_dist(baseline_mouse.getPos() - mouse_center, [0, 0]) > 0.44:
+                baseline_fixation.pos = baseline_mouse.getPos() - mouse_center
                 baseline_fixation.opacity = 1
                 continueRoutine = False
         else:
+            first = True
             baseline_fixation.opacity = 1
             baseline_fixation.pos = [0, 0]
-            mouse_center = baseline_mouse.getPos()
             baseline_mouse.setPos([0, 0])
         
         # check for quit (typically the Esc key)
@@ -1204,9 +1214,18 @@ for thisBlock in blocks:
         rotated_mouse.rightButton = []
         rotated_mouse.time = []
         gotValidClick = False  # until a click is received
+        if int(expInfo['participant'])%2 == 0:
+            rotation = 90
+        else:
+            count = count + 1
+            rotation = int(count/64 + 1)*10
+            if rotation > 90:
+                rotation = 90
         rotated_fixation.opacity = 1
         rotated_fixation.pos = [0, 0]
-        mouse_center = rotated_mouse.getPos()
+        first = True
+        print(rotation)
+        
         # keep track of which components have finished
         rotatedComponents = [rotated_target, rotated_fixation, rotated_mouse]
         for thisComponent in rotatedComponents:
@@ -1271,18 +1290,21 @@ for thisBlock in blocks:
                 rotated_mouse.midButton.append(buttons[1])
                 rotated_mouse.rightButton.append(buttons[2])
                 rotated_mouse.time.append(rotated_mouse.mouseClock.getTime())
+            win.mouseVisible = False
             if rotated_mouse.getPressed()[0]:
+                if first:
+                    mouse_center = rotated_mouse.getPos()
+                    first = False
                 rotated_fixation.opacity = 0
-                if euclidean_dist(rotated_mouse.getPos(), [0, 0]) > 0.44:
-                    mouse_pos = rotated_mouse.getPos()
-                    rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], 90)
-            #        rotated_fixation.pos = rotated_mouse.getPos()
+                if euclidean_dist(rotated_mouse.getPos()- mouse_center, [0, 0]) > 0.44:
+                    mouse_pos = rotated_mouse.getPos() - mouse_center
+                    rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], rotation)
                     rotated_fixation.opacity = 1
                     continueRoutine = False
             else:
+                first = True
                 rotated_fixation.opacity = 1
                 rotated_fixation.pos = [0, 0]
-                mouse_center = rotated_mouse.getPos()
                 rotated_mouse.setPos([0, 0])
             
             # check for quit (typically the Esc key)
@@ -1456,7 +1478,7 @@ for thisBlock in blocks:
             win.timeOnFlip(rotated_breaks, 'tStartRefresh')  # time at next scr refresh
             rotated_breaks.setAutoDraw(True)
         # *mouse_5* updates
-        if mouse_5.status == NOT_STARTED and t >= 0.0-frameTolerance:
+        if mouse_5.status == NOT_STARTED and t >= 0.5-frameTolerance:
             # keep track of start time/frame for later
             mouse_5.frameNStart = frameN  # exact frame index
             mouse_5.tStart = t  # local t and not account for scr refresh
@@ -1538,7 +1560,7 @@ for thisTransfer_trial in transfer_trials:
     gotValidClick = False  # until a click is received
     transfer_fixation.opacity = 1
     transfer_fixation.pos = [0, 0]
-    mouse_center = transfer_mouse.getPos()
+    first = True
     # keep track of which components have finished
     transferComponents = [transfer_target, transfer_fixation, transfer_mouse]
     for thisComponent in transferComponents:
@@ -1599,16 +1621,20 @@ for thisTransfer_trial in transfer_trials:
             transfer_mouse.midButton.append(buttons[1])
             transfer_mouse.rightButton.append(buttons[2])
             transfer_mouse.time.append(transfer_mouse.mouseClock.getTime())
+        win.mouseVisible = False
         if transfer_mouse.getPressed()[0]:
+            if first:
+                mouse_center = transfer_mouse.getPos()
+                first = False
             transfer_fixation.opacity = 0
-            if euclidean_dist(transfer_mouse.getPos(), [0, 0]) > 0.44:
-                transfer_fixation.pos = transfer_mouse.getPos()
+            if euclidean_dist(transfer_mouse.getPos()- mouse_center, [0, 0]) > 0.44:
+                transfer_fixation.pos = transfer_mouse.getPos() - mouse_center
                 transfer_fixation.opacity = 1
                 continueRoutine = False
         else:
+            first = False
             transfer_fixation.opacity = 1
             transfer_fixation.pos = [0, 0]
-            mouse_center = transfer_mouse.getPos()
             transfer_mouse.setPos([0, 0])
         
         # check for quit (typically the Esc key)
