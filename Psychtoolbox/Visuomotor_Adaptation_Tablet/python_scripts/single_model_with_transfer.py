@@ -62,7 +62,8 @@ def residuals_sudden(params, num_trials, data_errors):
     model_errors = model_sudden(num_trials, params[0], params[1])[0]
     #model_errors_train = np.take(model_errors, train_indices)
     #data_errors_train = np.take(data_errors, train_indices)
-    residual_error = np.sqrt(np.sum(np.square(model_errors - data_errors))/len(model_errors))
+    residual_error = np.sum((model_errors - data_errors)**2)
+
     if params[0] < 0 or params[1] < 0:
         residual_error = residual_error + 10000000
     if params[0] > 1 or params[1] > 1:
@@ -73,7 +74,7 @@ def residuals_gradual(params, num_trials, data_errors):
     model_errors = model_gradual(num_trials, params[0], params[1])[0]
     #model_errors_train = np.take(model_errors, train_indices)
     #data_errors_train = np.take(data_errors, train_indices)
-    residual_error = np.sqrt(np.sum(np.square(model_errors - data_errors))/len(model_errors))
+    residual_error = np.sum((model_errors - data_errors)**2)
     if params[0] < 0 or params[1] < 0:
         residual_error = residual_error + 10000000
     if params[0] > 1 or params[1] > 1:
