@@ -181,7 +181,7 @@ def main():
     #its = pickle.load(open('its.pickle', 'rb'))
     #mts = pickle.load(open('mts.pickle', 'rb'))
     #curvatures_smooth = pickle.load(open('curvatures.pickle', 'rb'))
-    curvatures_smooth = pickle.load(open('generated_by_single.pickle', 'rb'))
+    curvatures_smooth = pickle.load(open('generated_by_dual.pickle', 'rb'))
     #curvatures_smooth = pickle.load(open('single_with_transfer_generated_errors.pickle', 'rb'))
     #total_time = its+mts
     #Test git and vscode 
@@ -199,7 +199,7 @@ def main():
     #%% Parallel run and dump fits
     fits = run_fits_dual(curvatures_smooth, 640, 640)
     #with open('fit_dual_bound_with_transfer_model_recovery.pickle', 'wb') as f:
-    with open('fit_dual_bound_with_transfer_GBS.pickle', 'wb') as f:
+    with open('fit_dual_bound_with_transfer_GBD.pickle', 'wb') as f:
         
         pickle.dump(fits, f)
     f.close()
