@@ -23,11 +23,11 @@ from scipy.ndimage import gaussian_filter1d
 
 def model_sudden(num_trials, A, B):
     errors = np.zeros((num_trials))
-    rotation = 90/90.0
+    rotation = 90
     rotation_est = np.zeros((num_trials))
     for trial in range(num_trials - 1):
         if trial < 640:
-            rotation = 1.0
+            rotation = 90
             errors[trial] = rotation - rotation_est[trial]
             rotation_est[trial+1] = A*rotation_est[trial] + B*errors[trial]
         else:
@@ -45,9 +45,9 @@ def model_gradual(num_trials, A, B):
     for trial in range(num_trials - 1):
         if trial < 640:
             if trial%64 == 0:
-                rotation = rotation + 10/90.0
-            if rotation > 1:
-                rotation = 1.0
+                rotation = rotation + 10
+            if rotation > 90:
+                rotation = 90
             errors[trial] = rotation - rotation_est[trial]
             rotation_est[trial+1] = A*rotation_est[trial] + B*errors[trial]
         else:
@@ -222,8 +222,8 @@ def main():
     #mts = pickle.load(open('mts.pickle', 'rb'))
     #total_time = its+mts
     #Test git and vscode 
-    curvatures_smooth = pickle.load(open('dual_with_transfer_generated_errors.pickle', 'rb'))
-    #curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
+    #curvatures_smooth = pickle.load(open('dual_with_transfer_generated_errors.pickle', 'rb'))
+    curvatures_smooth = pickle.load(open('curvatures.pickle', 'rb'))
     #curvatures_smooth = curvatures_smooth/90
     #curvatures_smooth = gaussian_filter1d(total_time, 2)
     #curvatures_smooth = curvatures_smooth/np.max(curvatures_smooth)
@@ -234,7 +234,7 @@ def main():
 
     #%% Parallel run and dump fits
     fits = run_fits_single(curvatures_smooth, 640, 640)
-    with open('fit_single_bound_with_transfer_model_recovery.pickle', 'wb') as f:
+    with open('fit_single_bound_with_transfer.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
         

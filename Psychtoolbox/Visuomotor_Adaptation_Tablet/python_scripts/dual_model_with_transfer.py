@@ -23,14 +23,14 @@ from scipy.ndimage import gaussian_filter1d
 
 def dual_model_sudden(num_trials, Af, Bf, As, Bs):
     errors = np.zeros((num_trials))
-    rotation = 1.0
+    rotation = 90
     fast_est = np.zeros((num_trials))
     slow_est = np.zeros((num_trials))
     rotation_est = np.zeros((num_trials))
     #rotation_est[0] = est
     for trial in range(num_trials - 1):
         if trial < 640:
-            rotation = 1.0
+            rotation = 90
             errors[trial] = rotation - rotation_est[trial]
             fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
             slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
@@ -55,9 +55,9 @@ def dual_model_gradual(num_trials, Af, Bf, As, Bs):
     for trial in range(num_trials - 1):
         if trial < 640:
             if trial%64 == 0:
-                rotation = rotation + 10/90.0
-            if rotation > 1:
-                rotation = 1.0
+                rotation = rotation + 10
+            if rotation > 90:
+                rotation = 90
             errors[trial] = rotation - rotation_est[trial]
             fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
             slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
@@ -180,14 +180,15 @@ def main():
     #if __name__ == '__main__':
     #its = pickle.load(open('its.pickle', 'rb'))
     #mts = pickle.load(open('mts.pickle', 'rb'))
+    curvatures_smooth = pickle.load(open('curvatures.pickle', 'rb'))
     #curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
-    curvatures_smooth = pickle.load(open('single_with_transfer_generated_errors.pickle', 'rb'))
+    #curvatures_smooth = pickle.load(open('single_with_transfer_generated_errors.pickle', 'rb'))
     #total_time = its+mts
     #Test git and vscode 
     #curvatures_smooth = curvatures_smooth/90.0
     #curvatures_smooth = gaussian_filter1d(total_time, 2)
     #curvatures_smooth = curvatures_smooth/np.max(curvatures_smooth)
-    print("parallel curvatures successful")
+    #print("parallel curvatures successful")
     print (curvatures_smooth)
     
     #with open('curvatures_smooth.pickle', 'wb') as f:
@@ -197,7 +198,9 @@ def main():
     
     #%% Parallel run and dump fits
     fits = run_fits_dual(curvatures_smooth, 640, 640)
-    with open('fit_dual_bound_with_transfer_model_recovery.pickle', 'wb') as f:
+    #with open('fit_dual_bound_with_transfer_model_recovery.pickle', 'wb') as f:
+    with open('fit_dual_bound_with_transfer.pickle', 'wb') as f:
+        
         pickle.dump(fits, f)
     f.close()
         
