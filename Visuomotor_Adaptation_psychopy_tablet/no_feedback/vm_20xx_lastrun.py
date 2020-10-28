@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2020.2.4),
-    on October 07, 2020, at 08:48
+    on October 14, 2020, at 13:52
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -51,7 +51,7 @@ filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expInfo['participant'], expNa
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
     extraInfo=expInfo, runtimeInfo=None,
-    originPath='C:\\Users\\lab\\Experiments\\tsavalia\\Visuomotor_Adaptation_psychopy_tablet\\no_feedback\\vm_20xx_lastrun.py',
+    originPath='C:\\Users\\Tejas\\Documents\\Lab-Codes\\Visuomotor_Adaptation_psychopy_tablet\\no_feedback\\vm_20xx_lastrun.py',
     savePickle=True, saveWideText=True,
     dataFileName=filename)
 # save a log file for detail verbose info
@@ -83,7 +83,7 @@ defaultKeyboard = keyboard.Keyboard()
 # Initialize components for Routine "instructions"
 instructionsClock = core.Clock()
 Welcome = visual.TextStim(win=win, name='Welcome',
-    text='Welcome to Visuomotor Adaptation!\n\nYour task is to move a circle controlled by the pen to the target cross.  \n\nThe circle will disappear once you start to move and reappear as you cover the distance required to hit the target. \n\nTry to hit the target as many times as possible. \n\nScratch on the tab using the pen to proceed to a demo.',
+    text='Welcome to Visuomotor Adaptation!\n\nYour task is to move a circle controlled by the pen to the target cross.  \n\nThe circle will disappear once you start to move and reappear as you cover the distance required to hit the target. \n\nOnce the circle reappears, you will be shown a score based on how close you were to the target. Maximize the score by trying to hit the target as many times as possible. \n\nMaximum score you can get on each trial is 31.\n\nScratch on the tab using the pen to proceed to a demo.',
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -108,47 +108,89 @@ mouse_2.mouseClock = core.Clock()
 
 # Initialize components for Routine "demo"
 demoClock = core.Clock()
+def euclidean_dist(vec1, vec2):
+    return sqrt((vec1[0] - vec2[0])**2 + (vec1[1] - vec2[1])**2)
+
+def angular_dist(vec1, vec2):
+    uv1 = vec1/np.linalg.norm(vec1)
+    uv2 = vec2/np.linalg.norm(vec2)
+    dot_product = np.dot(uv1, uv2)
+    angle = np.arccos(dot_product)
+    return angle
+demo_enclosing_1 = visual.Polygon(
+    win=win, name='demo_enclosing_1',
+    edges=64, size=(0.89, 0.89),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=-1.0, interpolate=True)
+demo_enclosing = visual.Polygon(
+    win=win, name='demo_enclosing',
+    edges=64, size=(0.80, 0.80),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=-2.0, interpolate=True)
 demo_target = visual.ShapeStim(
     win=win, name='demo_target', vertices='cross',
     size=(0.05, 0.05),
     ori=45, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=0.0, interpolate=True)
+    opacity=1, depth=-3.0, interpolate=True)
 demo_fixation = visual.Polygon(
     win=win, name='demo_fixation',
     edges=32, size=(0.025, 0.025),
     ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,0,0], lineColorSpace='rgb',
     fillColor=[1,0,0], fillColorSpace='rgb',
-    opacity=1, depth=-1.0, interpolate=True)
+    opacity=1, depth=-4.0, interpolate=True)
 demo_mouse = event.Mouse(win=win)
 x, y = [None, None]
 demo_mouse.mouseClock = core.Clock()
-def euclidean_dist(vec1, vec2):
-    return sqrt((vec1[0] - vec2[0])**2 + (vec1[1] - vec2[1])**2)
 
 # Initialize components for Routine "demo_feedback"
 demo_feedbackClock = core.Clock()
+demo_enclosing_feedback_1 = visual.Polygon(
+    win=win, name='demo_enclosing_feedback_1',
+    edges=128, size=(0.9, 0.9),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0, 0, 0], fillColorSpace='rgb',
+    opacity=1, depth=0.0, interpolate=True)
+demo_enclosing_feedback = visual.Polygon(
+    win=win, name='demo_enclosing_feedback',
+    edges=64, size=(0.79, 0.79),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0, 0, 0], fillColorSpace='rgb',
+    opacity=1, depth=-1.0, interpolate=True)
 demo_target_feedback = visual.ShapeStim(
     win=win, name='demo_target_feedback', vertices='cross',
     size=(0.05, 0.05),
     ori=45, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=0.0, interpolate=True)
+    opacity=1, depth=-2.0, interpolate=True)
 demo_fixation_feedback = visual.Polygon(
     win=win, name='demo_fixation_feedback',
     edges=32, size=(0.025, 0.025),
     ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,0,0], lineColorSpace='rgb',
     fillColor=[1,0,0], fillColorSpace='rgb',
-    opacity=1, depth=-1.0, interpolate=True)
+    opacity=1, depth=-3.0, interpolate=True)
+demo_score_text = visual.TextStim(win=win, name='demo_score_text',
+    text='default text',
+    font='Arial',
+    pos=(0.4, 0.4), height=0.04, wrapWidth=None, ori=0, 
+    color='green', colorSpace='rgb', opacity=1, 
+    languageStyle='LTR',
+    depth=-5.0);
 
 # Initialize components for Routine "experiment_start"
 experiment_startClock = core.Clock()
 text_3 = visual.TextStim(win=win, name='text_3',
-    text="Experiment starts now!\n\nTry to come as close to the target as possible even if you can't hit it.\n\nScratch the trackpad to continue.",
+    text='Experiment starts now!\n\nRemember you can maximize your score by being as close to the target as possible.\n\nScratch the trackpad to continue.',
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -160,45 +202,80 @@ mouse_6.mouseClock = core.Clock()
 
 # Initialize components for Routine "baseline"
 baselineClock = core.Clock()
+baseline_enclosing_1 = visual.Polygon(
+    win=win, name='baseline_enclosing_1',
+    edges=128, size=(0.9, 0.9),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=-1.0, interpolate=True)
+baseline_enclosing = visual.Polygon(
+    win=win, name='baseline_enclosing',
+    edges=128, size=(0.8, 0.8),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=-2.0, interpolate=True)
 baseline_target = visual.ShapeStim(
     win=win, name='baseline_target', vertices='cross',
     size=(0.05, 0.05),
     ori=45, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=0.0, interpolate=True)
+    opacity=1, depth=-3.0, interpolate=True)
 baseline_fixation = visual.Polygon(
     win=win, name='baseline_fixation',
     edges=32, size=(0.025, 0.025),
     ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,0,0], lineColorSpace='rgb',
     fillColor=[1,0,0], fillColorSpace='rgb',
-    opacity=1.0, depth=-1.0, interpolate=True)
+    opacity=1.0, depth=-4.0, interpolate=True)
 baseline_mouse = event.Mouse(win=win)
 x, y = [None, None]
 baseline_mouse.mouseClock = core.Clock()
 
 # Initialize components for Routine "baseline_feedback"
 baseline_feedbackClock = core.Clock()
+baseline_enclosing_feedback_1 = visual.Polygon(
+    win=win, name='baseline_enclosing_feedback_1',
+    edges=128, size=(0.9, 0.9),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=0.0, interpolate=True)
+baseline_enclosing_feedback = visual.Polygon(
+    win=win, name='baseline_enclosing_feedback',
+    edges=128, size=(0.8, 0.8),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=-1.0, interpolate=True)
 baseline_target_feedback = visual.ShapeStim(
     win=win, name='baseline_target_feedback', vertices='cross',
     size=(0.05, 0.05),
     ori=45, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=0.0, interpolate=True)
+    opacity=1, depth=-2.0, interpolate=True)
 baseline_fixation_feedback = visual.Polygon(
     win=win, name='baseline_fixation_feedback',
     edges=32, size=(0.025, 0.025),
     ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,0,0], lineColorSpace='rgb',
     fillColor=[1,0,0], fillColorSpace='rgb',
-    opacity=1, depth=-1.0, interpolate=True)
+    opacity=1, depth=-3.0, interpolate=True)
+baseline_score_text = visual.TextStim(win=win, name='baseline_score_text',
+    text='default text',
+    font='Arial',
+    pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
+    color='green', colorSpace='rgb', opacity=1, 
+    languageStyle='LTR',
+    depth=-5.0);
 
 # Initialize components for Routine "break_1"
 break_1Clock = core.Clock()
 text_2 = visual.TextStim(win=win, name='text_2',
-    text="Start next block.\n\nRemember to try to be as accurate as possible by getting close to the target as many times as possible.\n\nIf it helps, take your time to make the movement and be accurate.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
+    text="Take a break.\n\nRemember to try to maximize your score by getting close to the target as many times as possible.\n\nIf it helps, take your time to make the movement and be accurate.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -210,20 +287,34 @@ mouse_3.mouseClock = core.Clock()
 
 # Initialize components for Routine "rotated"
 rotatedClock = core.Clock()
+rotated_enclosing_1 = visual.Polygon(
+    win=win, name='rotated_enclosing_1',
+    edges=128, size=(0.9, 0.9),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=0.0, interpolate=True)
+rotated_enclosing = visual.Polygon(
+    win=win, name='rotated_enclosing',
+    edges=128, size=(0.8, 0.8),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=-1.0, interpolate=True)
 rotated_target = visual.ShapeStim(
     win=win, name='rotated_target', vertices='cross',
     size=(0.05, 0.05),
     ori=45, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=0.0, interpolate=True)
+    opacity=1, depth=-2.0, interpolate=True)
 rotated_fixation = visual.Polygon(
     win=win, name='rotated_fixation',
     edges=32, size=(0.025, 0.025),
     ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,0,0], lineColorSpace='rgb',
     fillColor=[1,0,0], fillColorSpace='rgb',
-    opacity=1, depth=-1.0, interpolate=True)
+    opacity=1, depth=-3.0, interpolate=True)
 rotated_mouse = event.Mouse(win=win)
 x, y = [None, None]
 rotated_mouse.mouseClock = core.Clock()
@@ -239,25 +330,46 @@ count = 0
 
 # Initialize components for Routine "rotated_feedback"
 rotated_feedbackClock = core.Clock()
+rotated_enclosing_feedback_1 = visual.Polygon(
+    win=win, name='rotated_enclosing_feedback_1',
+    edges=128, size=(0.9, 0.9),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=0.0, interpolate=True)
+rotated_enclosing_feedback = visual.Polygon(
+    win=win, name='rotated_enclosing_feedback',
+    edges=128, size=(0.8, 0.8),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0,0,0], fillColorSpace='rgb',
+    opacity=1, depth=-1.0, interpolate=True)
 rotated_target_feedback = visual.ShapeStim(
     win=win, name='rotated_target_feedback', vertices='cross',
     size=(0.05, 0.05),
     ori=45, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=0.0, interpolate=True)
+    opacity=1, depth=-2.0, interpolate=True)
 rotated_fixation_feedback = visual.Polygon(
     win=win, name='rotated_fixation_feedback',
     edges=32, size=(0.025, 0.025),
     ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,0,0], lineColorSpace='rgb',
     fillColor=[1,0,0], fillColorSpace='rgb',
-    opacity=1, depth=-1.0, interpolate=True)
+    opacity=1, depth=-3.0, interpolate=True)
+rotated_score_text = visual.TextStim(win=win, name='rotated_score_text',
+    text='default text',
+    font='Arial',
+    pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
+    color='green', colorSpace='rgb', opacity=1, 
+    languageStyle='LTR',
+    depth=-5.0);
 
 # Initialize components for Routine "break_2"
 break_2Clock = core.Clock()
 rotated_breaks = visual.TextStim(win=win, name='rotated_breaks',
-    text="Take a break.\n\nRemember to try to be as accurate as possible by getting as close to the target coss as possible.\n\nIf it helps, take your time to make the movement and be accurate.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
+    text="Take a break.\n\nRemember to try to maximize your score by getting close to the target as many times as possible.\n\nIf it helps, take your time to make the movement and be accurate.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -269,40 +381,75 @@ mouse_5.mouseClock = core.Clock()
 
 # Initialize components for Routine "transfer"
 transferClock = core.Clock()
+transfer_enclosing_1 = visual.Polygon(
+    win=win, name='transfer_enclosing_1',
+    edges=128, size=(0.9, 0.9),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1, -1, -1], lineColorSpace='rgb',
+    fillColor=[0, 0, 0], fillColorSpace='rgb',
+    opacity=1, depth=-1.0, interpolate=True)
+transfer_enclosing = visual.Polygon(
+    win=win, name='transfer_enclosing',
+    edges=128, size=(0.8, 0.8),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0, 0, 0], fillColorSpace='rgb',
+    opacity=1, depth=-2.0, interpolate=True)
 transfer_target = visual.ShapeStim(
     win=win, name='transfer_target', vertices='cross',
     size=(0.05, 0.05),
     ori=45, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=0.0, interpolate=True)
+    opacity=1, depth=-3.0, interpolate=True)
 transfer_fixation = visual.Polygon(
     win=win, name='transfer_fixation',
     edges=32, size=(0.025, 0.025),
     ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,0,0], lineColorSpace='rgb',
     fillColor=[1,0,0], fillColorSpace='rgb',
-    opacity=1, depth=-1.0, interpolate=True)
+    opacity=1, depth=-4.0, interpolate=True)
 transfer_mouse = event.Mouse(win=win)
 x, y = [None, None]
 transfer_mouse.mouseClock = core.Clock()
 
 # Initialize components for Routine "transfer_feedback"
 transfer_feedbackClock = core.Clock()
+transfer_enclosing_feedback_1 = visual.Polygon(
+    win=win, name='transfer_enclosing_feedback_1',
+    edges=128, size=(0.9, 0.9),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1, -1, -1], lineColorSpace='rgb',
+    fillColor=[0, 0, 0], fillColorSpace='rgb',
+    opacity=1, depth=0.0, interpolate=True)
+transfer_enclosing_feedback = visual.Polygon(
+    win=win, name='transfer_enclosing_feedback',
+    edges=128, size=(0.8, 0.8),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
+    fillColor=[0, 0, 0], fillColorSpace='rgb',
+    opacity=1, depth=-1.0, interpolate=True)
 transfer_target_feedback = visual.ShapeStim(
     win=win, name='transfer_target_feedback', vertices='cross',
     size=(0.05, 0.05),
     ori=45, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=0.0, interpolate=True)
+    opacity=1, depth=-2.0, interpolate=True)
 transfer_fixation_feedback = visual.Polygon(
     win=win, name='transfer_fixation_feedback',
     edges=32, size=(0.025, 0.025),
     ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,0,0], lineColorSpace='rgb',
     fillColor=[1,0,0], fillColorSpace='rgb',
-    opacity=1, depth=-1.0, interpolate=True)
+    opacity=1, depth=-3.0, interpolate=True)
+text_4 = visual.TextStim(win=win, name='text_4',
+    text='default text',
+    font='Arial',
+    pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
+    color='green', colorSpace='rgb', opacity=1, 
+    languageStyle='LTR',
+    depth=-5.0);
 
 # Initialize components for Routine "Done"
 DoneClock = core.Clock()
@@ -405,7 +552,7 @@ thisExp.nextEntry()
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-trials = data.TrialHandler(nReps=2, method='random', 
+trials = data.TrialHandler(nReps=0, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=[None],
     seed=None, name='trials')
@@ -527,6 +674,10 @@ for thisTrial in trials:
         # ------Prepare to start Routine "demo"-------
         continueRoutine = True
         # update component parameters for each repeat
+        demo_fixation.opacity = 1
+        demo_fixation.pos = [0, 0]
+        first = True
+        jitter = np.random.uniform(0.5, 1.5)
         demo_target.setPos((target_x, target_y))
         demo_fixation.setPos((0, 0))
         # setup some python lists for storing info about the demo_mouse
@@ -537,11 +688,8 @@ for thisTrial in trials:
         demo_mouse.rightButton = []
         demo_mouse.time = []
         gotValidClick = False  # until a click is received
-        demo_fixation.opacity = 1
-        demo_fixation.pos = [0, 0]
-        first = True
         # keep track of which components have finished
-        demoComponents = [demo_target, demo_fixation, demo_mouse]
+        demoComponents = [demo_enclosing_1, demo_enclosing, demo_target, demo_fixation, demo_mouse]
         for thisComponent in demoComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -563,9 +711,42 @@ for thisTrial in trials:
             tThisFlipGlobal = win.getFutureFlipTime(clock=None)
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
+            win.mouseVisible = False
+            if demo_mouse.getPressed()[0]:
+                if first:
+                    mouse_center = demo_mouse.getPos()
+                    first = False
+                demo_fixation.opacity = 0
+                if euclidean_dist(demo_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
+                    demo_fixation.pos = demo_mouse.getPos() - mouse_center
+                    demo_fixation.opacity = 1
+                    continueRoutine = False
+            else:
+                first = True
+                demo_fixation.opacity = 1
+                demo_fixation.pos = [0, 0]
+                demo_mouse.setPos([0, 0])
+            
+            # *demo_enclosing_1* updates
+            if demo_enclosing_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                demo_enclosing_1.frameNStart = frameN  # exact frame index
+                demo_enclosing_1.tStart = t  # local t and not account for scr refresh
+                demo_enclosing_1.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(demo_enclosing_1, 'tStartRefresh')  # time at next scr refresh
+                demo_enclosing_1.setAutoDraw(True)
+            
+            # *demo_enclosing* updates
+            if demo_enclosing.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                demo_enclosing.frameNStart = frameN  # exact frame index
+                demo_enclosing.tStart = t  # local t and not account for scr refresh
+                demo_enclosing.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(demo_enclosing, 'tStartRefresh')  # time at next scr refresh
+                demo_enclosing.setAutoDraw(True)
             
             # *demo_target* updates
-            if demo_target.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            if demo_target.status == NOT_STARTED and tThisFlip >= jitter-frameTolerance:
                 # keep track of start time/frame for later
                 demo_target.frameNStart = frameN  # exact frame index
                 demo_target.tStart = t  # local t and not account for scr refresh
@@ -582,7 +763,7 @@ for thisTrial in trials:
                 win.timeOnFlip(demo_fixation, 'tStartRefresh')  # time at next scr refresh
                 demo_fixation.setAutoDraw(True)
             # *demo_mouse* updates
-            if demo_mouse.status == NOT_STARTED and t >= 0.0-frameTolerance:
+            if demo_mouse.status == NOT_STARTED and t >= jitter-frameTolerance:
                 # keep track of start time/frame for later
                 demo_mouse.frameNStart = frameN  # exact frame index
                 demo_mouse.tStart = t  # local t and not account for scr refresh
@@ -600,21 +781,6 @@ for thisTrial in trials:
                 demo_mouse.midButton.append(buttons[1])
                 demo_mouse.rightButton.append(buttons[2])
                 demo_mouse.time.append(demo_mouse.mouseClock.getTime())
-            win.mouseVisible = False
-            if demo_mouse.getPressed()[0]:
-                if first:
-                    mouse_center = demo_mouse.getPos()
-                    first = False
-                demo_fixation.opacity = 0
-                if euclidean_dist(demo_mouse.getPos() - mouse_center, [0, 0]) > 0.44:
-                    demo_fixation.pos = demo_mouse.getPos() - mouse_center
-                    demo_fixation.opacity = 1
-                    continueRoutine = False
-            else:
-                first = True
-                demo_fixation.opacity = 1
-                demo_fixation.pos = [0, 0]
-                demo_mouse.setPos([0, 0])
             
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -637,6 +803,12 @@ for thisTrial in trials:
         for thisComponent in demoComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        demo_fixation.opacity = 1
+        demo_fix_end_pos = demo_fixation.pos
+        trials_2.addData('demo_enclosing_1.started', demo_enclosing_1.tStartRefresh)
+        trials_2.addData('demo_enclosing_1.stopped', demo_enclosing_1.tStopRefresh)
+        trials_2.addData('demo_enclosing.started', demo_enclosing.tStartRefresh)
+        trials_2.addData('demo_enclosing.stopped', demo_enclosing.tStopRefresh)
         trials_2.addData('demo_target.started', demo_target.tStartRefresh)
         trials_2.addData('demo_target.stopped', demo_target.tStopRefresh)
         trials_2.addData('demo_fixation.started', demo_fixation.tStartRefresh)
@@ -650,19 +822,20 @@ for thisTrial in trials:
         trials_2.addData('demo_mouse.time', demo_mouse.time)
         trials_2.addData('demo_mouse.started', demo_mouse.tStart)
         trials_2.addData('demo_mouse.stopped', demo_mouse.tStop)
-        demo_fixation.opacity = 1
-        demo_fix_end_pos = demo_fixation.pos
         # the Routine "demo" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         
         # ------Prepare to start Routine "demo_feedback"-------
         continueRoutine = True
-        routineTimer.add(0.500000)
+        routineTimer.add(1.000000)
         # update component parameters for each repeat
         demo_target_feedback.setPos((target_x, target_y))
         demo_fixation_feedback.setPos(demo_fix_end_pos)
+        ang_error = angular_dist(demo_fix_end_pos, demo_target_feedback.pos)
+        score = int((pi-ang_error)*10)
+        demo_score_text.setText('Your score: ' + str(score))
         # keep track of which components have finished
-        demo_feedbackComponents = [demo_target_feedback, demo_fixation_feedback]
+        demo_feedbackComponents = [demo_enclosing_feedback_1, demo_enclosing_feedback, demo_target_feedback, demo_fixation_feedback, demo_score_text]
         for thisComponent in demo_feedbackComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -685,6 +858,40 @@ for thisTrial in trials:
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
             
+            # *demo_enclosing_feedback_1* updates
+            if demo_enclosing_feedback_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                demo_enclosing_feedback_1.frameNStart = frameN  # exact frame index
+                demo_enclosing_feedback_1.tStart = t  # local t and not account for scr refresh
+                demo_enclosing_feedback_1.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(demo_enclosing_feedback_1, 'tStartRefresh')  # time at next scr refresh
+                demo_enclosing_feedback_1.setAutoDraw(True)
+            if demo_enclosing_feedback_1.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > demo_enclosing_feedback_1.tStartRefresh + 1-frameTolerance:
+                    # keep track of stop time/frame for later
+                    demo_enclosing_feedback_1.tStop = t  # not accounting for scr refresh
+                    demo_enclosing_feedback_1.frameNStop = frameN  # exact frame index
+                    win.timeOnFlip(demo_enclosing_feedback_1, 'tStopRefresh')  # time at next scr refresh
+                    demo_enclosing_feedback_1.setAutoDraw(False)
+            
+            # *demo_enclosing_feedback* updates
+            if demo_enclosing_feedback.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                demo_enclosing_feedback.frameNStart = frameN  # exact frame index
+                demo_enclosing_feedback.tStart = t  # local t and not account for scr refresh
+                demo_enclosing_feedback.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(demo_enclosing_feedback, 'tStartRefresh')  # time at next scr refresh
+                demo_enclosing_feedback.setAutoDraw(True)
+            if demo_enclosing_feedback.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > demo_enclosing_feedback.tStartRefresh + 1-frameTolerance:
+                    # keep track of stop time/frame for later
+                    demo_enclosing_feedback.tStop = t  # not accounting for scr refresh
+                    demo_enclosing_feedback.frameNStop = frameN  # exact frame index
+                    win.timeOnFlip(demo_enclosing_feedback, 'tStopRefresh')  # time at next scr refresh
+                    demo_enclosing_feedback.setAutoDraw(False)
+            
             # *demo_target_feedback* updates
             if demo_target_feedback.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
                 # keep track of start time/frame for later
@@ -695,7 +902,7 @@ for thisTrial in trials:
                 demo_target_feedback.setAutoDraw(True)
             if demo_target_feedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > demo_target_feedback.tStartRefresh + 0.5-frameTolerance:
+                if tThisFlipGlobal > demo_target_feedback.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     demo_target_feedback.tStop = t  # not accounting for scr refresh
                     demo_target_feedback.frameNStop = frameN  # exact frame index
@@ -719,6 +926,23 @@ for thisTrial in trials:
                     win.timeOnFlip(demo_fixation_feedback, 'tStopRefresh')  # time at next scr refresh
                     demo_fixation_feedback.setAutoDraw(False)
             
+            # *demo_score_text* updates
+            if demo_score_text.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                demo_score_text.frameNStart = frameN  # exact frame index
+                demo_score_text.tStart = t  # local t and not account for scr refresh
+                demo_score_text.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(demo_score_text, 'tStartRefresh')  # time at next scr refresh
+                demo_score_text.setAutoDraw(True)
+            if demo_score_text.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > demo_score_text.tStartRefresh + 1-frameTolerance:
+                    # keep track of stop time/frame for later
+                    demo_score_text.tStop = t  # not accounting for scr refresh
+                    demo_score_text.frameNStop = frameN  # exact frame index
+                    win.timeOnFlip(demo_score_text, 'tStopRefresh')  # time at next scr refresh
+                    demo_score_text.setAutoDraw(False)
+            
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
@@ -740,17 +964,23 @@ for thisTrial in trials:
         for thisComponent in demo_feedbackComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        trials_2.addData('demo_enclosing_feedback_1.started', demo_enclosing_feedback_1.tStartRefresh)
+        trials_2.addData('demo_enclosing_feedback_1.stopped', demo_enclosing_feedback_1.tStopRefresh)
+        trials_2.addData('demo_enclosing_feedback.started', demo_enclosing_feedback.tStartRefresh)
+        trials_2.addData('demo_enclosing_feedback.stopped', demo_enclosing_feedback.tStopRefresh)
         trials_2.addData('demo_target_feedback.started', demo_target_feedback.tStartRefresh)
         trials_2.addData('demo_target_feedback.stopped', demo_target_feedback.tStopRefresh)
         trials_2.addData('demo_fixation_feedback.started', demo_fixation_feedback.tStartRefresh)
         trials_2.addData('demo_fixation_feedback.stopped', demo_fixation_feedback.tStopRefresh)
+        trials_2.addData('demo_score_text.started', demo_score_text.tStartRefresh)
+        trials_2.addData('demo_score_text.stopped', demo_score_text.tStopRefresh)
         thisExp.nextEntry()
         
     # completed 1 repeats of 'trials_2'
     
     thisExp.nextEntry()
     
-# completed 2 repeats of 'trials'
+# completed 0 repeats of 'trials'
 
 
 # ------Prepare to start Routine "experiment_start"-------
@@ -837,7 +1067,7 @@ thisExp.nextEntry()
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-baseline_trials = data.TrialHandler(nReps=4, method='random', 
+baseline_trials = data.TrialHandler(nReps=1, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=data.importConditions('conditions_baseline.xlsx'),
     seed=None, name='baseline_trials')
@@ -858,6 +1088,11 @@ for thisBaseline_trial in baseline_trials:
     # ------Prepare to start Routine "baseline"-------
     continueRoutine = True
     # update component parameters for each repeat
+    baseline_fixation.opacity = 1
+    baseline_fixation.pos = [0, 0]
+    mouse_center = baseline_mouse.getPos()
+    first = True
+    jitter = np.random.uniform(0.5, 1.5)
     baseline_target.setPos((target_x, target_y))
     baseline_fixation.setOpacity(1)
     baseline_fixation.setPos((0, 0))
@@ -869,12 +1104,8 @@ for thisBaseline_trial in baseline_trials:
     baseline_mouse.rightButton = []
     baseline_mouse.time = []
     gotValidClick = False  # until a click is received
-    baseline_fixation.opacity = 1
-    baseline_fixation.pos = [0, 0]
-    mouse_center = baseline_mouse.getPos()
-    first = True
     # keep track of which components have finished
-    baselineComponents = [baseline_target, baseline_fixation, baseline_mouse]
+    baselineComponents = [baseline_enclosing_1, baseline_enclosing, baseline_target, baseline_fixation, baseline_mouse]
     for thisComponent in baselineComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -896,9 +1127,42 @@ for thisBaseline_trial in baseline_trials:
         tThisFlipGlobal = win.getFutureFlipTime(clock=None)
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
+        win.mouseVisible = False
+        if baseline_mouse.getPressed()[0]:
+            if first:
+                mouse_center = baseline_mouse.getPos()
+                first = False
+            baseline_fixation.opacity = 0
+            if euclidean_dist(baseline_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
+                baseline_fixation.pos = baseline_mouse.getPos() - mouse_center
+                baseline_fixation.opacity = 1
+                continueRoutine = False
+        else:
+            first = True
+            baseline_fixation.opacity = 1
+            baseline_fixation.pos = [0, 0]
+            baseline_mouse.setPos([0, 0])
+        
+        # *baseline_enclosing_1* updates
+        if baseline_enclosing_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            baseline_enclosing_1.frameNStart = frameN  # exact frame index
+            baseline_enclosing_1.tStart = t  # local t and not account for scr refresh
+            baseline_enclosing_1.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(baseline_enclosing_1, 'tStartRefresh')  # time at next scr refresh
+            baseline_enclosing_1.setAutoDraw(True)
+        
+        # *baseline_enclosing* updates
+        if baseline_enclosing.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            baseline_enclosing.frameNStart = frameN  # exact frame index
+            baseline_enclosing.tStart = t  # local t and not account for scr refresh
+            baseline_enclosing.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(baseline_enclosing, 'tStartRefresh')  # time at next scr refresh
+            baseline_enclosing.setAutoDraw(True)
         
         # *baseline_target* updates
-        if baseline_target.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        if baseline_target.status == NOT_STARTED and tThisFlip >= jitter-frameTolerance:
             # keep track of start time/frame for later
             baseline_target.frameNStart = frameN  # exact frame index
             baseline_target.tStart = t  # local t and not account for scr refresh
@@ -924,6 +1188,14 @@ for thisBaseline_trial in baseline_trials:
             baseline_mouse.status = STARTED
             baseline_mouse.mouseClock.reset()
             prevButtonState = baseline_mouse.getPressed()  # if button is down already this ISN'T a new click
+        if baseline_mouse.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > baseline_mouse.tStartRefresh + jitter-frameTolerance:
+                # keep track of stop time/frame for later
+                baseline_mouse.tStop = t  # not accounting for scr refresh
+                baseline_mouse.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(baseline_mouse, 'tStopRefresh')  # time at next scr refresh
+                baseline_mouse.status = FINISHED
         if baseline_mouse.status == STARTED:  # only update if started and not finished!
             x, y = baseline_mouse.getPos()
             baseline_mouse.x.append(x)
@@ -933,21 +1205,6 @@ for thisBaseline_trial in baseline_trials:
             baseline_mouse.midButton.append(buttons[1])
             baseline_mouse.rightButton.append(buttons[2])
             baseline_mouse.time.append(baseline_mouse.mouseClock.getTime())
-        win.mouseVisible = False
-        if baseline_mouse.getPressed()[0]:
-            if first:
-                mouse_center = baseline_mouse.getPos()
-                first = False
-            baseline_fixation.opacity = 0
-            if euclidean_dist(baseline_mouse.getPos() - mouse_center, [0, 0]) > 0.44:
-                baseline_fixation.pos = baseline_mouse.getPos() - mouse_center
-                baseline_fixation.opacity = 1
-                continueRoutine = False
-        else:
-            first = True
-            baseline_fixation.opacity = 1
-            baseline_fixation.pos = [0, 0]
-            baseline_mouse.setPos([0, 0])
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -970,6 +1227,12 @@ for thisBaseline_trial in baseline_trials:
     for thisComponent in baselineComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
+    baseline_fixation.opacity = 1
+    baseline_fix_end_pos = baseline_fixation.pos
+    baseline_trials.addData('baseline_enclosing_1.started', baseline_enclosing_1.tStartRefresh)
+    baseline_trials.addData('baseline_enclosing_1.stopped', baseline_enclosing_1.tStopRefresh)
+    baseline_trials.addData('baseline_enclosing.started', baseline_enclosing.tStartRefresh)
+    baseline_trials.addData('baseline_enclosing.stopped', baseline_enclosing.tStopRefresh)
     baseline_trials.addData('baseline_target.started', baseline_target.tStartRefresh)
     baseline_trials.addData('baseline_target.stopped', baseline_target.tStopRefresh)
     baseline_trials.addData('baseline_fixation.started', baseline_fixation.tStartRefresh)
@@ -983,19 +1246,20 @@ for thisBaseline_trial in baseline_trials:
     baseline_trials.addData('baseline_mouse.time', baseline_mouse.time)
     baseline_trials.addData('baseline_mouse.started', baseline_mouse.tStart)
     baseline_trials.addData('baseline_mouse.stopped', baseline_mouse.tStop)
-    baseline_fixation.opacity = 1
-    baseline_fix_end_pos = baseline_fixation.pos
     # the Routine "baseline" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
     # ------Prepare to start Routine "baseline_feedback"-------
     continueRoutine = True
-    routineTimer.add(0.500000)
+    routineTimer.add(1.000000)
     # update component parameters for each repeat
     baseline_target_feedback.setPos((target_x, target_y))
     baseline_fixation_feedback.setPos(baseline_fix_end_pos)
+    ang_error = angular_dist(baseline_fix_end_pos, baseline_target_feedback.pos)
+    score = int((pi-ang_error)*10)
+    baseline_score_text.setText('Your score: ' + str(score))
     # keep track of which components have finished
-    baseline_feedbackComponents = [baseline_target_feedback, baseline_fixation_feedback]
+    baseline_feedbackComponents = [baseline_enclosing_feedback_1, baseline_enclosing_feedback, baseline_target_feedback, baseline_fixation_feedback, baseline_score_text]
     for thisComponent in baseline_feedbackComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -1018,6 +1282,40 @@ for thisBaseline_trial in baseline_trials:
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
         
+        # *baseline_enclosing_feedback_1* updates
+        if baseline_enclosing_feedback_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            baseline_enclosing_feedback_1.frameNStart = frameN  # exact frame index
+            baseline_enclosing_feedback_1.tStart = t  # local t and not account for scr refresh
+            baseline_enclosing_feedback_1.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(baseline_enclosing_feedback_1, 'tStartRefresh')  # time at next scr refresh
+            baseline_enclosing_feedback_1.setAutoDraw(True)
+        if baseline_enclosing_feedback_1.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > baseline_enclosing_feedback_1.tStartRefresh + 1.0-frameTolerance:
+                # keep track of stop time/frame for later
+                baseline_enclosing_feedback_1.tStop = t  # not accounting for scr refresh
+                baseline_enclosing_feedback_1.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(baseline_enclosing_feedback_1, 'tStopRefresh')  # time at next scr refresh
+                baseline_enclosing_feedback_1.setAutoDraw(False)
+        
+        # *baseline_enclosing_feedback* updates
+        if baseline_enclosing_feedback.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            baseline_enclosing_feedback.frameNStart = frameN  # exact frame index
+            baseline_enclosing_feedback.tStart = t  # local t and not account for scr refresh
+            baseline_enclosing_feedback.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(baseline_enclosing_feedback, 'tStartRefresh')  # time at next scr refresh
+            baseline_enclosing_feedback.setAutoDraw(True)
+        if baseline_enclosing_feedback.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > baseline_enclosing_feedback.tStartRefresh + 1.0-frameTolerance:
+                # keep track of stop time/frame for later
+                baseline_enclosing_feedback.tStop = t  # not accounting for scr refresh
+                baseline_enclosing_feedback.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(baseline_enclosing_feedback, 'tStopRefresh')  # time at next scr refresh
+                baseline_enclosing_feedback.setAutoDraw(False)
+        
         # *baseline_target_feedback* updates
         if baseline_target_feedback.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
             # keep track of start time/frame for later
@@ -1028,7 +1326,7 @@ for thisBaseline_trial in baseline_trials:
             baseline_target_feedback.setAutoDraw(True)
         if baseline_target_feedback.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > baseline_target_feedback.tStartRefresh + 0.5-frameTolerance:
+            if tThisFlipGlobal > baseline_target_feedback.tStartRefresh + 1-frameTolerance:
                 # keep track of stop time/frame for later
                 baseline_target_feedback.tStop = t  # not accounting for scr refresh
                 baseline_target_feedback.frameNStop = frameN  # exact frame index
@@ -1052,6 +1350,23 @@ for thisBaseline_trial in baseline_trials:
                 win.timeOnFlip(baseline_fixation_feedback, 'tStopRefresh')  # time at next scr refresh
                 baseline_fixation_feedback.setAutoDraw(False)
         
+        # *baseline_score_text* updates
+        if baseline_score_text.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            baseline_score_text.frameNStart = frameN  # exact frame index
+            baseline_score_text.tStart = t  # local t and not account for scr refresh
+            baseline_score_text.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(baseline_score_text, 'tStartRefresh')  # time at next scr refresh
+            baseline_score_text.setAutoDraw(True)
+        if baseline_score_text.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > baseline_score_text.tStartRefresh + 1.0-frameTolerance:
+                # keep track of stop time/frame for later
+                baseline_score_text.tStop = t  # not accounting for scr refresh
+                baseline_score_text.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(baseline_score_text, 'tStopRefresh')  # time at next scr refresh
+                baseline_score_text.setAutoDraw(False)
+        
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
             core.quit()
@@ -1073,13 +1388,19 @@ for thisBaseline_trial in baseline_trials:
     for thisComponent in baseline_feedbackComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
+    baseline_trials.addData('baseline_enclosing_feedback_1.started', baseline_enclosing_feedback_1.tStartRefresh)
+    baseline_trials.addData('baseline_enclosing_feedback_1.stopped', baseline_enclosing_feedback_1.tStopRefresh)
+    baseline_trials.addData('baseline_enclosing_feedback.started', baseline_enclosing_feedback.tStartRefresh)
+    baseline_trials.addData('baseline_enclosing_feedback.stopped', baseline_enclosing_feedback.tStopRefresh)
     baseline_trials.addData('baseline_target_feedback.started', baseline_target_feedback.tStartRefresh)
     baseline_trials.addData('baseline_target_feedback.stopped', baseline_target_feedback.tStopRefresh)
     baseline_trials.addData('baseline_fixation_feedback.started', baseline_fixation_feedback.tStartRefresh)
     baseline_trials.addData('baseline_fixation_feedback.stopped', baseline_fixation_feedback.tStopRefresh)
+    baseline_trials.addData('baseline_score_text.started', baseline_score_text.tStartRefresh)
+    baseline_trials.addData('baseline_score_text.stopped', baseline_score_text.tStopRefresh)
     thisExp.nextEntry()
     
-# completed 4 repeats of 'baseline_trials'
+# completed 1 repeats of 'baseline_trials'
 
 
 # ------Prepare to start Routine "break_1"-------
@@ -1166,7 +1487,7 @@ thisExp.nextEntry()
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-blocks = data.TrialHandler(nReps=10, method='random', 
+blocks = data.TrialHandler(nReps=1, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=[None],
     seed=None, name='blocks')
@@ -1185,7 +1506,7 @@ for thisBlock in blocks:
             exec('{} = thisBlock[paramName]'.format(paramName))
     
     # set up handler to look after randomisation of conditions etc
-    block_trials = data.TrialHandler(nReps=4, method='random', 
+    block_trials = data.TrialHandler(nReps=1, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=data.importConditions('conditions_baseline.xlsx'),
         seed=None, name='block_trials')
@@ -1224,10 +1545,9 @@ for thisBlock in blocks:
         rotated_fixation.opacity = 1
         rotated_fixation.pos = [0, 0]
         first = True
-        print(rotation)
-        
+        jitter = np.random.uniform(0.5, 1.5)
         # keep track of which components have finished
-        rotatedComponents = [rotated_target, rotated_fixation, rotated_mouse]
+        rotatedComponents = [rotated_enclosing_1, rotated_enclosing, rotated_target, rotated_fixation, rotated_mouse]
         for thisComponent in rotatedComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -1250,8 +1570,26 @@ for thisBlock in blocks:
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
             
+            # *rotated_enclosing_1* updates
+            if rotated_enclosing_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                rotated_enclosing_1.frameNStart = frameN  # exact frame index
+                rotated_enclosing_1.tStart = t  # local t and not account for scr refresh
+                rotated_enclosing_1.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(rotated_enclosing_1, 'tStartRefresh')  # time at next scr refresh
+                rotated_enclosing_1.setAutoDraw(True)
+            
+            # *rotated_enclosing* updates
+            if rotated_enclosing.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                rotated_enclosing.frameNStart = frameN  # exact frame index
+                rotated_enclosing.tStart = t  # local t and not account for scr refresh
+                rotated_enclosing.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(rotated_enclosing, 'tStartRefresh')  # time at next scr refresh
+                rotated_enclosing.setAutoDraw(True)
+            
             # *rotated_target* updates
-            if rotated_target.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            if rotated_target.status == NOT_STARTED and tThisFlip >= jitter-frameTolerance:
                 # keep track of start time/frame for later
                 rotated_target.frameNStart = frameN  # exact frame index
                 rotated_target.tStart = t  # local t and not account for scr refresh
@@ -1272,7 +1610,7 @@ for thisBlock in blocks:
             if rotated_fixation.status == STARTED:  # only update if drawing
                 rotated_fixation.setPos((0, 0), log=False)
             # *rotated_mouse* updates
-            if rotated_mouse.status == NOT_STARTED and t >= 0.0-frameTolerance:
+            if rotated_mouse.status == NOT_STARTED and t >= jitter-frameTolerance:
                 # keep track of start time/frame for later
                 rotated_mouse.frameNStart = frameN  # exact frame index
                 rotated_mouse.tStart = t  # local t and not account for scr refresh
@@ -1296,7 +1634,7 @@ for thisBlock in blocks:
                     mouse_center = rotated_mouse.getPos()
                     first = False
                 rotated_fixation.opacity = 0
-                if euclidean_dist(rotated_mouse.getPos()- mouse_center, [0, 0]) > 0.44:
+                if euclidean_dist(rotated_mouse.getPos()- mouse_center, [0, 0]) > 0.41:
                     mouse_pos = rotated_mouse.getPos() - mouse_center
                     rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], rotation)
                     rotated_fixation.opacity = 1
@@ -1328,6 +1666,10 @@ for thisBlock in blocks:
         for thisComponent in rotatedComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        block_trials.addData('rotated_enclosing_1.started', rotated_enclosing_1.tStartRefresh)
+        block_trials.addData('rotated_enclosing_1.stopped', rotated_enclosing_1.tStopRefresh)
+        block_trials.addData('rotated_enclosing.started', rotated_enclosing.tStartRefresh)
+        block_trials.addData('rotated_enclosing.stopped', rotated_enclosing.tStopRefresh)
         block_trials.addData('rotated_target.started', rotated_target.tStartRefresh)
         block_trials.addData('rotated_target.stopped', rotated_target.tStopRefresh)
         block_trials.addData('rotated_fixation.started', rotated_fixation.tStartRefresh)
@@ -1348,12 +1690,16 @@ for thisBlock in blocks:
         
         # ------Prepare to start Routine "rotated_feedback"-------
         continueRoutine = True
-        routineTimer.add(0.500000)
+        routineTimer.add(1.000000)
         # update component parameters for each repeat
         rotated_target_feedback.setPos((target_x, target_y))
         rotated_fixation_feedback.setPos(rotated_fix_end_pos)
+        ang_error = angular_dist(rotated_fix_end_pos, rotated_target_feedback.pos)
+        score = int((pi-ang_error)*10)
+        
+        rotated_score_text.setText('Your score: ' + str(score))
         # keep track of which components have finished
-        rotated_feedbackComponents = [rotated_target_feedback, rotated_fixation_feedback]
+        rotated_feedbackComponents = [rotated_enclosing_feedback_1, rotated_enclosing_feedback, rotated_target_feedback, rotated_fixation_feedback, rotated_score_text]
         for thisComponent in rotated_feedbackComponents:
             thisComponent.tStart = None
             thisComponent.tStop = None
@@ -1376,6 +1722,40 @@ for thisBlock in blocks:
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
             
+            # *rotated_enclosing_feedback_1* updates
+            if rotated_enclosing_feedback_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                rotated_enclosing_feedback_1.frameNStart = frameN  # exact frame index
+                rotated_enclosing_feedback_1.tStart = t  # local t and not account for scr refresh
+                rotated_enclosing_feedback_1.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(rotated_enclosing_feedback_1, 'tStartRefresh')  # time at next scr refresh
+                rotated_enclosing_feedback_1.setAutoDraw(True)
+            if rotated_enclosing_feedback_1.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > rotated_enclosing_feedback_1.tStartRefresh + 1.0-frameTolerance:
+                    # keep track of stop time/frame for later
+                    rotated_enclosing_feedback_1.tStop = t  # not accounting for scr refresh
+                    rotated_enclosing_feedback_1.frameNStop = frameN  # exact frame index
+                    win.timeOnFlip(rotated_enclosing_feedback_1, 'tStopRefresh')  # time at next scr refresh
+                    rotated_enclosing_feedback_1.setAutoDraw(False)
+            
+            # *rotated_enclosing_feedback* updates
+            if rotated_enclosing_feedback.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                rotated_enclosing_feedback.frameNStart = frameN  # exact frame index
+                rotated_enclosing_feedback.tStart = t  # local t and not account for scr refresh
+                rotated_enclosing_feedback.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(rotated_enclosing_feedback, 'tStartRefresh')  # time at next scr refresh
+                rotated_enclosing_feedback.setAutoDraw(True)
+            if rotated_enclosing_feedback.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > rotated_enclosing_feedback.tStartRefresh + 1.0-frameTolerance:
+                    # keep track of stop time/frame for later
+                    rotated_enclosing_feedback.tStop = t  # not accounting for scr refresh
+                    rotated_enclosing_feedback.frameNStop = frameN  # exact frame index
+                    win.timeOnFlip(rotated_enclosing_feedback, 'tStopRefresh')  # time at next scr refresh
+                    rotated_enclosing_feedback.setAutoDraw(False)
+            
             # *rotated_target_feedback* updates
             if rotated_target_feedback.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
                 # keep track of start time/frame for later
@@ -1386,7 +1766,7 @@ for thisBlock in blocks:
                 rotated_target_feedback.setAutoDraw(True)
             if rotated_target_feedback.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > rotated_target_feedback.tStartRefresh + 0.5-frameTolerance:
+                if tThisFlipGlobal > rotated_target_feedback.tStartRefresh + 1-frameTolerance:
                     # keep track of stop time/frame for later
                     rotated_target_feedback.tStop = t  # not accounting for scr refresh
                     rotated_target_feedback.frameNStop = frameN  # exact frame index
@@ -1410,6 +1790,23 @@ for thisBlock in blocks:
                     win.timeOnFlip(rotated_fixation_feedback, 'tStopRefresh')  # time at next scr refresh
                     rotated_fixation_feedback.setAutoDraw(False)
             
+            # *rotated_score_text* updates
+            if rotated_score_text.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                # keep track of start time/frame for later
+                rotated_score_text.frameNStart = frameN  # exact frame index
+                rotated_score_text.tStart = t  # local t and not account for scr refresh
+                rotated_score_text.tStartRefresh = tThisFlipGlobal  # on global time
+                win.timeOnFlip(rotated_score_text, 'tStartRefresh')  # time at next scr refresh
+                rotated_score_text.setAutoDraw(True)
+            if rotated_score_text.status == STARTED:
+                # is it time to stop? (based on global clock, using actual start)
+                if tThisFlipGlobal > rotated_score_text.tStartRefresh + 1.0-frameTolerance:
+                    # keep track of stop time/frame for later
+                    rotated_score_text.tStop = t  # not accounting for scr refresh
+                    rotated_score_text.frameNStop = frameN  # exact frame index
+                    win.timeOnFlip(rotated_score_text, 'tStopRefresh')  # time at next scr refresh
+                    rotated_score_text.setAutoDraw(False)
+            
             # check for quit (typically the Esc key)
             if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
                 core.quit()
@@ -1431,13 +1828,19 @@ for thisBlock in blocks:
         for thisComponent in rotated_feedbackComponents:
             if hasattr(thisComponent, "setAutoDraw"):
                 thisComponent.setAutoDraw(False)
+        block_trials.addData('rotated_enclosing_feedback_1.started', rotated_enclosing_feedback_1.tStartRefresh)
+        block_trials.addData('rotated_enclosing_feedback_1.stopped', rotated_enclosing_feedback_1.tStopRefresh)
+        block_trials.addData('rotated_enclosing_feedback.started', rotated_enclosing_feedback.tStartRefresh)
+        block_trials.addData('rotated_enclosing_feedback.stopped', rotated_enclosing_feedback.tStopRefresh)
         block_trials.addData('rotated_target_feedback.started', rotated_target_feedback.tStartRefresh)
         block_trials.addData('rotated_target_feedback.stopped', rotated_target_feedback.tStopRefresh)
         block_trials.addData('rotated_fixation_feedback.started', rotated_fixation_feedback.tStartRefresh)
         block_trials.addData('rotated_fixation_feedback.stopped', rotated_fixation_feedback.tStopRefresh)
+        block_trials.addData('rotated_score_text.started', rotated_score_text.tStartRefresh)
+        block_trials.addData('rotated_score_text.stopped', rotated_score_text.tStopRefresh)
         thisExp.nextEntry()
         
-    # completed 4 repeats of 'block_trials'
+    # completed 1 repeats of 'block_trials'
     
     
     # ------Prepare to start Routine "break_2"-------
@@ -1523,11 +1926,11 @@ for thisBlock in blocks:
     routineTimer.reset()
     thisExp.nextEntry()
     
-# completed 10 repeats of 'blocks'
+# completed 1 repeats of 'blocks'
 
 
 # set up handler to look after randomisation of conditions etc
-transfer_trials = data.TrialHandler(nReps=4, method='random', 
+transfer_trials = data.TrialHandler(nReps=1, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=data.importConditions('conditions_baseline.xlsx'),
     seed=None, name='transfer_trials')
@@ -1548,6 +1951,11 @@ for thisTransfer_trial in transfer_trials:
     # ------Prepare to start Routine "transfer"-------
     continueRoutine = True
     # update component parameters for each repeat
+    transfer_fixation.opacity = 1
+    transfer_fixation.pos = [0, 0]
+    mouse_center = transfer_mouse.getPos()
+    first = True
+    jitter = np.random.uniform(0.5, 1.5)
     transfer_target.setPos((target_x, target_y))
     transfer_fixation.setPos((0, 0))
     # setup some python lists for storing info about the transfer_mouse
@@ -1558,11 +1966,8 @@ for thisTransfer_trial in transfer_trials:
     transfer_mouse.rightButton = []
     transfer_mouse.time = []
     gotValidClick = False  # until a click is received
-    transfer_fixation.opacity = 1
-    transfer_fixation.pos = [0, 0]
-    first = True
     # keep track of which components have finished
-    transferComponents = [transfer_target, transfer_fixation, transfer_mouse]
+    transferComponents = [transfer_enclosing_1, transfer_enclosing, transfer_target, transfer_fixation, transfer_mouse]
     for thisComponent in transferComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -1584,9 +1989,42 @@ for thisTransfer_trial in transfer_trials:
         tThisFlipGlobal = win.getFutureFlipTime(clock=None)
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
+        win.mouseVisible = False
+        if transfer_mouse.getPressed()[0]:
+            if first:
+                mouse_center = transfer_mouse.getPos()
+                first = False
+            transfer_fixation.opacity = 0
+            if euclidean_dist(transfer_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
+                transfer_fixation.pos = transfer_mouse.getPos() - mouse_center
+                transfer_fixation.opacity = 1
+                continueRoutine = False
+        else:
+            first = True
+            transfer_fixation.opacity = 1
+            transfer_fixation.pos = [0, 0]
+            transfer_mouse.setPos([0, 0])
+        
+        # *transfer_enclosing_1* updates
+        if transfer_enclosing_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            transfer_enclosing_1.frameNStart = frameN  # exact frame index
+            transfer_enclosing_1.tStart = t  # local t and not account for scr refresh
+            transfer_enclosing_1.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(transfer_enclosing_1, 'tStartRefresh')  # time at next scr refresh
+            transfer_enclosing_1.setAutoDraw(True)
+        
+        # *transfer_enclosing* updates
+        if transfer_enclosing.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            transfer_enclosing.frameNStart = frameN  # exact frame index
+            transfer_enclosing.tStart = t  # local t and not account for scr refresh
+            transfer_enclosing.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(transfer_enclosing, 'tStartRefresh')  # time at next scr refresh
+            transfer_enclosing.setAutoDraw(True)
         
         # *transfer_target* updates
-        if transfer_target.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        if transfer_target.status == NOT_STARTED and tThisFlip >= jitter-frameTolerance:
             # keep track of start time/frame for later
             transfer_target.frameNStart = frameN  # exact frame index
             transfer_target.tStart = t  # local t and not account for scr refresh
@@ -1603,7 +2041,7 @@ for thisTransfer_trial in transfer_trials:
             win.timeOnFlip(transfer_fixation, 'tStartRefresh')  # time at next scr refresh
             transfer_fixation.setAutoDraw(True)
         # *transfer_mouse* updates
-        if transfer_mouse.status == NOT_STARTED and t >= 0.0-frameTolerance:
+        if transfer_mouse.status == NOT_STARTED and t >= jitter-frameTolerance:
             # keep track of start time/frame for later
             transfer_mouse.frameNStart = frameN  # exact frame index
             transfer_mouse.tStart = t  # local t and not account for scr refresh
@@ -1621,21 +2059,6 @@ for thisTransfer_trial in transfer_trials:
             transfer_mouse.midButton.append(buttons[1])
             transfer_mouse.rightButton.append(buttons[2])
             transfer_mouse.time.append(transfer_mouse.mouseClock.getTime())
-        win.mouseVisible = False
-        if transfer_mouse.getPressed()[0]:
-            if first:
-                mouse_center = transfer_mouse.getPos()
-                first = False
-            transfer_fixation.opacity = 0
-            if euclidean_dist(transfer_mouse.getPos()- mouse_center, [0, 0]) > 0.44:
-                transfer_fixation.pos = transfer_mouse.getPos() - mouse_center
-                transfer_fixation.opacity = 1
-                continueRoutine = False
-        else:
-            first = False
-            transfer_fixation.opacity = 1
-            transfer_fixation.pos = [0, 0]
-            transfer_mouse.setPos([0, 0])
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -1658,6 +2081,12 @@ for thisTransfer_trial in transfer_trials:
     for thisComponent in transferComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
+    transfer_fixation.opacity = 1
+    transfer_fix_end_pos = transfer_fixation.pos
+    transfer_trials.addData('transfer_enclosing_1.started', transfer_enclosing_1.tStartRefresh)
+    transfer_trials.addData('transfer_enclosing_1.stopped', transfer_enclosing_1.tStopRefresh)
+    transfer_trials.addData('transfer_enclosing.started', transfer_enclosing.tStartRefresh)
+    transfer_trials.addData('transfer_enclosing.stopped', transfer_enclosing.tStopRefresh)
     transfer_trials.addData('transfer_target.started', transfer_target.tStartRefresh)
     transfer_trials.addData('transfer_target.stopped', transfer_target.tStopRefresh)
     transfer_trials.addData('transfer_fixation.started', transfer_fixation.tStartRefresh)
@@ -1671,19 +2100,20 @@ for thisTransfer_trial in transfer_trials:
     transfer_trials.addData('transfer_mouse.time', transfer_mouse.time)
     transfer_trials.addData('transfer_mouse.started', transfer_mouse.tStart)
     transfer_trials.addData('transfer_mouse.stopped', transfer_mouse.tStop)
-    transfer_fixation.opacity = 1
-    transfer_fix_end_pos = transfer_fixation.pos
     # the Routine "transfer" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
     # ------Prepare to start Routine "transfer_feedback"-------
     continueRoutine = True
-    routineTimer.add(0.500000)
+    routineTimer.add(1.000000)
     # update component parameters for each repeat
     transfer_target_feedback.setPos((target_x, target_y))
     transfer_fixation_feedback.setPos(transfer_fix_end_pos)
+    ang_error = angular_dist(transfer_fix_end_pos, transfer_target_feedback.pos)
+    score = int((pi-ang_error)*10)
+    text_4.setText('Your score: ' + str(score))
     # keep track of which components have finished
-    transfer_feedbackComponents = [transfer_target_feedback, transfer_fixation_feedback]
+    transfer_feedbackComponents = [transfer_enclosing_feedback_1, transfer_enclosing_feedback, transfer_target_feedback, transfer_fixation_feedback, text_4]
     for thisComponent in transfer_feedbackComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -1706,6 +2136,40 @@ for thisTransfer_trial in transfer_trials:
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
         
+        # *transfer_enclosing_feedback_1* updates
+        if transfer_enclosing_feedback_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            transfer_enclosing_feedback_1.frameNStart = frameN  # exact frame index
+            transfer_enclosing_feedback_1.tStart = t  # local t and not account for scr refresh
+            transfer_enclosing_feedback_1.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(transfer_enclosing_feedback_1, 'tStartRefresh')  # time at next scr refresh
+            transfer_enclosing_feedback_1.setAutoDraw(True)
+        if transfer_enclosing_feedback_1.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > transfer_enclosing_feedback_1.tStartRefresh + 1.0-frameTolerance:
+                # keep track of stop time/frame for later
+                transfer_enclosing_feedback_1.tStop = t  # not accounting for scr refresh
+                transfer_enclosing_feedback_1.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(transfer_enclosing_feedback_1, 'tStopRefresh')  # time at next scr refresh
+                transfer_enclosing_feedback_1.setAutoDraw(False)
+        
+        # *transfer_enclosing_feedback* updates
+        if transfer_enclosing_feedback.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            transfer_enclosing_feedback.frameNStart = frameN  # exact frame index
+            transfer_enclosing_feedback.tStart = t  # local t and not account for scr refresh
+            transfer_enclosing_feedback.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(transfer_enclosing_feedback, 'tStartRefresh')  # time at next scr refresh
+            transfer_enclosing_feedback.setAutoDraw(True)
+        if transfer_enclosing_feedback.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > transfer_enclosing_feedback.tStartRefresh + 1.0-frameTolerance:
+                # keep track of stop time/frame for later
+                transfer_enclosing_feedback.tStop = t  # not accounting for scr refresh
+                transfer_enclosing_feedback.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(transfer_enclosing_feedback, 'tStopRefresh')  # time at next scr refresh
+                transfer_enclosing_feedback.setAutoDraw(False)
+        
         # *transfer_target_feedback* updates
         if transfer_target_feedback.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
             # keep track of start time/frame for later
@@ -1716,7 +2180,7 @@ for thisTransfer_trial in transfer_trials:
             transfer_target_feedback.setAutoDraw(True)
         if transfer_target_feedback.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > transfer_target_feedback.tStartRefresh + 0.5-frameTolerance:
+            if tThisFlipGlobal > transfer_target_feedback.tStartRefresh + 1-frameTolerance:
                 # keep track of stop time/frame for later
                 transfer_target_feedback.tStop = t  # not accounting for scr refresh
                 transfer_target_feedback.frameNStop = frameN  # exact frame index
@@ -1740,6 +2204,23 @@ for thisTransfer_trial in transfer_trials:
                 win.timeOnFlip(transfer_fixation_feedback, 'tStopRefresh')  # time at next scr refresh
                 transfer_fixation_feedback.setAutoDraw(False)
         
+        # *text_4* updates
+        if text_4.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            text_4.frameNStart = frameN  # exact frame index
+            text_4.tStart = t  # local t and not account for scr refresh
+            text_4.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(text_4, 'tStartRefresh')  # time at next scr refresh
+            text_4.setAutoDraw(True)
+        if text_4.status == STARTED:
+            # is it time to stop? (based on global clock, using actual start)
+            if tThisFlipGlobal > text_4.tStartRefresh + 1.0-frameTolerance:
+                # keep track of stop time/frame for later
+                text_4.tStop = t  # not accounting for scr refresh
+                text_4.frameNStop = frameN  # exact frame index
+                win.timeOnFlip(text_4, 'tStopRefresh')  # time at next scr refresh
+                text_4.setAutoDraw(False)
+        
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
             core.quit()
@@ -1761,13 +2242,19 @@ for thisTransfer_trial in transfer_trials:
     for thisComponent in transfer_feedbackComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
+    transfer_trials.addData('transfer_enclosing_feedback_1.started', transfer_enclosing_feedback_1.tStartRefresh)
+    transfer_trials.addData('transfer_enclosing_feedback_1.stopped', transfer_enclosing_feedback_1.tStopRefresh)
+    transfer_trials.addData('transfer_enclosing_feedback.started', transfer_enclosing_feedback.tStartRefresh)
+    transfer_trials.addData('transfer_enclosing_feedback.stopped', transfer_enclosing_feedback.tStopRefresh)
     transfer_trials.addData('transfer_target_feedback.started', transfer_target_feedback.tStartRefresh)
     transfer_trials.addData('transfer_target_feedback.stopped', transfer_target_feedback.tStopRefresh)
     transfer_trials.addData('transfer_fixation_feedback.started', transfer_fixation_feedback.tStartRefresh)
     transfer_trials.addData('transfer_fixation_feedback.stopped', transfer_fixation_feedback.tStopRefresh)
+    transfer_trials.addData('text_4.started', text_4.tStartRefresh)
+    transfer_trials.addData('text_4.stopped', text_4.tStopRefresh)
     thisExp.nextEntry()
     
-# completed 4 repeats of 'transfer_trials'
+# completed 1 repeats of 'transfer_trials'
 
 
 # ------Prepare to start Routine "Done"-------
