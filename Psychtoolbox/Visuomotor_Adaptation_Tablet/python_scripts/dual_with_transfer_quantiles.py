@@ -77,13 +77,14 @@ def residuals_sudden(params, num_trials, data_errors):
     #residual_error = np.sum((model_errors - data_errors)**2)
     exp_quantiles = np.quantile(model_errors, [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1])
     exp_bin_counts = num_trials*np.array([0.1, 0.2, 0.2, 0.2, 0.2, 0.1])
-    #print("expected: ", exp_bin_counts)
     q_counts = list()
     for i in exp_quantiles:
         q_counts.append(sum(data_errors < i))
     obs_bin_counts = np.diff(q_counts)
-    #print ("observed: ", obs_bin_counts)
-    residual_error = 2*sum(obs_bin_counts*np.log(obs_bin_counts/exp_bin_counts)) 
+    log_val = np.log(obs_bin_counts/exp_bin_counts)
+    log_val[np.isneginf(log_val)] = 0 
+
+    residual_error = 2*sum(np.array(obs_bin_counts)*log_val) 
     if params[0] > params[2]:
         residual_error = residual_error + 10000000
     if params[1] < params[3]:
@@ -102,7 +103,10 @@ def residuals_gradual(params, num_trials, data_errors):
     for i in exp_quantiles:
         q_counts.append(sum(data_errors < i))
     obs_bin_counts = np.diff(q_counts)
-    residual_error = 2*sum(obs_bin_counts*np.log(obs_bin_counts/exp_bin_counts)) 
+    log_val = np.log(obs_bin_counts/exp_bin_counts)
+    log_val[np.isneginf(log_val)] = 0 
+
+    residual_error = 2*sum(np.array(obs_bin_counts)*log_val) 
 
     if params[0] > params[2]:
         residual_error = residual_error + 10000000
@@ -201,7 +205,7 @@ def main():
     #curvatures_smooth = pickle.load(open('single_with_transfer_generated_errors.pickle', 'rb'))
     #total_time = its+mts
     #Test git and vscode 
-    curvatures_smooth = curvatures_smooth/90.0
+    curvatures_smooth = curvatures_smooth/90
     #curvatures_smooth = gaussian_filter1d(total_time, 2)
     #curvatures_smooth = curvatures_smooth/np.max(curvatures_smooth)
     #print("parallel curvatures successful")
