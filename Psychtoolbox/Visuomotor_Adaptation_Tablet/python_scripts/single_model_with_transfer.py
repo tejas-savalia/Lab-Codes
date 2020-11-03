@@ -94,7 +94,7 @@ def fit_participant(participant, curvatures, num_fits):
         for initial_point in starting_points:
             if participant%4 == 0 or participant%4 == 1:      
                 #fits = scipy.optimize.minimize(residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')            
-                fits = scipy.optimize.basinhopping(residuals_sudden, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (704, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method':'Nelder-Mead'})
+                fits = scipy.optimize.basinhopping(residuals_sudden, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (704, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:]))), 'method':'Nelder-Mead'})
 
                 #if fits.fun < fit_V[participant][fit_parts]:
                 A = fits.x[0]#fit_Af[participant][fit_parts] = fits.x[0]
@@ -103,7 +103,7 @@ def fit_participant(participant, curvatures, num_fits):
                 #fit_success[participant][fit_parts] = fits.success                
             else:
                 #fits = scipy.optimize.minimize(residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')         
-                fits = scipy.optimize.basinhopping(residuals_gradual, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (704, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method':'Nelder-Mead'})
+                fits = scipy.optimize.basinhopping(residuals_gradual, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (704, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:]))), 'method':'Nelder-Mead'})
                 #if fits.fun < fit_V[participant][fit_parts]:
                 A = fits.x[0]#fit_Af[participant][fit_parts] = fits.x[0]
                 B = fits.x[1]#fit_Bf[participant][fit_parts] = fits.x[1]
