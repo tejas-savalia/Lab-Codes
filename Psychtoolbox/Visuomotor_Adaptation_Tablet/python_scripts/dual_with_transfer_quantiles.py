@@ -75,11 +75,13 @@ def dual_model_gradual(num_trials, Af, Bf, As, Bs):
 def residuals_sudden(params, num_trials, data_errors):
     model_errors = dual_model_sudden(num_trials, params[0], params[1], params[2], params[3])[0]
     #residual_error = np.sum((model_errors - data_errors)**2)
-    exp_quantiles = np.quantile(model_errors, [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1])
+    exp_quantiles = np.quantile(model_errors, [0.1, 0.3, 0.5, 0.7, 0.9])
     exp_bin_counts = num_trials*np.array([0.1, 0.2, 0.2, 0.2, 0.2, 0.1])
     q_counts = list()
     for i in exp_quantiles:
         q_counts.append(sum(data_errors < i))
+    q_counts.insert(0, 0)
+    q_counts.append(704)
     obs_bin_counts = np.diff(q_counts)
     log_val = np.log(obs_bin_counts/exp_bin_counts)
     log_val[np.isneginf(log_val)] = 0 
@@ -97,11 +99,13 @@ def residuals_gradual(params, num_trials, data_errors):
     model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
     #residual_error = np.sum((model_errors - data_errors)**2)
     #residual_error = mean_squared_error(data_errors, model_errors)
-    exp_quantiles = np.quantile(model_errors, [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1])
+    exp_quantiles = np.quantile(model_errors, [0.1, 0.3, 0.5, 0.7, 0.9])
     exp_bin_counts = num_trials*np.array([0.1, 0.2, 0.2, 0.2, 0.2, 0.1])
     q_counts = list()
     for i in exp_quantiles:
         q_counts.append(sum(data_errors < i))
+    q_counts.insert(0, 0)
+    q_counts.append(704)
     obs_bin_counts = np.diff(q_counts)
     log_val = np.log(obs_bin_counts/exp_bin_counts)
     log_val[np.isneginf(log_val)] = 0 
