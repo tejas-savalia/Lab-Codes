@@ -63,18 +63,12 @@ def residuals_sudden(params, num_trials, data_errors):
     #model_errors_train = np.take(model_errors, train_indices)
     #data_errors_train = np.take(data_errors, train_indices)
     #residual_error = np.sum((model_errors - data_errors)**2)
-    exp_quantiles = np.quantile(model_errors, [0.1, 0.3, 0.5, 0.7, 0.9])
-    exp_bin_counts = num_trials*np.array([0.1, 0.2, 0.2, 0.2, 0.2, 0.1])
-    q_counts = list()
-    for i in exp_quantiles:
-        q_counts.append(sum(data_errors < i))
-    q_counts.insert(0, 0)
-    q_counts.append(704)
-    obs_bin_counts = np.diff(q_counts)
-    log_val = np.log(obs_bin_counts/exp_bin_counts)
-    log_val[np.isneginf(log_val)] = 0 
-
-    residual_error = 2*sum(np.array(obs_bin_counts)*log_val) 
+    #likelihood = stat.norm.pdf(data_errors, loc = model_errors, scale = params[2])  
+    #if sum(np.log(likelihood)) > 0:
+    #    print ("sum LL: ", sum(np.log(likelihood))) 
+    residual_error = -2*sum(stat.norm.logcdf(data_errors, model_errors, params[2]))
+    if residual_error < 0:
+        print (residual_error)
 
     if params[0] < 0 or params[1] < 0:
         residual_error = residual_error + 10000000
@@ -87,19 +81,11 @@ def residuals_gradual(params, num_trials, data_errors):
     #model_errors_train = np.take(model_errors, train_indices)
     #data_errors_train = np.take(data_errors, train_indices)
     #residual_error = np.sum((model_errors - data_errors)**2)
-    exp_quantiles = np.quantile(model_errors, [0.1, 0.3, 0.5, 0.7, 0.9])
-    exp_bin_counts = num_trials*np.array([0.1, 0.2, 0.2, 0.2, 0.2, 0.1])
-    q_counts = list()
-    for i in exp_quantiles:
-        q_counts.append(sum(data_errors < i))
-    q_counts.insert(0, 0)
-    q_counts.append(704)
-    obs_bin_counts = np.diff(q_counts)
-    log_val = np.log(obs_bin_counts/exp_bin_counts)
-    log_val[np.isneginf(log_val)] = 0 
-
-    residual_error = 2*sum(np.array(obs_bin_counts)*log_val) 
-
+    #likelihood = stat.norm.pdf(data_errors, model_errors, params[2])   
+    #residual_error = -2*sum(np.log(likelihood))
+    residual_error = -2*sum(stat.norm.logcdf(data_errors, model_errors, params[2]))
+    if residual_error < 0:
+        print (residual_error)
     if params[0] < 0 or params[1] < 0:
         residual_error = residual_error + 10000000
     if params[0] > 1 or params[1] > 1:
@@ -115,23 +101,25 @@ def fit_participant(participant, curvatures, num_fits):
     #train_indices = np.random.choice(640, 576, replace = False)
     for fit_parts in range(num_fits):
 
-        starting_points = np.array([[0.9, 0.2]])
+        starting_points = np.array([[0.9, 0.2, 0.5]])
         for initial_point in starting_points:
             if participant%4 == 0 or participant%4 == 1:      
                 #fits = scipy.optimize.minimize(residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')            
-                fits = scipy.optimize.basinhopping(residuals_sudden, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (704, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method':'Nelder-Mead'})
+                fits = scipy.optimize.basinhopping(residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2]], minimizer_kwargs={'args': (704, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method':'Nelder-Mead'})
 
                 #if fits.fun < fit_V[participant][fit_parts]:
                 A = fits.x[0]#fit_Af[participant][fit_parts] = fits.x[0]
                 B = fits.x[1]#fit_Bf[participant][fit_parts] = fits.x[1]
+                epsilon = fits.x[2]
                 V = fits.fun#fit_V[participant][fit_parts] = fits.fun
                 #fit_success[participant][fit_parts] = fits.success                
             else:
                 #fits = scipy.optimize.minimize(residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')         
-                fits = scipy.optimize.basinhopping(residuals_gradual, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (704, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method':'Nelder-Mead'})
+                fits = scipy.optimize.basinhopping(residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2]], minimizer_kwargs={'args': (704, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method':'Nelder-Mead'})
                 #if fits.fun < fit_V[participant][fit_parts]:
                 A = fits.x[0]#fit_Af[participant][fit_parts] = fits.x[0]
                 B = fits.x[1]#fit_Bf[participant][fit_parts] = fits.x[1]
+                epsilon = fits.x[2]
                 V = fits.fun#fit_V[participant][fit_parts] = fits.fun
                 #fit_success[participant][fit_parts] = fits.success
             print (participant, V)
@@ -140,7 +128,7 @@ def fit_participant(participant, curvatures, num_fits):
 def run_fits_single(curvatures, num_trials, part_size):
     func = partial(fit_participant, curvatures = curvatures, num_fits = 1)
     pool = Pool()
-    res = np.reshape(np.array(pool.map(func, range(60))), (60, 3))
+    res = np.reshape(np.array(pool.map(func, range(60))), (60, 4))
     #return fit_Af, fit_Bf, fit_As, fit_Bs, fit_V
     return res   
 
