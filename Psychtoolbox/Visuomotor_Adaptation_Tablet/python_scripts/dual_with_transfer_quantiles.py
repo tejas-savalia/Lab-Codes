@@ -111,7 +111,7 @@ def fit_participant(participant, curvatures, num_fits):
 
     for fit_parts in range(num_fits):
 
-        starting_points = np.array([[0.9, 0.2, 0.999, 0.01, 5]])
+        starting_points = np.array([[0.9, 0.2, 0.999, 0.01, 0.05]])
         for initial_point in starting_points:
             if participant%4 == 0 or participant%4 == 1:      
                 #fits = scipy.optimize.minimize(residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')            
