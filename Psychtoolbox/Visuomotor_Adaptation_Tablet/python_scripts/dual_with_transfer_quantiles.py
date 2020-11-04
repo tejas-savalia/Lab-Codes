@@ -78,7 +78,7 @@ def residuals_sudden(params, num_trials, data_errors):
     #residual_error = np.sum((model_errors - data_errors)**2)
     #likelihood = stat.norm.pdf(data_errors, model_errors, params[4])   
     #residual_error = -2*sum(np.log(likelihood))
-    residual_error = -2*sum(stat.norm.logpdf(data_errors, model_errors, params[2]))
+    residual_error = -2*sum(stat.norm.logpdf(data_errors, model_errors, params[4]))
 
     if params[0] > params[2]:
         residual_error = residual_error + 10000000
@@ -94,7 +94,7 @@ def residuals_gradual(params, num_trials, data_errors):
     #residual_error = mean_squared_error(data_errors, model_errors)
     #likelihood = stat.norm.pdf(data_errors, model_errors, params[4])   
     #residual_error = -2*sum(np.log(likelihood))
-    residual_error = -2*sum(stat.norm.logpdf(data_errors, model_errors, params[2]))
+    residual_error = -2*sum(stat.norm.logpdf(data_errors, model_errors, params[4]))
 
     if params[0] > params[2]:
         residual_error = residual_error + 10000000
