@@ -78,7 +78,7 @@ def residuals_sudden(params, num_trials, data_errors):
     #residual_error = np.sum((model_errors - data_errors)**2)
     #likelihood = stat.norm.pdf(data_errors, model_errors, params[4])   
     #residual_error = -2*sum(np.log(likelihood))
-    residual_error = -2*sum(stat.norm.logcdf(data_errors, model_errors, params[2]))
+    residual_error = -2*sum(stat.norm.logpdf(data_errors, model_errors, params[2]))
 
     if params[0] > params[2]:
         residual_error = residual_error + 10000000
@@ -94,7 +94,7 @@ def residuals_gradual(params, num_trials, data_errors):
     #residual_error = mean_squared_error(data_errors, model_errors)
     #likelihood = stat.norm.pdf(data_errors, model_errors, params[4])   
     #residual_error = -2*sum(np.log(likelihood))
-    residual_error = -2*sum(stat.norm.logcdf(data_errors, model_errors, params[2]))
+    residual_error = -2*sum(stat.norm.logpdf(data_errors, model_errors, params[2]))
 
     if params[0] > params[2]:
         residual_error = residual_error + 10000000
@@ -111,7 +111,7 @@ def fit_participant(participant, curvatures, num_fits):
 
     for fit_parts in range(num_fits):
 
-        starting_points = np.array([[0.9, 0.2, 0.999, 0.01, 0.5]])
+        starting_points = np.array([[0.9, 0.2, 0.999, 0.01, 5]])
         for initial_point in starting_points:
             if participant%4 == 0 or participant%4 == 1:      
                 #fits = scipy.optimize.minimize(residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3]], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')            

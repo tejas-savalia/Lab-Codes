@@ -66,9 +66,9 @@ def residuals_sudden(params, num_trials, data_errors):
     #likelihood = stat.norm.pdf(data_errors, loc = model_errors, scale = params[2])  
     #if sum(np.log(likelihood)) > 0:
     #    print ("sum LL: ", sum(np.log(likelihood))) 
-    residual_error = -2*sum(stat.norm.logcdf(data_errors, model_errors, params[2]))
-    if residual_error < 0:
-        print (residual_error)
+    residual_error = -2*sum(stat.norm.logpdf(data_errors, model_errors, params[2]))
+    #if residual_error < 0:
+    #    print (residual_error)
 
     if params[0] < 0 or params[1] < 0:
         residual_error = residual_error + 10000000
@@ -83,9 +83,9 @@ def residuals_gradual(params, num_trials, data_errors):
     #residual_error = np.sum((model_errors - data_errors)**2)
     #likelihood = stat.norm.pdf(data_errors, model_errors, params[2])   
     #residual_error = -2*sum(np.log(likelihood))
-    residual_error = -2*sum(stat.norm.logcdf(data_errors, model_errors, params[2]))
-    if residual_error < 0:
-        print (residual_error)
+    residual_error = -2*sum(stat.norm.logpdf(data_errors, model_errors, params[2]))
+    #if residual_error < 0:
+        #print (residual_error)
     if params[0] < 0 or params[1] < 0:
         residual_error = residual_error + 10000000
     if params[0] > 1 or params[1] > 1:
@@ -123,7 +123,7 @@ def fit_participant(participant, curvatures, num_fits):
                 V = fits.fun#fit_V[participant][fit_parts] = fits.fun
                 #fit_success[participant][fit_parts] = fits.success
             print (participant, V)
-    return A, B, V
+    return A, B, epsilon, V
 
 def run_fits_single(curvatures, num_trials, part_size):
     func = partial(fit_participant, curvatures = curvatures, num_fits = 1)
