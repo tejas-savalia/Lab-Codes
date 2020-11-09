@@ -67,7 +67,7 @@ def residuals_sudden(params, num_trials, data_errors, train_indices):
 
     if params[0] < 0 or params[1] < 0:
         residual_error = residual_error + 10000000
-    if params[0] > 1 or parms[1] > 1:
+    if params[0] > 1 or params[1] > 1:
         residual_error = residual_error + 10000000
 
     return residual_error
@@ -80,7 +80,7 @@ def residuals_gradual(params, num_trials, data_errors, train_indices):
     residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[2]))
     if params[0] < 0 or params[1] < 0:
         residual_error = residual_error + 10000000
-    if params[0] > 1 or parms[1] > 1:
+    if params[0] > 1 or params[1] > 1:
         residual_error = residual_error + 10000000
     return residual_error
 
