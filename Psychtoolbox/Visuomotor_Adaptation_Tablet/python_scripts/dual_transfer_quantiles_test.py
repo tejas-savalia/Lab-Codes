@@ -106,17 +106,17 @@ def residuals_gradual(params, num_trials, data_errors, train_indices):
 
 #%% Run this to compile fit routines
     
-def fit_participant(participant, curvatures, num_fits, num_train):
+def fit_participant(participant, curvatures, num_fits):
     Af = np.zeros((num_fits))
     Bf = np.zeros((num_fits))
     As = np.zeros((num_fits))
     Bs = np.zeros((num_fits))
     epsilon = np.zeros((num_fits))
     V = np.zeros((num_fits))
-    train_indices = np.zeros((num_fits, num_train))
+    train_indices = np.zeros((num_fits, 634))
     
     for fit_parts in range(num_fits):
-        train_indices[fit_parts] = np.random.choice(704, num_train, replace = False)
+        train_indices = np.random.choice(704, 634, replace = False)
         starting_points = np.array([[0.9, 0.3, 0.99, 0.01, 0.05]])
         for initial_point in starting_points:
             if participant%4 == 0 or participant%4 == 1:      
@@ -137,13 +137,16 @@ def fit_participant(participant, curvatures, num_fits, num_train):
                 epsilon[fit_parts] = fits.x[4]
                 V[fit_parts] = fits.fun
                 
-        print (participant, np.mean(V))
+            print (participant, V)
     return Af, Bf, As, Bs, V, epsilon, train_indices
 
 def run_fits_dual(curvatures, num_trials, part_size):
-    func = partial(fit_participant, curvatures = curvatures, num_fits = 100, num_train = 634)
+    func = partial(fit_participant, curvatures = curvatures, num_fits = 1)
     pool = Pool()
-    res = np.reshape(np.array(pool.map(func, range(60))), (60, 7))
+    res = np.zeros((100, 60, 7))
+    for fit in range(100):
+        res[fit] = np.reshape(np.array(pool.map(func, range(60))), (60, 7))
+        print ('mean fits: ', mean(res[fit][:, 4]))
     #return fit_Af, fit_Bf, fit_As, fit_Bs, fit_V
     return res   
 
