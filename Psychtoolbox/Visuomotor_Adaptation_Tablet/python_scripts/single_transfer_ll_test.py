@@ -119,10 +119,10 @@ def fit_participant(participant, curvatures, num_fits):
 def run_fits_single(curvatures, num_trials, part_size):
     func = partial(fit_participant, curvatures = curvatures, num_fits = 1)
     pool = Pool()
-    res = np.zeros(100, dtype = object)
-    for i in range(100):        
-	res[i] = np.reshape(np.array(pool.map(func, range(60))), (60, 5))
-        print ('mean fits: ', np.mean(res[i][:, 2]))
+    res = np.zeros((100), dtype = object)
+    for fit in range(100):
+        res[fit] = np.reshape(np.array(pool.map(func, range(60))), (60, 5))
+        print ('mean fits: ', np.mean(res[fit][:, 2]))
     #return fit_Af, fit_Bf, fit_As, fit_Bs, fit_V
     return res   
 
