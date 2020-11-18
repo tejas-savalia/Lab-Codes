@@ -259,24 +259,28 @@ def single_test_fit(participant, curvatures, num_fit_trials):
 # In[8]:
 
 
-def run_fits_dual(curvatures, num_fit_trials):
+def run_fits_dual(curvatures, num_fit_trials, num_fits):
     c_obj = np.zeros(60, dtype = object)
     for i in range(60):
         c_obj[i] = curvatures
     participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60))]
     #func = partial(single_test_fit, curvatures = curvatures, num_fits = 1, num_fit_trials = num_fit_trials)
     pool = Pool()
-    res = np.reshape(np.array(pool.starmap(dual_test_fit, participant_args)), (60, 7))
+    res = np.zeros(num_fits, dtype = object)
+    for i in range(num_fits):
+        res[i] = np.reshape(np.array(pool.starmap(dual_test_fit, participant_args)), (60, 7))
     return res   
 
-def run_fits_single(curvatures, num_fit_trials):
+def run_fits_single(curvatures, num_fit_trials, num_fits):
     c_obj = np.zeros(60, dtype = object)
     for i in range(60):
         c_obj[i] = curvatures
     participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60))]
     #func = partial(single_test_fit, curvatures = curvatures, num_fits = 1, num_fit_trials = num_fit_trials)
     pool = Pool()
-    res = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (60, 5))
+    res = np.zeros(num_fits, dtype = object)
+    for i in range(num_fits):
+        res[i] = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (60, 5))
     return res   
 
 
