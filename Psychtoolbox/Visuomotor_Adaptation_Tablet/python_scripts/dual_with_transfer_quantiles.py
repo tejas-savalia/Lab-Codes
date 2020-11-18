@@ -152,31 +152,13 @@ def run_fits_dual(curvatures, num_trials, part_size):
 
 def main():
     
-    #%%Parallelize curvature calculations
-        
-#    paramlist = list(itertools.product(range(1000, 1060), range(12), range(64), range(1, 2)))
-    #if __name__ == '__main__':
-    #its = pickle.load(open('its.pickle', 'rb'))
-    #mts = pickle.load(open('mts.pickle', 'rb'))
     curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
-    #curvatures_smooth = pickle.load(open('generated_by_dual.pickle', 'rb'))
-    #curvatures_smooth = pickle.load(open('single_with_transfer_generated_errors.pickle', 'rb'))
-    #total_time = its+mts
-    #Test git and vscode 
     curvatures_smooth = curvatures_smooth/90
-    #curvatures_smooth = gaussian_filter1d(total_time, 2)
-    #curvatures_smooth = curvatures_smooth/np.max(curvatures_smooth)
-    #print("parallel curvatures successful")
     print (curvatures_smooth)
     
-    #with open('curvatures_smooth.pickle', 'wb') as f:
-    #    pickle.dump(curvatures_smooth, f)
-    #f.close()
     print ("Curvatures Loaded. In Fit routine")
     
-    #%% Parallel run and dump fits
     fits = run_fits_dual(curvatures_smooth, 640, 640)
-    #with open('fit_dual_bound_with_transfer_model_recovery.pickle', 'wb') as f:
 
     with open('fit_dual_transfer_loglik.pickle', 'wb') as f:
         pickle.dump(fits, f)
