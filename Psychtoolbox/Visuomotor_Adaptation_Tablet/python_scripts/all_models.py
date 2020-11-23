@@ -269,7 +269,7 @@ def run_fits_dual(curvatures, num_fit_trials, num_fits):
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
         res[i] = np.reshape(np.array(pool.starmap(dual_test_fit, participant_args)), (60, 7))
-        print ("Mean Res in dual: ", i, mean(res[i][:, -2]))
+        print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
     return res   
 
@@ -283,7 +283,7 @@ def run_fits_single(curvatures, num_fit_trials, num_fits):
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
         res[i] = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (60, 5))
-        print ("Mean Res in single: ", i, mean(res[i][:, -2]))
+        print ("Mean Res in single: ", i, np.mean(res[i][:, -3]))
     return res   
 
 
