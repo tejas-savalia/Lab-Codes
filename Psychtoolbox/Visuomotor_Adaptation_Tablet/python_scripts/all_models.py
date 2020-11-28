@@ -238,6 +238,7 @@ def mixed_sudden(num_trials, Af, Bf, As, Bs):
 
 
 def single_residuals_sudden(params, num_trials, data_errors, train_indices):
+    #print(train_indices)
     model_errors = model_sudden(num_trials, params[0], params[1])[0]
     model_errors_train = np.take(model_errors, train_indices)
     data_errors_train = np.take(data_errors, train_indices)
@@ -252,6 +253,7 @@ def single_residuals_sudden(params, num_trials, data_errors, train_indices):
     return residual_error
 
 def single_residuals_gradual(params, num_trials, data_errors, train_indices):
+    
     model_errors = model_gradual(num_trials, params[0], params[1])[0]
     model_errors_train = np.take(model_errors, train_indices)
     data_errors_train = np.take(data_errors, train_indices)
@@ -261,6 +263,7 @@ def single_residuals_gradual(params, num_trials, data_errors, train_indices):
         residual_error = residual_error + 10000000
     if params[0] > 1 or params[1] > 1:
         residual_error = residual_error + 10000000
+
     return residual_error
 
 
@@ -281,6 +284,9 @@ def dual_residuals_sudden(params, num_trials, data_errors, train_indices):
         residual_error = residual_error + 10000000
     if params[0] < 0 or params[1] < 0 or params[2] < 0 or params[3] < 0:
         residual_error = residual_error + 10000000
+    if params[0] > 1 or params[1] > 1 or params[2] > 1 or params[3] > 1:
+        residual_error = residual_error + 10000000
+
     return residual_error
 
 def dual_residuals_gradual(params, num_trials, data_errors, train_indices):
@@ -295,6 +301,9 @@ def dual_residuals_gradual(params, num_trials, data_errors, train_indices):
         residual_error = residual_error + 10000000
     if params[0] < 0 or params[1] < 0 or params[2] < 0 or params[3] < 0:
         residual_error = residual_error + 10000000
+    if params[0] > 1 or params[1] > 1 or params[2] > 1 or params[3] > 1:
+        residual_error = residual_error + 10000000
+
     return residual_error
 
 #%%
@@ -372,10 +381,10 @@ def dual_six_params_residuals_gradual(params, num_trials, data_errors, train_ind
 # In[6]:
 
 
-def dual_test_fit(participant, curvatures, num_fit_trials):
+def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     
-    train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
+    #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     starting_points = np.array([[0.9, 0.3, 0.99, 0.01, 0.05]])
     for initial_point in starting_points:
         if participant%4 == 0 or participant%4 == 1:      
@@ -403,9 +412,9 @@ def dual_test_fit(participant, curvatures, num_fit_trials):
 # In[7]:
 
 
-def single_test_fit(participant, curvatures, num_fit_trials):
+def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
-    train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
+    #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     starting_points = np.array([[0.9, 0.2, 0.5]])
     for initial_point in starting_points:
         if participant%4 == 0 or participant%4 == 1:      
@@ -426,10 +435,10 @@ def single_test_fit(participant, curvatures, num_fit_trials):
     return A, B, V, epsilon, train_indices
 
 #%%
-def dual_six_params_test_fit(participant, curvatures, num_fit_trials):
+def dual_six_params_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     
-    train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
+    #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     starting_points = np.array([[0.9, 0.3, 0.9, 0.3, 0.99, 0.01, 0.05]])
     bounds = [(0, 1), (0, 1),(0, 1),(0, 1),(0, 1),(0, 1),(0, 1)]
     for initial_point in starting_points:
@@ -462,10 +471,10 @@ def dual_six_params_test_fit(participant, curvatures, num_fit_trials):
 # In[7]:
 
 
-def mixed_test_fit(participant, curvatures, num_fit_trials):
+def mixed_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     
-    train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
+    #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     starting_points = np.array([[0.9, 0.3, 0.99, 0.01, 0.05]])
     bounds = [(0, 1), (0, 1), (0, 1), (0, 1),(0, 1)]
     for initial_point in starting_points:
@@ -496,56 +505,58 @@ def mixed_test_fit(participant, curvatures, num_fit_trials):
 
 
 def run_fits_dual(curvatures, num_fit_trials, num_fits):
-    c_obj = np.zeros(60, dtype = object)
-    for i in range(60):
-        c_obj[i] = curvatures
-    participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60))]
-    #func = partial(single_test_fit, curvatures = curvatures, num_fits = 1, num_fit_trials = num_fit_trials)
+    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
+        c_obj = np.zeros(60, dtype = object)
+        for participant in range(60):
+            c_obj[participant] = curvatures
+        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
         res[i] = np.reshape(np.array(pool.starmap(dual_test_fit, participant_args)), (60, 7))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
     return res   
 
 def run_fits_single(curvatures, num_fit_trials, num_fits):
-    c_obj = np.zeros(60, dtype = object)
-    for i in range(60):
-        c_obj[i] = curvatures
-    participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60))]
-    #func = partial(single_test_fit, curvatures = curvatures, num_fits = 1, num_fit_trials = num_fit_trials)
+    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    print(train_indices[0].shape)
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
+        c_obj = np.zeros(60, dtype = object)
+        for participant in range(60):
+            c_obj[participant] = curvatures
+        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
         res[i] = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (60, 5))
-        print ("Mean Res in single: ", i, np.mean(res[i][:, -3]))
+        print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
     return res   
 
 
 # In[ ]:
 def run_fits_mixed(curvatures, num_fit_trials, num_fits):
-    c_obj = np.zeros(60, dtype = object)
-    for i in range(60):
-        c_obj[i] = curvatures
-    participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60))]
     #func = partial(single_test_fit, curvatures = curvatures, num_fits = 1, num_fit_trials = num_fit_trials)
+    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
+        c_obj = np.zeros(60, dtype = object)
+        for participant in range(60):
+            c_obj[participant] = curvatures
+        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
         res[i] = np.reshape(np.array(pool.starmap(mixed_test_fit, participant_args)), (60, 7))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
     return res   
 def run_fits_dual_six_params(curvatures, num_fit_trials, num_fits):
-    c_obj = np.zeros(60, dtype = object)
-    for i in range(60):
-        c_obj[i] = curvatures
-    participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60))]
-    #func = partial(single_test_fit, curvatures = curvatures, num_fits = 1, num_fit_trials = num_fit_trials)
+    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
+        c_obj = np.zeros(60, dtype = object)
+        for participant in range(60):
+            c_obj[participant] = curvatures
+        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
         res[i] = np.reshape(np.array(pool.starmap(dual_six_params_test_fit, participant_args)), (60, 9))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
