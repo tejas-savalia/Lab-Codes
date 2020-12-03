@@ -23,6 +23,7 @@ def main(num_fit_trials):
     print (num_fit_trials)
 
     #%% Parallel run and dump fits
+    """
     fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
     with open('fit_single_CV_704.pickle', 'wb') as f:
         pickle.dump(fits, f)
@@ -35,8 +36,9 @@ def main(num_fit_trials):
     with open('fit_mixed_CV_704.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
+    """
     fits = run_fits_dual_six_params(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    with open('fit_six_CV_704.pickle', 'wb') as f:
+    with open('ft.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
 
