@@ -549,8 +549,8 @@ def run_fits_mixed(curvatures, num_fit_trials, num_fits):
 
     return res   
 def run_fits_dual_six_params(curvatures, num_fit_trials, num_fits):
-    #train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
-    train_indices = pickle.load(open('ti.pickle', 'rb'))
+    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    #train_indices = pickle.load(open('ti.pickle', 'rb'))
     starting_points  = pickle.load(open('sp.pickle', 'rb'))
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
