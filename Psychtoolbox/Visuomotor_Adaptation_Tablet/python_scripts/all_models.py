@@ -190,7 +190,7 @@ def model_transfer(last_error, num_trials, A, B):
             rotation_est[trial+1] = A*rotation_est[trial] + B*errors[trial]
         else:
             rotation = 0
-            errors[trial-640] = last_error
+            errors[trial-640] = 1 - last_error
             rotation_est[trial+1-640] = A*rotation_est[trial-640] - B*errors[trial-640]
         #errors[trial] = rotation - rotation_est[trial]
     errors[num_trials-1] = rotation_est[num_trials-1-640]
@@ -212,7 +212,7 @@ def dual_transfer(last_error, num_trials, Af, Bf, As, Bs):
             slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
         else:
             rotation = 0
-            errors[trial-640] = last_error
+            errors[trial-640] = 1 - last_error
         #print(errors[trial])
             fast_est[trial+1-640] = Af*fast_est[trial-640] - Bf*errors[trial-640]
             slow_est[trial+1-640] = As*slow_est[trial-640] - Bs*errors[trial-640]
