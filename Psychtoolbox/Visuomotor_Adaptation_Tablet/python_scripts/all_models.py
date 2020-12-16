@@ -379,7 +379,7 @@ def dual_six_params_residuals_gradual(params, num_trials, data_errors, train_ind
 
 def single_residuals_transfer(params, num_trials, data_errors, train_indices):
     #print(train_indices)
-    model_errors = model_transfer(data_errors[-65], num_trials, params[0], params[1])[0]
+    model_errors = model_transfer(np.nanmean(data_errors[-80:-64]), num_trials, params[0], params[1])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices >= 640]-640)
     data_errors_train = np.take(data_errors, train_indices[train_indices >= 640]-640)
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
@@ -393,7 +393,7 @@ def single_residuals_transfer(params, num_trials, data_errors, train_indices):
     return residual_error
 
 def dual_residuals_transfer(params, num_trials, data_errors, train_indices):
-    model_errors = dual_transfer(data_errors[-65], num_trials, params[0], params[1], params[2], params[3])[0]
+    model_errors = dual_transfer(np.nanmean(data_errors[-80:-64]), num_trials, params[0], params[1], params[2], params[3])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices >= 640]-640)
     data_errors_train = np.take(data_errors, train_indices[train_indices >= 640]-640)
     residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[4]))
