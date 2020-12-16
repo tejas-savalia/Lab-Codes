@@ -178,44 +178,46 @@ def model_gradual(num_trials, A, B):
     errors[num_trials-1] = rotation_est[num_trials-1]
     return errors, rotation_est
 
-def model_transfer(num_trials, A, B):
+def model_transfer(last_error, num_trials, A, B):
     errors = np.zeros((num_trials))
     rotation = 90/90.0
     rotation_est = np.zeros((num_trials))
-    for trial in range(num_trials - 1):
+    for trial in range(640, 640+num_trials - 1):
         if trial < 640:
+            print ("Please don't be here, Single")
             rotation = 90/90.0
             errors[trial] = rotation - rotation_est[trial]
             rotation_est[trial+1] = A*rotation_est[trial] + B*errors[trial]
         else:
             rotation = 0
-            errors[trial] = rotation_est[trial]
-            rotation_est[trial+1] = A*rotation_est[trial] - B*errors[trial]
+            errors[trial-640] = last_error
+            rotation_est[trial+1-640] = A*rotation_est[trial-640] - B*errors[trial-640]
         #errors[trial] = rotation - rotation_est[trial]
-    errors[num_trials-1] = rotation_est[num_trials-1]
+    errors[num_trials-1] = rotation_est[num_trials-1-640]
     return errors, rotation_est
 
-def dual_transfer(num_trials, Af, Bf, As, Bs):
+def dual_transfer(last_error, num_trials, Af, Bf, As, Bs):
     errors = np.zeros((num_trials))
     rotation = 1.0
     fast_est = np.zeros((num_trials))
     slow_est = np.zeros((num_trials))
     rotation_est = np.zeros((num_trials))
     #rotation_est[0] = est
-    for trial in range(num_trials - 1):
+    for trial in range(640, 640+num_trials - 1):
         if trial < 640:
+            print ("Please don't be here")
             rotation = 1.0
             errors[trial] = rotation - rotation_est[trial]
             fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
             slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
         else:
             rotation = 0
-            errors[trial] = rotation_est[trial]
+            errors[trial-640] = last_error
         #print(errors[trial])
-            fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
+            fast_est[trial+1-640] = Af*fast_est[trial-640] - Bf*errors[trial-640]
+            slow_est[trial+1-640] = As*slow_est[trial-640] - Bs*errors[trial-640]
 
-        rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
+        rotation_est[trial+1-640] = fast_est[trial+1-640] + slow_est[trial+1-640]
         #print (rotation_est)
     errors[num_trials-1] = rotation_est[num_trials-1]
     return errors, rotation_est, fast_est, slow_est
@@ -417,7 +419,7 @@ def dual_six_params_residuals_gradual(params, num_trials, data_errors, train_ind
 
 def single_residuals_transfer(params, num_trials, data_errors, train_indices):
     #print(train_indices)
-    model_errors = model_sudden(num_trials, params[0], params[1])[0]
+    model_errors = model_transfer(data_errors[-65], num_trials, params[0], params[1])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices >= 640]-640)
     data_errors_train = np.take(data_errors, train_indices[train_indices >= 640]-640)
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
@@ -431,7 +433,7 @@ def single_residuals_transfer(params, num_trials, data_errors, train_indices):
     return residual_error
 
 def dual_residuals_transfer(params, num_trials, data_errors, train_indices):
-    model_errors = dual_model_sudden(num_trials, params[0], params[1], params[2], params[3])[0]
+    model_errors = dual_transfer(data_errors[-65], num_trials, params[0], params[1], params[2], params[3])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices >= 640]-640)
     data_errors_train = np.take(data_errors, train_indices[train_indices >= 640]-640)
     residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[4]))
@@ -569,7 +571,7 @@ def dual_transfer_test_fit(participant, curvatures, num_fit_trials, train_indice
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     starting_points = np.array([[0.9, 0.3, 0.99, 0.01, 0.05]])
     for initial_point in starting_points:
-        fits = scipy.optimize.basinhopping(dual_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
+        fits = scipy.optimize.basinhopping(dual_residuals_transfer, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
 
         Af = fits.x[0]
         Bf = fits.x[1]
