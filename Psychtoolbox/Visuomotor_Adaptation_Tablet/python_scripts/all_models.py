@@ -380,8 +380,8 @@ def dual_six_params_residuals_gradual(params, num_trials, data_errors, train_ind
 def single_residuals_transfer(params, num_trials, data_errors, train_indices):
     #print(train_indices)
     model_errors = model_transfer(np.nanmean(data_errors[-80:-64]), num_trials, params[0], params[1])[0]
-    model_errors_train = np.take(model_errors, np.sort(train_indices[train_indices >= 640]-640))
-    data_errors_train = np.take(data_errors, np.sort(train_indices[train_indices >= 640]))
+    model_errors_train = model_errors[train_indices]
+    data_errors_train = data_errors[np.sort(train_indices)]
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
     residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[2]))
 
@@ -393,9 +393,9 @@ def single_residuals_transfer(params, num_trials, data_errors, train_indices):
     return residual_error
 
 def dual_residuals_transfer(params, num_trials, data_errors, train_indices):
-    model_errors = dual_transfer(np.nanmean(data_errors[-80:-64]), num_trials, params[0], params[1], params[2], params[3])[0]
-    model_errors_train = np.take(model_errors, np.sort(train_indices[train_indices >= 640]-640))
-    data_errors_train = np.take(data_errors, np.sort(train_indices[train_indices >= 640]))
+    model_errors = dual_transfer(np.nanmean(data_errors[0]), num_trials, params[0], params[1], params[2], params[3])[0]
+    model_errors_train = model_errors[train_indices]
+    data_errors_train = data_errors[np.sort(train_indices)]
     residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[4]))
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
     if params[0] > params[2]:
@@ -527,11 +527,11 @@ def mixed_test_fit(participant, curvatures, num_fit_trials, train_indices):
 
 def dual_transfer_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
-    
+    train_indices = train_indices[train_indices >= 640] - 640
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     starting_points = np.array([[0.9, 0.3, 0.99, 0.01, 0.05]])
     for initial_point in starting_points:
-        fits = scipy.optimize.basinhopping(dual_residuals_transfer, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
+        fits = scipy.optimize.basinhopping(dual_residuals_transfer, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][11]), nan = np.nanmedian(curvatures[participant][11])), train_indices), 'method':'Nelder-Mead'})
 
         Af = fits.x[0]
         Bf = fits.x[1]
@@ -548,10 +548,12 @@ def dual_transfer_test_fit(participant, curvatures, num_fit_trials, train_indice
 
 def single_transfer_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
+    train_indices = train_indices[train_indices >= 640] - 640
+
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     starting_points = np.array([[0.9, 0.2, 0.5]])
     for initial_point in starting_points:
-        fits = scipy.optimize.basinhopping(single_residuals_transfer, x0 = [initial_point[0], initial_point[1], initial_point[2]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
+        fits = scipy.optimize.basinhopping(single_residuals_transfer, x0 = [initial_point[0], initial_point[1], initial_point[2]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][11]), nan = np.nanmedian(curvatures[participant][11])), train_indices), 'method':'Nelder-Mead'})
 
         A = fits.x[0]
         B = fits.x[1]
