@@ -128,19 +128,6 @@ def dual_six_param_gradual(num_trials, Af, Bf, Aft, Bft, As, Bs):
     return errors, rotation_est, fast_est, slow_est
 
 
-# 
-
-# In[ ]:
-
-
-
-
-
-# # 2 Param Single state model with Transfer Phase
-
-# In[3]:
-
-
 def model_sudden(num_trials, A, B):
     errors = np.zeros((num_trials))
     rotation = 90/90.0
@@ -180,42 +167,29 @@ def model_gradual(num_trials, A, B):
 
 def model_transfer(last_error, num_trials, A, B):
     errors = np.zeros((num_trials))
-    rotation = 90/90.0
+    rotation = 90/90.0 - last_error
     rotation_est = np.zeros((num_trials))
-    for trial in range(639, 640+num_trials - 1):
-        if trial < 640:
-            #print ("Please don't be here, Single")
-            rotation_est[trial + 1 - 640] = 1 - last_error
-        else:
-            errors[trial-640] = 1 - rotation_est[trial - 640]
-            rotation_est[trial+1-640] = A*rotation_est[trial-640] + B*errors[trial-640]
-        #errors[trial] = rotation - rotation_est[trial]
-    errors[num_trials-1] = rotation_est[num_trials-1]
+    for trial in range(num_trials - 1):
+        rotation = 90/90.0
+        errors[trial] = rotation - rotation_est[trial]
+        rotation_est[trial+1] = A*rotation_est[trial] + B*errors[trial]
+
+    errors[num_trials-1] = rotation - rotation_est[num_trials-1]
     return errors, rotation_est
 
 def dual_transfer(last_error, num_trials, Af, Bf, As, Bs):
     errors = np.zeros((num_trials))
-    rotation = 1.0
+    rotation = 1.0 - last_error
     fast_est = np.zeros((num_trials))
     slow_est = np.zeros((num_trials))
     rotation_est = np.zeros((num_trials))
     #rotation_est[0] = est
-    for trial in range(639, 640+num_trials - 1):
-        if trial < 640:
-            #print ("Please don't be here")
-            rotation = 1.0
-            rotation_est[trial + 1 - 640] = 1 - last_error
-            #fast_est[trial+1 - 640] = 0.05*rotation_est[trial + 1 - 640]
-            #slow_est[trial+1 - 640] = 0.95*rotation_est[trial + 1 - 640]
-        else:
-            errors[trial - 640] = 1 - rotation_est[trial - 640]
-        #print(errors[trial])
-            fast_est[trial+1-640] = Af*fast_est[trial-640] + Bf*errors[trial-640]
-            slow_est[trial+1-640] = As*slow_est[trial-640] + Bs*errors[trial-640]
-
-            rotation_est[trial+1-640] = fast_est[trial+1-640] + slow_est[trial+1-640]
-        #print (rotation_est)
-    errors[num_trials-1] = rotation_est[num_trials-1]
+    for trial in range(num_trials - 1):
+        errors[trial] = rotation - rotation_est[trial]
+        fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
+        slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+        rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
+    errors[num_trials - 1] = rotation - rotation_est[num_trials-1]
     return errors, rotation_est, fast_est, slow_est
 
 
@@ -273,13 +247,6 @@ def mixed_sudden(num_trials, Af, Bf, As, Bs):
     errors[num_trials-1] = rotation_est[num_trials-1]
     return errors, rotation_est, fast_est, slow_est
 
-# # Residual Functions
-
-# ## Single State Models
-
-# In[4]:
-
-
 def single_residuals_sudden(params, num_trials, data_errors, train_indices):
     #print(train_indices)
     model_errors = model_sudden(num_trials, params[0], params[1])[0]
@@ -308,7 +275,6 @@ def single_residuals_gradual(params, num_trials, data_errors, train_indices):
         residual_error = residual_error + 10000000
 
     return residual_error
-
 
 def dual_residuals_sudden(params, num_trials, data_errors, train_indices):
     model_errors = dual_model_sudden(num_trials, params[0], params[1], params[2], params[3])[0]
@@ -343,7 +309,6 @@ def dual_residuals_gradual(params, num_trials, data_errors, train_indices):
         residual_error = residual_error + 10000000
 
     return residual_error
-
 
 def mixed_residuals_sudden(params, num_trials, data_errors, train_indices):
     model_errors = mixed_sudden(num_trials, params[0], params[1], params[2], params[3])[0]
