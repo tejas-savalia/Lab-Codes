@@ -182,18 +182,15 @@ def model_transfer(last_error, num_trials, A, B):
     errors = np.zeros((num_trials))
     rotation = 90/90.0
     rotation_est = np.zeros((num_trials))
-    for trial in range(640, 640+num_trials - 1):
+    for trial in range(639, 640+num_trials - 1):
         if trial < 640:
-            print ("Please don't be here, Single")
-            rotation = 90/90.0
-            errors[trial] = rotation - rotation_est[trial]
-            rotation_est[trial+1] = A*rotation_est[trial] + B*errors[trial]
+            #print ("Please don't be here, Single")
+            rotation_est[trial + 1 - 640] = 1 - last_error
         else:
-            rotation = 0
-            errors[trial-640] = 1 - last_error
+            errors[trial-640] = rotation_est[trial - 640]
             rotation_est[trial+1-640] = A*rotation_est[trial-640] - B*errors[trial-640]
         #errors[trial] = rotation - rotation_est[trial]
-    errors[num_trials-1] = rotation_est[num_trials-1-640]
+    errors[num_trials-1] = rotation_est[num_trials-1]
     return errors, rotation_est
 
 def dual_transfer(last_error, num_trials, Af, Bf, As, Bs):
@@ -203,21 +200,20 @@ def dual_transfer(last_error, num_trials, Af, Bf, As, Bs):
     slow_est = np.zeros((num_trials))
     rotation_est = np.zeros((num_trials))
     #rotation_est[0] = est
-    for trial in range(640, 640+num_trials - 1):
+    for trial in range(639, 640+num_trials - 1):
         if trial < 640:
-            print ("Please don't be here")
+            #print ("Please don't be here")
             rotation = 1.0
-            errors[trial] = rotation - rotation_est[trial]
-            fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+            rotation_est[trial + 1 - 640] = 1 - last_error
+            fast_est[trial+1 - 640] = 0.5*rotation_est[trial + 1 - 640]
+            slow_est[trial+1 - 640] = 0.5*rotation_est[trial + 1 - 640]
         else:
-            rotation = 0
-            errors[trial-640] = 1 - last_error
+            errors[trial - 640] = rotation_est[trial - 640]
         #print(errors[trial])
             fast_est[trial+1-640] = Af*fast_est[trial-640] - Bf*errors[trial-640]
             slow_est[trial+1-640] = As*slow_est[trial-640] - Bs*errors[trial-640]
 
-        rotation_est[trial+1-640] = fast_est[trial+1-640] + slow_est[trial+1-640]
+            rotation_est[trial+1-640] = fast_est[trial+1-640] + slow_est[trial+1-640]
         #print (rotation_est)
     errors[num_trials-1] = rotation_est[num_trials-1]
     return errors, rotation_est, fast_est, slow_est
