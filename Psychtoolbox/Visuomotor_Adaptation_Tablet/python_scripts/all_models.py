@@ -170,7 +170,6 @@ def model_transfer(last_error, num_trials, A, B):
     rotation = 90/90.0 - last_error
     rotation_est = np.zeros((num_trials))
     for trial in range(num_trials - 1):
-        rotation = 90/90.0
         errors[trial] = rotation - rotation_est[trial]
         rotation_est[trial+1] = A*rotation_est[trial] + B*errors[trial]
 
