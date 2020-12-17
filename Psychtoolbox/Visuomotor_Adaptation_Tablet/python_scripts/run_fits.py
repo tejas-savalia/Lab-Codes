@@ -9,7 +9,8 @@ from sklearn.metrics import *
 import scipy.stats as stat
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
-from all_models import *
+#from all_models import *
+from transfer_models import *
 import sys
 
 # %%
