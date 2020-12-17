@@ -66,8 +66,8 @@ def single_transfer_residuals(params, num_trials, data_errors, prev_est, train_i
     model_errors = single_transfer(num_trials, A, B, prev_est)
     model_errors_train = model_errors[np.sort(train_indices)]
     data_errors_train = data_errors[np.sort(train_indices)]
-    plt.plot(model_errors)
-    plt.plot(data_errors_train)
+    #plt.plot(model_errors)
+    #plt.plot(data_errors_train)
     residuals = -2*np.sum(stats.norm.logpdf(data_errors_train, model_errors_train, epsilon))
     if A < 0 or B < 0 or A > 1 or B > 1:
         residuals = residuals + 100000000
@@ -86,8 +86,8 @@ def dual_transfer_residuals(params, num_trials, data_errors, prev_est, train_ind
     model_errors = dual_transfer(num_trials, Af, Bf, As, Bs, prev_est)
     model_errors_train = model_errors[np.sort(train_indices)]
     data_errors_train = data_errors[np.sort(train_indices)]
-    plt.plot(model_errors)
-    plt.plot(data_errors_train)
+    #plt.plot(model_errors)
+    #plt.plot(data_errors_train)
     residuals = -2*np.sum(stats.norm.logpdf(data_errors_train, model_errors_train, epsilon))
     if Af < 0 or Bf < 0 or Af > 1 or Bf > 1 or As < 0 or Bs < 0 or As > 1 or Bs > 1:
         residuals = residuals + 100000000
@@ -101,7 +101,7 @@ def dual_transfer_residuals(params, num_trials, data_errors, prev_est, train_ind
 
 
 def fit_single_transfer(participant, curvatures, training_indices):
-    ti = training_indices[participant][training_indices[participant] > 640] - 640
+    ti = training_indices[training_indices > 640] - 640
     fits = scipy.optimize.basinhopping(single_transfer_residuals, x0 = [0.8, 0.1, 0.1], 
                                        minimizer_kwargs={'args': (64, 
                                                              curvatures[participant][-1], 
@@ -113,7 +113,7 @@ def fit_single_transfer(participant, curvatures, training_indices):
     epsilon = fits.x[2]
     V = fits.fun
     print (participant, V)
-    return A, B, V, epsilon
+    return A, B, V, epsilon, ti
 
 def fit_dual_transfer(participant, curvatures, training_indices, fast_est, slow_est):
     ti = training_indices[training_indices > 640] - 640
@@ -132,7 +132,7 @@ def fit_dual_transfer(participant, curvatures, training_indices, fast_est, slow_
     epsilon = fits.x[4]
     V = fits.fun
     print (participant, V)
-    return Af, Bf, As, Bs, V, epsilon
+    return Af, Bf, As, Bs, V, epsilon, ti
 
 
 # In[ ]:

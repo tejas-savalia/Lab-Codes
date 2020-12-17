@@ -45,10 +45,10 @@ def main(num_fit_trials):
     #    pickle.dump(fits, f)
     #f.close()
 
-    fits = run_fits_dual_transfer(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    with open('fit_dual_CV_transfer.pickle', 'wb') as f:
-        pickle.dump(fits, f)
-    f.close()
+    #fits = run_fits_dual_transfer(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_dual_CV_transfer.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
     fits = run_fits_single_transfer(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
     with open('fit_single_CV_transfer.pickle', 'wb') as f:
         pickle.dump(fits, f)
