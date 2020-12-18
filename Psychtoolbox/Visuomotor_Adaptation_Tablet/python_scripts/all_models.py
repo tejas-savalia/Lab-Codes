@@ -592,7 +592,7 @@ def run_fits_single(curvatures, num_fit_trials, num_fits):
             c_obj[participant] = curvatures
         participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
         res[i] = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (60, 5))
-        print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
+        print ("Mean Res in Single: ", i, np.mean(res[i][:, -3]))
     return res   
 
 def run_fits_mixed(curvatures, num_fit_trials, num_fits):
