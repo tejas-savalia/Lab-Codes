@@ -74,6 +74,59 @@ def dual_model_gradual(num_trials, Af, Bf, As, Bs):
     errors[num_trials-1] = rotation_est[num_trials-1]
 
     return errors, rotation_est, fast_est, slow_est
+
+def dual_model_sudden_avg(num_trials, Af, Bf, As, Bs):
+    errors = np.zeros((num_trials))
+    rotation = 1.0
+    fast_est = np.zeros((num_trials))
+    slow_est = np.zeros((num_trials))
+    rotation_est = np.zeros((num_trials))
+    #rotation_est[0] = est
+    for trial in range(num_trials - 1):
+        if trial < 640:
+            rotation = 1.0
+            errors[trial] = rotation - rotation_est[trial]
+            fast_est[trial+1] = Af*fast_est[trial] + Bf*np.mean(errors[:trial])
+            slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+        else:
+            rotation = 0
+            errors[trial] = rotation_est[trial]
+        #print(errors[trial])
+            fast_est[trial+1] = Af*fast_est[trial] - Bf*np.mean(errors[:trial])
+            slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
+
+        rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
+        #print (rotation_est)
+    errors[num_trials-1] = rotation_est[num_trials-1]
+    return errors, rotation_est, fast_est, slow_est
+
+def dual_model_gradual_avg(num_trials, Af, Bf, As, Bs):
+    errors = np.zeros((num_trials))
+    fast_est = np.zeros((num_trials))
+    slow_est = np.zeros((num_trials))
+    rotation_est = np.zeros((num_trials))
+    rotation = 0
+    for trial in range(num_trials - 1):
+        if trial < 640:
+            if trial%64 == 0:
+                rotation = rotation + 10/90.0
+            if rotation > 1.0:
+                rotation = 1.0
+            errors[trial] = rotation - rotation_est[trial]
+            fast_est[trial+1] = Af*fast_est[trial] + Bf*np.mean(errors[:trial])
+            slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+        else:
+            rotation = 0
+            errors[trial] = rotation_est[trial] 
+            fast_est[trial+1] = Af*fast_est[trial] - Bf*np.mean(errors[:trial])
+            slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
+
+        rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
+        #print (rotation_est)
+    errors[num_trials-1] = rotation_est[num_trials-1]
+
+    return errors, rotation_est, fast_est, slow_est
+
 #%%
 def dual_six_param_sudden(num_trials, Af, Bf, Aft, Bft, As, Bs):
     errors = np.zeros((num_trials))
@@ -276,7 +329,8 @@ def single_residuals_gradual(params, num_trials, data_errors, train_indices):
     return residual_error
 
 def dual_residuals_sudden(params, num_trials, data_errors, train_indices):
-    model_errors = dual_model_sudden(num_trials, params[0], params[1], params[2], params[3])[0]
+    #model_errors = dual_model_sudden(num_trials, params[0], params[1], params[2], params[3])[0]
+    model_errors = dual_model_sudden_avg(num_trials, params[0], params[1], params[2], params[3])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices < len(model_errors)])
     data_errors_train = np.take(data_errors, train_indices[train_indices < len(model_errors)])
     residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[4]))
@@ -293,7 +347,8 @@ def dual_residuals_sudden(params, num_trials, data_errors, train_indices):
     return residual_error
 
 def dual_residuals_gradual(params, num_trials, data_errors, train_indices):
-    model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
+    #model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
+    model_errors = dual_model_gradual_avg(num_trials, params[0], params[1], params[2], params[3])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices < len(model_errors)])
     data_errors_train = np.take(data_errors, train_indices[train_indices < len(model_errors)])
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
