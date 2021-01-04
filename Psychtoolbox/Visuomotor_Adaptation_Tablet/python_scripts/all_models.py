@@ -86,13 +86,20 @@ def dual_model_sudden_avg(num_trials, Af, Bf, As, Bs):
         if trial < 640:
             rotation = 1.0
             errors[trial] = rotation - rotation_est[trial]
-            fast_est[trial+1] = Af*fast_est[trial] + Bf*np.mean(errors[:trial])
+            #fast_est[trial+1] = Af*fast_est[trial] + Bf*np.mean(errors[:trial])
+            if trial < 16:
+                fast_est[trial+1] = Af*fast_est[trial] + Bf*np.mean(errors[:trial])
+            else:
+                fast_est[trial+1] = Af*fast_est[trial] + Bf*np.mean(errors[trial-16:trial])
             slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
         else:
             rotation = 0
             errors[trial] = rotation_est[trial]
         #print(errors[trial])
-            fast_est[trial+1] = Af*fast_est[trial] - Bf*np.mean(errors[:trial])
+            if trial < 640+16: 
+                fast_est[trial+1] = Af*fast_est[trial] - Bf*np.mean(errors[640:trial])
+            else:
+                fast_est[trial+1] = Af*fast_est[trial] - Bf*np.mean(errors[trial-16:trial])
             slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
 
         rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
@@ -113,12 +120,18 @@ def dual_model_gradual_avg(num_trials, Af, Bf, As, Bs):
             if rotation > 1.0:
                 rotation = 1.0
             errors[trial] = rotation - rotation_est[trial]
-            fast_est[trial+1] = Af*fast_est[trial] + Bf*np.mean(errors[:trial])
+            if trial < 16:
+                fast_est[trial+1] = Af*fast_est[trial] + Bf*np.mean(errors[:trial])
+            else:
+                fast_est[trial+1] = Af*fast_est[trial] + Bf*np.mean(errors[trial-16:trial])
             slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
         else:
             rotation = 0
-            errors[trial] = rotation_est[trial] 
-            fast_est[trial+1] = Af*fast_est[trial] - Bf*np.mean(errors[:trial])
+            errors[trial] = rotation_est[trial]
+            if trial < 640+16: 
+                fast_est[trial+1] = Af*fast_est[trial] - Bf*np.mean(errors[640:trial])
+            else:
+                fast_est[trial+1] = Af*fast_est[trial] - Bf*np.mean(errors[trial-16:trial])
             slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
 
         rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
@@ -128,6 +141,7 @@ def dual_model_gradual_avg(num_trials, Af, Bf, As, Bs):
     return errors, rotation_est, fast_est, slow_est
 
 #%%
+
 def dual_six_param_sudden(num_trials, Af, Bf, Aft, Bft, As, Bs):
     errors = np.zeros((num_trials))
     rotation = 1.0
