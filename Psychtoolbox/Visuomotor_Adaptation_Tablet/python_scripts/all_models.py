@@ -560,8 +560,8 @@ def dual_avg_test_fit(participant, curvatures, num_fit_trials, train_indices, av
     starting_points = np.array([[0.6, 0.5, 0.9, 0.1, 0.05]])
     for initial_point in starting_points:
         if participant%4 == 0 or participant%4 == 1:      
-            #fits = scipy.optimize.basinhopping(dual_residuals_sudden_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), 'method':'Nelder-Mead'})
-            fits = scipy.optimize.minimize(dual_residuals_sudden_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], args=(num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), method='Nelder-Mead')
+            fits = scipy.optimize.basinhopping(dual_residuals_sudden_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), 'method':'Nelder-Mead'}, niter_success = 5)
+            #fits = scipy.optimize.minimize(dual_residuals_sudden_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], args=(num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), method='Nelder-Mead')
             Af = fits.x[0]
             Bf = fits.x[1]
             As = fits.x[2]
@@ -569,8 +569,8 @@ def dual_avg_test_fit(participant, curvatures, num_fit_trials, train_indices, av
             epsilon = fits.x[4]
             V = fits.fun
         else:
-            #fits = scipy.optimize.basinhopping(dual_residuals_gradual_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), 'method':'Nelder-Mead'})
-            fits = scipy.optimize.minimize(dual_residuals_gradual_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], args=(num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), method='Nelder-Mead')
+            fits = scipy.optimize.basinhopping(dual_residuals_gradual_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), 'method':'Nelder-Mead'}, niter_success = 5)
+            #fits = scipy.optimize.minimize(dual_residuals_gradual_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], args=(num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), method='Nelder-Mead')
 
             Af = fits.x[0]
             Bf = fits.x[1]
@@ -728,7 +728,7 @@ def run_fits_dual_avg(curvatures, num_fit_trials, num_fits):
         c_obj = np.zeros(60, dtype = object)
         for participant in range(60):
             c_obj[participant] = curvatures
-        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i], avg_errors[i])]
+        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i], avg_errors)]
         res[i] = np.reshape(np.array(pool.starmap(dual_avg_test_fit, participant_args)), (60, 7))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
