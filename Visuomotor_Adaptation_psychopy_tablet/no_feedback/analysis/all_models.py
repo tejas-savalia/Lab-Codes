@@ -369,8 +369,8 @@ def dual_residuals_sudden(params, num_trials, data_errors, train_indices):
     return residual_error
 
 def dual_residuals_gradual(params, num_trials, data_errors, train_indices):
-    #model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
-    model_errors = dual_model_gradual_avg(num_trials, params[0], params[1], params[2], params[3])[0]
+    model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
+    #model_errors = dual_model_gradual_avg(num_trials, params[0], params[1], params[2], params[3])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices < len(model_errors)])
     data_errors_train = np.take(data_errors, train_indices[train_indices < len(model_errors)])
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
@@ -532,7 +532,7 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     starting_points = np.array([[0.9, 0.3, 0.99, 0.01, 0.05]])
     for initial_point in starting_points:
-        if participant%4 == 0 or participant%4 == 1:      
+        if participant%2 == 0:# or participant%4 == 1:      
             fits = scipy.optimize.basinhopping(dual_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
 
             Af = fits.x[0]
@@ -589,7 +589,7 @@ def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     starting_points = np.array([[0.9, 0.2, 0.5]])
     for initial_point in starting_points:
-        if participant%4 == 0 or participant%4 == 1:      
+        if participant%2 == 0:# or participant%4 == 1:      
             fits = scipy.optimize.basinhopping(single_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
 
             A = fits.x[0]
@@ -707,16 +707,16 @@ def single_transfer_test_fit(participant, curvatures, num_fit_trials, train_indi
 # In[8]:
 
 
-def run_fits_dual(curvatures, num_fit_trials, num_fits):
+def run_fits_dual(curvatures, num_fit_trials, num_fits, num_participants):
     train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
-        c_obj = np.zeros(60, dtype = object)
-        for participant in range(60):
+        c_obj = np.zeros(num_participants, dtype = object)
+        for participant in range(num_participants):
             c_obj[participant] = curvatures
-        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
-        res[i] = np.reshape(np.array(pool.starmap(dual_test_fit, participant_args)), (60, 7))
+        participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)],  np.repeat(num_fit_trials, num_participants), train_indices[i])]
+        res[i] = np.reshape(np.array(pool.starmap(dual_test_fit, participant_args)), (num_participants, 7))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
     return res   
@@ -737,17 +737,17 @@ def run_fits_dual_avg(curvatures, num_fit_trials, num_fits):
     return res   
 
 
-def run_fits_single(curvatures, num_fit_trials, num_fits):
+def run_fits_single(curvatures, num_fit_trials, num_fits, num_participants):
     train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
     print(train_indices[0].shape)
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
-        c_obj = np.zeros(60, dtype = object)
-        for participant in range(60):
+        c_obj = np.zeros(num_participants, dtype = object)
+        for participant in range(num_participants):
             c_obj[participant] = curvatures
-        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
-        res[i] = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (60, 5))
+        participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)],  np.repeat(num_fit_trials, num_participants), train_indices[i])]
+        res[i] = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (num_participants, 5))
         print ("Mean Res in Single: ", i, np.mean(res[i][:, -3]))
     return res   
 

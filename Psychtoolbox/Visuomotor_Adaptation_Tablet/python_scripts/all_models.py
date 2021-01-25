@@ -557,7 +557,10 @@ def dual_avg_test_fit(participant, curvatures, num_fit_trials, train_indices, av
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
-    starting_points = np.array([[0.6, 0.5, 0.9, 0.1, 0.05], [0.5, 0.6, 0.8, 0.1], [0.45, 0.7, 0.9, 0.5], [0.4, 0.8, 0.5, 0.3], [0.7, 0.3, 0.75, 0.2], [0.8, 0.2, 0.9, 0.05], [0.85, 0.1, 0.95, 0.01], [0.9, 0.05, 0.99, 0.01]])
+    #starting_points = np.array([[0.6, 0.5, 0.9, 0.1, 0.05], [0.5, 0.6, 0.8, 0.1], [0.45, 0.7, 0.9, 0.5], [0.4, 0.8, 0.5, 0.3], [0.7, 0.3, 0.75, 0.2], [0.8, 0.2, 0.9, 0.05], [0.85, 0.1, 0.95, 0.01], [0.9, 0.05, 0.99, 0.01]])
+    starting_points = np.zeros((100, 5))
+    for i in range(1):
+        starting_points[i] = np.random.uniform(0, 1, 5)
     V = np.inf
     for initial_point in starting_points:
         if participant%4 == 0 or participant%4 == 1:      
@@ -572,7 +575,7 @@ def dual_avg_test_fit(participant, curvatures, num_fit_trials, train_indices, av
                 V = fits.fun
         else:
             #fits = scipy.optimize.basinhopping(dual_residuals_gradual_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), 'method':'Nelder-Mead'}, niter_success = 5)
-            #fits = scipy.optimize.minimize(dual_residuals_gradual_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], args=(num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), method='Nelder-Mead')
+            fits = scipy.optimize.minimize(dual_residuals_gradual_avg, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], args=(num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, avg_errors), method='Nelder-Mead')
             if fits.fun < V:
                 Af = fits.x[0]
                 Bf = fits.x[1]
@@ -581,7 +584,7 @@ def dual_avg_test_fit(participant, curvatures, num_fit_trials, train_indices, av
                 epsilon = fits.x[4]
                 V = fits.fun
             
-        print (participant, V)
+    print (participant, V)
     return Af, Bf, As, Bs, V, epsilon, train_indices
 
 def single_test_fit(participant, curvatures, num_fit_trials, train_indices):

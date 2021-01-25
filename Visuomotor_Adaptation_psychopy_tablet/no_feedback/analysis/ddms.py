@@ -1,18 +1,19 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from ddm import Model, Sample
-from ddm import Model
-from ddm.models import DriftConstant, NoiseConstant, BoundConstant, OverlayNonDecision, ICRange
-from ddm.functions import fit_adjust_model, display_model
-from ddm import Fittable
-from ddm.models import LossRobustBIC, LossRobustLikelihood, LossSquaredError
-from ddm.functions import fit_adjust_model, fit_model
-import seaborn as sns
-from ddm import set_N_cpus
-
-from ddm import Bound
 def main():
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    from ddm import Model, Sample
+    from ddm import Model
+    from ddm.models import DriftConstant, NoiseConstant, BoundConstant, OverlayNonDecision, ICRange
+    from ddm.functions import fit_adjust_model, display_model
+    from ddm import Fittable
+    from ddm.models import LossRobustBIC, LossRobustLikelihood, LossSquaredError
+    from ddm.functions import fit_adjust_model, fit_model
+    import seaborn as sns
+    from ddm import set_N_cpus
+
+    from ddm import Bound
+
     set_N_cpus(8)
     class BoundBlocks(Bound):
         name = "constant"
@@ -76,54 +77,52 @@ def main():
                 return self.VBlock10
             if conditions['block'] == 11:
                 return self.VBlock11
+        model_fits = np.zeros(14, dtype = object)
+        for participant in range(14):
+            print(participant)
+            df_rt = pd.read_csv(open('RTs.csv'))
+            df_error = pd.read_csv(open('Angular_errors.csv'))
+            df_rt['Correct'] = 0
+            df_rt['Correct'][df_error['Error'] < np.pi/9] = 1
+            df_rt['Correct'][df_error['Error'] > np.pi/9] = 0
 
-    model = Model(bound=BoundBlocks(BBlock0 = Fittable(minval = 0, maxval = 10),
-                                   BBlock1 = Fittable(minval = 0, maxval = 10),
-                                   BBlock2 = Fittable(minval = 0, maxval = 10),
-                                   BBlock3 = Fittable(minval = 0, maxval = 10),
-                                   BBlock4 = Fittable(minval = 0, maxval = 10),
-                                   BBlock5 = Fittable(minval = 0, maxval = 10),
-                                   BBlock6 = Fittable(minval = 0, maxval = 10),
-                                   BBlock7 = Fittable(minval = 0, maxval = 10),
-                                   BBlock8 = Fittable(minval = 0, maxval = 10),
-                                   BBlock9 = Fittable(minval = 0, maxval = 10),
-                                   BBlock10 = Fittable(minval = 0, maxval = 10),
-                                   BBlock11 = Fittable(minval = 0, maxval = 10)),
+            df_rt = df_rt[df_rt['participant_id'] == participant]
 
-                  drift=DriftBlocks(VBlock0 = Fittable(minval = 0, maxval = 10),
-                                   VBlock1 = Fittable(minval = 0, maxval = 10),
-                                   VBlock2 = Fittable(minval = 0, maxval = 10),
-                                   VBlock3 = Fittable(minval = 0, maxval = 10),
-                                   VBlock4 = Fittable(minval = 0, maxval = 10),
-                                   VBlock5 = Fittable(minval = 0, maxval = 10),
-                                   VBlock6 = Fittable(minval = 0, maxval = 10),
-                                   VBlock7 = Fittable(minval = 0, maxval = 10),
-                                   VBlock8 = Fittable(minval = 0, maxval = 10),
-                                   VBlock9 = Fittable(minval = 0, maxval = 10),
-                                   VBlock10 = Fittable(minval = 0, maxval = 10),
-                                   VBlock11 = Fittable(minval = 0, maxval = 10)),
+            df_rt = df_rt[df_rt["ITs"] > .001]
+            df_rt = df_rt[df_rt["ITs"] < 5]
+            df_rt = df_rt.drop(['Trial', 'Unnamed: 0', 'participant_id', 'condition', 'MTs'], axis = 1)
 
-                  overlay=OverlayNonDecision(nondectime=Fittable(minval=0, maxval=0.5)),
+            samp = Sample.from_pandas_dataframe(df_rt, rt_column_name="ITs", correct_column_name="Correct")
+            model_fits[participant] = fit_model(samp, bound=BoundBlocks(BBlock0 = Fittable(minval = 0, maxval = 20),
+		       BBlock1 = Fittable(minval = 0, maxval = 20),
+		       BBlock2 = Fittable(minval = 0, maxval = 20),
+		       BBlock3 = Fittable(minval = 0, maxval = 20),
+		       BBlock4 = Fittable(minval = 0, maxval = 20),
+		       BBlock5 = Fittable(minval = 0, maxval = 20),
+		       BBlock6 = Fittable(minval = 0, maxval = 20),
+		       BBlock7 = Fittable(minval = 0, maxval = 20),
+		       BBlock8 = Fittable(minval = 0, maxval = 20),
+		       BBlock9 = Fittable(minval = 0, maxval = 20),
+		       BBlock10 = Fittable(minval = 0, maxval = 20),
+		       BBlock11 = Fittable(minval = 0, maxval = 20)),
 
-                  noise=NoiseConstant(noise=Fittable(minval=0, maxval=10)), 
-                  dx=.01, dt=.0001, T_dur = 10
-                 )
+            drift=DriftBlocks(VBlock0 = Fittable(minval = -20, maxval = 20),
+		       VBlock1 = Fittable(minval = -20, maxval = 20),
+		       VBlock2 = Fittable(minval = -20, maxval = 20),
+		       VBlock3 = Fittable(minval = -20, maxval = 20),
+		       VBlock4 = Fittable(minval = -20, maxval = 20),
+		       VBlock5 = Fittable(minval = -20, maxval = 20),
+		       VBlock6 = Fittable(minval = -20, maxval = 20),
+		       VBlock7 = Fittable(minval = -20, maxval = 20),
+		       VBlock8 = Fittable(minval = -20, maxval = 20),
+		       VBlock9 = Fittable(minval = -20, maxval = 20),
+		       VBlock10 = Fittable(minval = -20, maxval = 20),
+		       VBlock11 = Fittable(minval = -20, maxval = 20)),
 
-    participant = 0
-    df_rt = pd.read_csv(open('RTs.csv'))
-    df_error = pd.read_csv(open('Angular_errors.csv'))
+            overlay=OverlayNonDecision(nondectime=Fittable(minval=0, maxval=0.5)),
 
-    df_rt['Correct'] = 0
-    df_rt['Correct'][df_error['Error'] < np.pi/9] = 1
-    df_rt['Correct'][df_error['Error'] > np.pi/9] = 0
-
-    df_rt = df_rt[df_rt['participant_id'] == participant]
-
-    df_rt = df_rt[df_rt["ITs"] > .001]
-    df_rt = df_rt[df_rt["ITs"] < 5]
-    df_rt = df_rt.drop(['Trial', 'Unnamed: 0', 'participant_id', 'condition', 'MTs'], axis = 1)
-    samp = Sample.from_pandas_dataframe(df_rt, rt_column_name="ITs", correct_column_name="Correct")
-    model_fit = fit_adjust_model(samp, model, lossfunction=LossRobustLikelihood, verbose=False)
+            noise=NoiseConstant(noise=Fittable(minval=0.01, maxval=5)), lossfunction=LossRobustLikelihood, verbose = False
+	    )
 
 if __name__ == '__main__':
     main()
