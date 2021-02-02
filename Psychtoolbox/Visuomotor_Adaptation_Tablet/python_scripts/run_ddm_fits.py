@@ -49,5 +49,8 @@ def fit_ddm_participant(participant):
 def main():
     pool = Pool()
     res = np.zeros(60, dtype = object)
-    res = pool.map(fit_ddm_participant, 60)
+    res = pool.map(fit_ddm_participant, range(60))
     pickle.dump(res, open('ddm_fits.pickle', 'wb'))
+
+if __name__ == '__main__':
+    main()
