@@ -153,12 +153,16 @@ def fit_ddm_2_param_participant(participant):
                       noise=NoiseConstant(noise=Fittable(minval = 0, maxval = 5)),                      
                       overlay=OverlayNonDecision(nondectime=Fittable(minval = 0, maxval = 1)),
                       dx=.001, dt=.01, T_dur=5)
-
-        fit_adjust_model(samp, model_fit,
+        try:
+            fit_adjust_model(samp, model_fit,
                          fitting_method="differential_evolution",
                          lossfunction=LossRobustLikelihood, verbose=False)
-        #    print ("In except: ")
-        #    print (participant)
+            print("Participant done: ", participant)
+            print("ic: ", ic)
+        except:
+            print ("In except: ")
+            print (participant)
+            print (ic)
         model_fits_2param[ic] = model_fit
     return model_fits_2param
 

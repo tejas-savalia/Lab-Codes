@@ -40,10 +40,18 @@ def main(num_fit_trials):
     #    pickle.dump(fits, f)
     #f.close()
 
-    fits = run_fits_dual_eight(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    with open('fit_dual_eight_CV_704.pickle', 'wb') as f:
+    fits = run_fits_dual_alpha(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    with open('fit_dual_alpha_CV_704.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
+
+
+    #fits = run_fits_dual_eight(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_dual_eight_CV_704.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
+
+
 
     #fits = run_fits_mixed(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
     #with open('fit_mixed_CV_704.pickle', 'wb') as f:
