@@ -96,7 +96,7 @@ def dual_model_sudden_alpha(num_trials, Af, Bf, As, Bs, alpha):
             fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
             slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
 
-        rotation_est[trial+1] = alpha*fast_est[trial+1] + (1-alpha)*slow_est[trial+1]
+        rotation_est[trial+1] = alpha*fast_est[trial+1] + (2-alpha)*slow_est[trial+1]
         #print (rotation_est)
     errors[num_trials-1] = rotation_est[num_trials-1]
     return errors, rotation_est, fast_est, slow_est
@@ -123,7 +123,7 @@ def dual_model_gradual_alpha(num_trials, Af, Bf, As, Bs, alpha):
             fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
             slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
 
-        rotation_est[trial+1] = alpha*fast_est[trial+1] + (1-alpha)*slow_est[trial+1]
+        rotation_est[trial+1] = alpha*fast_est[trial+1] + (2-alpha)*slow_est[trial+1]
         #print (rotation_est)
     errors[num_trials-1] = rotation_est[num_trials-1]
 
@@ -507,7 +507,7 @@ def dual_residuals_sudden_alpha(params, num_trials, data_errors, train_indices):
         residual_error = residual_error + 10000000
     if params[0] > 1 or params[1] > 1 or params[2] > 1 or params[3] > 1:
         residual_error = residual_error + 10000000
-    if params[4] < 0 or params[4] > 1:
+    if params[4] < 0 or params[4] > 2:
         residual_error = residual_error + 10000000
 
     return residual_error
@@ -527,7 +527,7 @@ def dual_residuals_gradual_alpha(params, num_trials, data_errors, train_indices)
         residual_error = residual_error + 10000000
     if params[0] > 1 or params[1] > 1 or params[2] > 1 or params[3] > 1:
         residual_error = residual_error + 10000000
-    if params[4] < 0 or params[4] > 1:
+    if params[4] < 0 or params[4] > 2:
         residual_error = residual_error + 10000000
 
     return residual_error

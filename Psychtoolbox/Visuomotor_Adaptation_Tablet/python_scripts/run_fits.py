@@ -41,7 +41,7 @@ def main(num_fit_trials):
     #f.close()
 
     fits = run_fits_dual_alpha(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    with open('fit_dual_alpha_CV_704.pickle', 'wb') as f:
+    with open('fit_dual_2alpha_CV_704.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
 
