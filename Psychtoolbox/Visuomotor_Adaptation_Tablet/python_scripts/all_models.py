@@ -155,7 +155,7 @@ def dual_model_sudden_alpha_beta(num_trials, Af, Bf, As, Bs, alpha, beta):
     return errors, rotation_est, fast_est, slow_est
 
 
-def dual_model_gradual_alpha(num_trials, Af, Bf, As, Bs, alpha, beta):
+def dual_model_gradual_alpha_beta(num_trials, Af, Bf, As, Bs, alpha, beta):
     errors = np.zeros((num_trials))
     fast_est = np.zeros((num_trials))
     slow_est = np.zeros((num_trials))
@@ -586,10 +586,10 @@ def dual_residuals_gradual_alpha(params, num_trials, data_errors, train_indices)
     return residual_error
 
 def dual_residuals_sudden_alpha_beta(params, num_trials, data_errors, train_indices):
-    model_errors = dual_model_sudden_alpha(num_trials, params[0], params[1], params[2], params[3], params[4], params[5])[0]
+    model_errors = dual_model_sudden_alpha_beta(num_trials, params[0], params[1], params[2], params[3], params[4], params[5])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices < len(model_errors)])
     data_errors_train = np.take(data_errors, train_indices[train_indices < len(model_errors)])
-    residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[5]))
+    residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[6]))
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
     if params[0] > params[2]:
         residual_error = residual_error + 10000000
@@ -599,18 +599,17 @@ def dual_residuals_sudden_alpha_beta(params, num_trials, data_errors, train_indi
         residual_error = residual_error + 10000000
     if params[0] > 1 or params[1] > 1 or params[2] > 1 or params[3] > 1:
         residual_error = residual_error + 10000000
-    if params[4] < 0 or params[4] > 1 or params[5] < 0 or params[5] > 1:
+    if params[4] < 0 or params[4] > 2 or params[5] < 0 or params[5] > 2:
         residual_error = residual_error + 10000000
 
     return residual_error
 
 def dual_residuals_gradual_alpha_beta(params, num_trials, data_errors, train_indices):
-    #model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
-    model_errors = dual_model_gradual_alpha(num_trials, params[0], params[1], params[2], params[3], params[4])[0]
+    model_errors = dual_model_gradual_alpha_beta(num_trials, params[0], params[1], params[2], params[3], params[4], params[5])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices < len(model_errors)])
     data_errors_train = np.take(data_errors, train_indices[train_indices < len(model_errors)])
-    #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
-    residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[5]))
+
+    residual_error = -2*sum(stat.norm.logpdf(data_errors_train, model_errors_train, params[6]))
     if params[0] > params[2]:
         residual_error = residual_error + 10000000
     if params[1] < params[3]:
@@ -619,7 +618,7 @@ def dual_residuals_gradual_alpha_beta(params, num_trials, data_errors, train_ind
         residual_error = residual_error + 10000000
     if params[0] > 1 or params[1] > 1 or params[2] > 1 or params[3] > 1:
         residual_error = residual_error + 10000000
-    if params[4] < 0 or params[4] > 1 or params[5] < 0 or params[5] > 1:
+    if params[4] < 0 or params[4] > 2 or params[5] < 0 or params[5] > 2:
         residual_error = residual_error + 10000000
 
     return residual_error
@@ -858,7 +857,7 @@ def dual_alpha_test_fit(participant, curvatures, num_fit_trials, train_indices):
     return Af, Bf, As, Bs, alpha, V, epsilon, train_indices
 
 def dual_alpha_beta_test_fit(participant, curvatures, num_fit_trials, train_indices):
-    print('In dual alpha, participant: ', participant)
+    print('In dual alpha beta, participant: ', participant)
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
@@ -872,7 +871,8 @@ def dual_alpha_beta_test_fit(participant, curvatures, num_fit_trials, train_indi
             As = fits.x[2]
             Bs = fits.x[3]
             alpha = fits.x[4]
-            epsilon = fits.x[5]
+            beta = fits.x[5]
+            epsilon = fits.x[6]
             V = fits.fun
         else:
             fits = scipy.optimize.basinhopping(dual_residuals_gradual_alpha_beta, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4], initial_point[5], initial_point[6]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
@@ -881,7 +881,8 @@ def dual_alpha_beta_test_fit(participant, curvatures, num_fit_trials, train_indi
             As = fits.x[2]
             Bs = fits.x[3]
             alpha = fits.x[4]
-            epsilon = fits.x[5]
+            beta = fits.x[5]
+            epsilon = fits.x[6]
             V = fits.fun
             
         print (participant, V)
@@ -1119,7 +1120,7 @@ def run_fits_dual_alpha_beta(curvatures, num_fit_trials, num_fits):
         for participant in range(60):
             c_obj[participant] = curvatures
         participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
-        res[i] = np.reshape(np.array(pool.starmap(dual_alpha_test_fit, participant_args)), (60, 9))
+        res[i] = np.reshape(np.array(pool.starmap(dual_alpha_beta_test_fit, participant_args)), (60, 9))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
     return res   
