@@ -16,7 +16,7 @@ import sys
 # %%
 def main(num_fit_trials):
     curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
-    curvatures_smooth = curvatures_smooth/90
+    curvatures_smooth = curvatures_smooth/(np.pi/2)
     print("parallel curvatures successful")
     print (curvatures_smooth)
 
