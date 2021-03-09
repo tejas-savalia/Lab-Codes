@@ -30,10 +30,10 @@ def main(num_fit_trials):
         pickle.dump(fits, f)
     f.close()
     
-    fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]), int(num_fit_trials[3]))
-    with open('fit_dual_CV_704.pickle', 'wb') as f:
-        pickle.dump(fits, f)
-    f.close()
+    #fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]), int(num_fit_trials[3]))
+    #with open('fit_dual_CV_704.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
 
     #fits = run_fits_dual_avg(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
     #with open('fit_dual_fastavg_CV_704.pickle', 'wb') as f:
