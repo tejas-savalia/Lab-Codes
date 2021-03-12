@@ -22,7 +22,7 @@ from scipy.ndimage import gaussian_filter1d
 
 # In[2]:
 
-def hybrid_sudden(num_trials, A, B, Af, Bf, As, Bs, alpha):
+def hybrid_sudden(num_trials, A, B, Af, Bf, As, Bs):
     errors_dual = np.zeros((num_trials))
     errors_single = np.zeros((num_trials))    
     rotation = 1.0
@@ -57,12 +57,11 @@ def hybrid_sudden(num_trials, A, B, Af, Bf, As, Bs, alpha):
     errors_dual[num_trials-1] = dual_est[num_trials-1]
     errors_single[num_trials-1] = single_est[num_trials-1]
     
-    errors = alpha * errors_single + (1 - alpha) * errors_dual
     
-    return errors, errors_single, errors_dual, single_est, dual_est
+    return errors_single, errors_dual, single_est, dual_est
 
 
-def hybrid_gradual(num_trials, A, B, Af, Bf, As, Bs, alpha):
+def hybrid_gradual(num_trials, A, B, Af, Bf, As, Bs):
     errors_dual = np.zeros((num_trials))
     errors_single = np.zeros((num_trials))
     fast_est = np.zeros((num_trials))
@@ -97,9 +96,8 @@ def hybrid_gradual(num_trials, A, B, Af, Bf, As, Bs, alpha):
     errors_dual[num_trials-1] = dual_est[num_trials-1]
     errors_single[num_trials-1] = single_est[num_trials-1]
 
-    errors = alpha * errors_single + (1 - alpha) * errors_dual
 
-    return errors, errors_single, errors_dual, single_est, dual_est
+    return errors_single, errors_dual, single_est, dual_est
 
 
 
@@ -354,7 +352,8 @@ def dual_residuals_gradual_alpha(params, num_trials, data_errors, train_indices)
 
 def hybrid_residuals_sudden(params, num_trials, data_errors, train_indices):
     #model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
-    model_errors = hybrid_sudden(num_trials, params[0], params[1], params[2], params[3], params[4], params[5], params[6])[0]
+    model_errors_single, model_errors_dual, x, y = hybrid_sudden(num_trials, params[0], params[1], params[2], params[3], params[4], params[5])
+    model_errors = params[6]*model_errors_single + (1 - params[6])*model_errors_dual
     model_errors_train = np.take(model_errors, train_indices[train_indices < len(model_errors)])
     data_errors_train = np.take(data_errors, train_indices[train_indices < len(model_errors)])
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
@@ -373,7 +372,8 @@ def hybrid_residuals_sudden(params, num_trials, data_errors, train_indices):
 
 def hybrid_residuals_gradual(params, num_trials, data_errors, train_indices):
     #model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
-    model_errors = hybrid_gradual(num_trials, params[0], params[1], params[2], params[3], params[4], params[5], params[6])[0]
+    model_errors_single, model_errors_dual, x, y = hybrid_gradual(num_trials, params[0], params[1], params[2], params[3], params[4], params[5])
+    model_errors = params[6]*model_errors_single + (1 - params[6])*model_errors_dual
     model_errors_train = np.take(model_errors, train_indices[train_indices < len(model_errors)])
     data_errors_train = np.take(data_errors, train_indices[train_indices < len(model_errors)])
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
@@ -475,7 +475,7 @@ def hybrid_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
-    starting_points = np.array([[0.9, 0.1, 0.9, 0.3, 0.99, 0.01, 0.5, 0.05]])
+    starting_points = np.array([[0.9, 0.2, 0.9, 0.3, 0.99, 0.01, 0.5, 0.5]])
     for initial_point in starting_points:
         if participant%4 == 0 or participant%4 == 1:      
             fits = scipy.optimize.basinhopping(hybrid_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4], initial_point[5], initial_point[6], initial_point[7]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
