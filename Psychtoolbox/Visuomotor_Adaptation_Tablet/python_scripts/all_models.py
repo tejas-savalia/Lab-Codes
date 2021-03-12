@@ -475,32 +475,42 @@ def hybrid_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
-    starting_points = np.array([[0.9, 0.2, 0.9, 0.3, 0.99, 0.01, 0.5, 0.5]])
+    V = np.inf
+    #starting_points = np.array([[0.9, 0.2, 0.9, 0.3, 0.99, 0.01, 0.5, 0.5]])
+    starting_points = np.random.uniform(0, 1, (20, 8))
     for initial_point in starting_points:
         if participant%4 == 0 or participant%4 == 1:      
-            fits = scipy.optimize.basinhopping(hybrid_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4], initial_point[5], initial_point[6], initial_point[7]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
+            #fits = scipy.optimize.basinhopping(hybrid_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4], initial_point[5], initial_point[6], initial_point[7]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
+            fits = scipy.optimize.minimize(hybrid_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4], initial_point[5], initial_point[6], initial_point[7]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+            if fits.fun < V:
+            
 
-            A = fits.x[0]
-            B = fits.x[1]
-            Af = fits.x[2]
-            Bf = fits.x[3]
-            As = fits.x[4]
-            Bs = fits.x[5]
-            alpha = fits.x[6]
-            epsilon = fits.x[7]
-            V = fits.fun
+                A = fits.x[0]
+                B = fits.x[1]
+                Af = fits.x[2]
+                Bf = fits.x[3]
+                As = fits.x[4]
+                Bs = fits.x[5]
+                alpha = fits.x[6]
+                epsilon = fits.x[7]
+                V = fits.fun
         else:
             fits = scipy.optimize.basinhopping(hybrid_residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4], initial_point[5], initial_point[6], initial_point[7]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
-            A = fits.x[0]
-            B = fits.x[1]
-            Af = fits.x[2]
-            Bf = fits.x[3]
-            As = fits.x[4]
-            Bs = fits.x[5]
-            alpha = fits.x[6]
-            epsilon = fits.x[7]
-            V = fits.fun
-        print (participant, V)
+            fits = scipy.optimize.minimize(hybrid_residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4], initial_point[5], initial_point[6], initial_point[7]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+
+            if fits.fun < V:
+            
+
+                A = fits.x[0]
+                B = fits.x[1]
+                Af = fits.x[2]
+                Bf = fits.x[3]
+                As = fits.x[4]
+                Bs = fits.x[5]
+                alpha = fits.x[6]
+                epsilon = fits.x[7]
+                V = fits.fun
+    print (participant, V)
     return A, B, Af, Bf, As, Bs, alpha, V, epsilon, train_indices
 
 
