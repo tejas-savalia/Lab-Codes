@@ -35,42 +35,11 @@ def main(num_fit_trials):
     #    pickle.dump(fits, f)
     #f.close()
 
-    #fits = run_fits_dual_avg(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_dual_fastavg_CV_704.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
-
-    fits = run_fits_dual_alpha_beta(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    with open('fit_dual_alpha_beta_CV_704.pickle', 'wb') as f:
+    fits = run_fits_hybrid(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    with open('fit_hybrid_CV_704.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
 
-
-    #fits = run_fits_dual_eight(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_dual_eight_CV_704.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
-
-
-
-    #fits = run_fits_mixed(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_mixed_CV_704.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
-    
-    #fits = run_fits_dual_six_params(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_mixed_CV_704.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
-
-    #fits = run_fits_dual_transfer(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_dual_CV_transfer.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
-    #fits = run_fits_single_transfer(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_single_CV_transfer.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
 
 
 if __name__ == '__main__':

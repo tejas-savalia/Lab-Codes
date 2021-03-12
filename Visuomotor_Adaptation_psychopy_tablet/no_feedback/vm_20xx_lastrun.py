@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2020.2.4),
-    on October 14, 2020, at 13:52
+    on March 11, 2021, at 14:16
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -119,7 +119,7 @@ def angular_dist(vec1, vec2):
     return angle
 demo_enclosing_1 = visual.Polygon(
     win=win, name='demo_enclosing_1',
-    edges=64, size=(0.89, 0.89),
+    edges=64, size=(0.9, 0.9),
     ori=0, pos=(0, 0),
     lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
     fillColor=[0,0,0], fillColorSpace='rgb',
@@ -160,7 +160,7 @@ demo_enclosing_feedback_1 = visual.Polygon(
     opacity=1, depth=0.0, interpolate=True)
 demo_enclosing_feedback = visual.Polygon(
     win=win, name='demo_enclosing_feedback',
-    edges=64, size=(0.79, 0.79),
+    edges=64, size=(0.8, 0.8),
     ori=0, pos=(0, 0),
     lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
     fillColor=[0, 0, 0], fillColorSpace='rgb',
@@ -182,7 +182,7 @@ demo_fixation_feedback = visual.Polygon(
 demo_score_text = visual.TextStim(win=win, name='demo_score_text',
     text='default text',
     font='Arial',
-    pos=(0.4, 0.4), height=0.04, wrapWidth=None, ori=0, 
+    pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='green', colorSpace='rgb', opacity=1, 
     languageStyle='LTR',
     depth=-5.0);
@@ -208,28 +208,28 @@ baseline_enclosing_1 = visual.Polygon(
     ori=0, pos=(0, 0),
     lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
     fillColor=[0,0,0], fillColorSpace='rgb',
-    opacity=1, depth=-1.0, interpolate=True)
+    opacity=1, depth=0.0, interpolate=True)
 baseline_enclosing = visual.Polygon(
     win=win, name='baseline_enclosing',
     edges=128, size=(0.8, 0.8),
     ori=0, pos=(0, 0),
     lineWidth=1, lineColor=[-1,-1,-1], lineColorSpace='rgb',
     fillColor=[0,0,0], fillColorSpace='rgb',
-    opacity=1, depth=-2.0, interpolate=True)
+    opacity=1, depth=-1.0, interpolate=True)
 baseline_target = visual.ShapeStim(
     win=win, name='baseline_target', vertices='cross',
     size=(0.05, 0.05),
     ori=45, pos=[0,0],
     lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
     fillColor=[1,1,1], fillColorSpace='rgb',
-    opacity=1, depth=-3.0, interpolate=True)
+    opacity=1, depth=-2.0, interpolate=True)
 baseline_fixation = visual.Polygon(
     win=win, name='baseline_fixation',
     edges=32, size=(0.025, 0.025),
     ori=0, pos=[0,0],
     lineWidth=1, lineColor=[1,0,0], lineColorSpace='rgb',
     fillColor=[1,0,0], fillColorSpace='rgb',
-    opacity=1.0, depth=-4.0, interpolate=True)
+    opacity=1.0, depth=-3.0, interpolate=True)
 baseline_mouse = event.Mouse(win=win)
 x, y = [None, None]
 baseline_mouse.mouseClock = core.Clock()
@@ -552,7 +552,7 @@ thisExp.nextEntry()
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-trials = data.TrialHandler(nReps=0, method='random', 
+trials = data.TrialHandler(nReps=2, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=[None],
     seed=None, name='trials')
@@ -678,6 +678,7 @@ for thisTrial in trials:
         demo_fixation.pos = [0, 0]
         first = True
         jitter = np.random.uniform(0.5, 1.5)
+        myClock = core.Clock()
         demo_target.setPos((target_x, target_y))
         demo_fixation.setPos((0, 0))
         # setup some python lists for storing info about the demo_mouse
@@ -805,6 +806,7 @@ for thisTrial in trials:
                 thisComponent.setAutoDraw(False)
         demo_fixation.opacity = 1
         demo_fix_end_pos = demo_fixation.pos
+        score = myClock.getTime()
         trials_2.addData('demo_enclosing_1.started', demo_enclosing_1.tStartRefresh)
         trials_2.addData('demo_enclosing_1.stopped', demo_enclosing_1.tStopRefresh)
         trials_2.addData('demo_enclosing.started', demo_enclosing.tStartRefresh)
@@ -832,7 +834,9 @@ for thisTrial in trials:
         demo_target_feedback.setPos((target_x, target_y))
         demo_fixation_feedback.setPos(demo_fix_end_pos)
         ang_error = angular_dist(demo_fix_end_pos, demo_target_feedback.pos)
-        score = int((pi-ang_error)*10)
+        #score = int((pi-ang_error)*10)
+        #score = new_time - curr_time
+        score = int(100/score)
         demo_score_text.setText('Your score: ' + str(score))
         # keep track of which components have finished
         demo_feedbackComponents = [demo_enclosing_feedback_1, demo_enclosing_feedback, demo_target_feedback, demo_fixation_feedback, demo_score_text]
@@ -980,7 +984,7 @@ for thisTrial in trials:
     
     thisExp.nextEntry()
     
-# completed 0 repeats of 'trials'
+# completed 2 repeats of 'trials'
 
 
 # ------Prepare to start Routine "experiment_start"-------
@@ -1067,7 +1071,7 @@ thisExp.nextEntry()
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-baseline_trials = data.TrialHandler(nReps=1, method='random', 
+baseline_trials = data.TrialHandler(nReps=4, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=data.importConditions('conditions_baseline.xlsx'),
     seed=None, name='baseline_trials')
@@ -1088,11 +1092,6 @@ for thisBaseline_trial in baseline_trials:
     # ------Prepare to start Routine "baseline"-------
     continueRoutine = True
     # update component parameters for each repeat
-    baseline_fixation.opacity = 1
-    baseline_fixation.pos = [0, 0]
-    mouse_center = baseline_mouse.getPos()
-    first = True
-    jitter = np.random.uniform(0.5, 1.5)
     baseline_target.setPos((target_x, target_y))
     baseline_fixation.setOpacity(1)
     baseline_fixation.setPos((0, 0))
@@ -1104,6 +1103,12 @@ for thisBaseline_trial in baseline_trials:
     baseline_mouse.rightButton = []
     baseline_mouse.time = []
     gotValidClick = False  # until a click is received
+    baseline_fixation.opacity = 1
+    baseline_fixation.pos = [0, 0]
+    mouse_center = baseline_mouse.getPos()
+    first = True
+    jitter = np.random.uniform(0.5, 1.5)
+    baseline_clock = core.Clock()
     # keep track of which components have finished
     baselineComponents = [baseline_enclosing_1, baseline_enclosing, baseline_target, baseline_fixation, baseline_mouse]
     for thisComponent in baselineComponents:
@@ -1127,21 +1132,6 @@ for thisBaseline_trial in baseline_trials:
         tThisFlipGlobal = win.getFutureFlipTime(clock=None)
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
-        win.mouseVisible = False
-        if baseline_mouse.getPressed()[0]:
-            if first:
-                mouse_center = baseline_mouse.getPos()
-                first = False
-            baseline_fixation.opacity = 0
-            if euclidean_dist(baseline_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
-                baseline_fixation.pos = baseline_mouse.getPos() - mouse_center
-                baseline_fixation.opacity = 1
-                continueRoutine = False
-        else:
-            first = True
-            baseline_fixation.opacity = 1
-            baseline_fixation.pos = [0, 0]
-            baseline_mouse.setPos([0, 0])
         
         # *baseline_enclosing_1* updates
         if baseline_enclosing_1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
@@ -1179,7 +1169,7 @@ for thisBaseline_trial in baseline_trials:
             win.timeOnFlip(baseline_fixation, 'tStartRefresh')  # time at next scr refresh
             baseline_fixation.setAutoDraw(True)
         # *baseline_mouse* updates
-        if baseline_mouse.status == NOT_STARTED and t >= 0.0-frameTolerance:
+        if baseline_mouse.status == NOT_STARTED and t >= jitter-frameTolerance:
             # keep track of start time/frame for later
             baseline_mouse.frameNStart = frameN  # exact frame index
             baseline_mouse.tStart = t  # local t and not account for scr refresh
@@ -1187,15 +1177,7 @@ for thisBaseline_trial in baseline_trials:
             win.timeOnFlip(baseline_mouse, 'tStartRefresh')  # time at next scr refresh
             baseline_mouse.status = STARTED
             baseline_mouse.mouseClock.reset()
-            prevButtonState = baseline_mouse.getPressed()  # if button is down already this ISN'T a new click
-        if baseline_mouse.status == STARTED:
-            # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > baseline_mouse.tStartRefresh + jitter-frameTolerance:
-                # keep track of stop time/frame for later
-                baseline_mouse.tStop = t  # not accounting for scr refresh
-                baseline_mouse.frameNStop = frameN  # exact frame index
-                win.timeOnFlip(baseline_mouse, 'tStopRefresh')  # time at next scr refresh
-                baseline_mouse.status = FINISHED
+            prevButtonState = [0, 0, 0]  # if now button is down we will treat as 'new' click
         if baseline_mouse.status == STARTED:  # only update if started and not finished!
             x, y = baseline_mouse.getPos()
             baseline_mouse.x.append(x)
@@ -1205,6 +1187,21 @@ for thisBaseline_trial in baseline_trials:
             baseline_mouse.midButton.append(buttons[1])
             baseline_mouse.rightButton.append(buttons[2])
             baseline_mouse.time.append(baseline_mouse.mouseClock.getTime())
+        win.mouseVisible = False
+        if baseline_mouse.getPressed()[0]:
+            if first:
+                mouse_center = baseline_mouse.getPos()
+                first = False
+            baseline_fixation.opacity = 0
+            if euclidean_dist(baseline_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
+                baseline_fixation.pos = baseline_mouse.getPos() - mouse_center
+                baseline_fixation.opacity = 1
+                continueRoutine = False
+        else:
+            first = True
+            baseline_fixation.opacity = 1
+            baseline_fixation.pos = [0, 0]
+            baseline_mouse.setPos([0, 0])
         
         # check for quit (typically the Esc key)
         if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
@@ -1227,8 +1224,6 @@ for thisBaseline_trial in baseline_trials:
     for thisComponent in baselineComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    baseline_fixation.opacity = 1
-    baseline_fix_end_pos = baseline_fixation.pos
     baseline_trials.addData('baseline_enclosing_1.started', baseline_enclosing_1.tStartRefresh)
     baseline_trials.addData('baseline_enclosing_1.stopped', baseline_enclosing_1.tStopRefresh)
     baseline_trials.addData('baseline_enclosing.started', baseline_enclosing.tStartRefresh)
@@ -1246,6 +1241,9 @@ for thisBaseline_trial in baseline_trials:
     baseline_trials.addData('baseline_mouse.time', baseline_mouse.time)
     baseline_trials.addData('baseline_mouse.started', baseline_mouse.tStart)
     baseline_trials.addData('baseline_mouse.stopped', baseline_mouse.tStop)
+    baseline_fixation.opacity = 1
+    baseline_fix_end_pos = baseline_fixation.pos
+    score = baseline_clock.getTime()
     # the Routine "baseline" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -1256,7 +1254,8 @@ for thisBaseline_trial in baseline_trials:
     baseline_target_feedback.setPos((target_x, target_y))
     baseline_fixation_feedback.setPos(baseline_fix_end_pos)
     ang_error = angular_dist(baseline_fix_end_pos, baseline_target_feedback.pos)
-    score = int((pi-ang_error)*10)
+    #score = int((pi-ang_error)*10)
+    score = int(100/score)
     baseline_score_text.setText('Your score: ' + str(score))
     # keep track of which components have finished
     baseline_feedbackComponents = [baseline_enclosing_feedback_1, baseline_enclosing_feedback, baseline_target_feedback, baseline_fixation_feedback, baseline_score_text]
@@ -1400,7 +1399,7 @@ for thisBaseline_trial in baseline_trials:
     baseline_trials.addData('baseline_score_text.stopped', baseline_score_text.tStopRefresh)
     thisExp.nextEntry()
     
-# completed 1 repeats of 'baseline_trials'
+# completed 4 repeats of 'baseline_trials'
 
 
 # ------Prepare to start Routine "break_1"-------
@@ -1487,7 +1486,7 @@ thisExp.nextEntry()
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-blocks = data.TrialHandler(nReps=1, method='random', 
+blocks = data.TrialHandler(nReps=10, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=[None],
     seed=None, name='blocks')
@@ -1506,7 +1505,7 @@ for thisBlock in blocks:
             exec('{} = thisBlock[paramName]'.format(paramName))
     
     # set up handler to look after randomisation of conditions etc
-    block_trials = data.TrialHandler(nReps=1, method='random', 
+    block_trials = data.TrialHandler(nReps=4, method='random', 
         extraInfo=expInfo, originPath=-1,
         trialList=data.importConditions('conditions_baseline.xlsx'),
         seed=None, name='block_trials')
@@ -1840,7 +1839,7 @@ for thisBlock in blocks:
         block_trials.addData('rotated_score_text.stopped', rotated_score_text.tStopRefresh)
         thisExp.nextEntry()
         
-    # completed 1 repeats of 'block_trials'
+    # completed 4 repeats of 'block_trials'
     
     
     # ------Prepare to start Routine "break_2"-------
@@ -1926,11 +1925,11 @@ for thisBlock in blocks:
     routineTimer.reset()
     thisExp.nextEntry()
     
-# completed 1 repeats of 'blocks'
+# completed 10 repeats of 'blocks'
 
 
 # set up handler to look after randomisation of conditions etc
-transfer_trials = data.TrialHandler(nReps=1, method='random', 
+transfer_trials = data.TrialHandler(nReps=4, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=data.importConditions('conditions_baseline.xlsx'),
     seed=None, name='transfer_trials')
@@ -2254,7 +2253,7 @@ for thisTransfer_trial in transfer_trials:
     transfer_trials.addData('text_4.stopped', text_4.tStopRefresh)
     thisExp.nextEntry()
     
-# completed 1 repeats of 'transfer_trials'
+# completed 4 repeats of 'transfer_trials'
 
 
 # ------Prepare to start Routine "Done"-------
