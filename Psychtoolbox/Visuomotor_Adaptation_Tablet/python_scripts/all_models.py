@@ -352,8 +352,8 @@ def dual_residuals_gradual_alpha(params, num_trials, data_errors, train_indices)
 
 def hybrid_residuals_sudden(params, num_trials, data_errors, train_indices, single_params, dual_params):
 
-    model_errors_single = model_sudden(num_trials, single_params[0], single_params[1])
-    model_errors_dual = dual_model_sudden(num_trials, dual_params[0], dual_params[1], dual_params[2], dual_params[3])
+    model_errors_single = model_sudden(num_trials, single_params[0], single_params[1])[0]
+    model_errors_dual = dual_model_sudden(num_trials, dual_params[0], dual_params[1], dual_params[2], dual_params[3])[0]
     model_errors = params[0]*model_errors_single + (1 - params[0])*model_errors_dual
 
     model_errors_train = np.take(model_errors, train_indices[train_indices < len(model_errors)])
@@ -464,7 +464,7 @@ def hybrid_test_fit(participant, curvatures, num_fit_trials, train_indices, best
     
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     #starting_points = np.array([[0.9, 0.2, 0.9, 0.3, 0.99, 0.01, 0.5, 0.5]])
-    starting_points = np.random.uniform([[0.5, 0.01]])
+    starting_points = np.array([[0.5, 0.01]])
     for initial_point in starting_points:
         if participant%4 == 0 or participant%4 == 1:      
             fits = scipy.optimize.basinhopping(hybrid_residuals_sudden, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, best_single[participant][:2], best_dual[participant][:4]), 'method':'Nelder-Mead'})
@@ -562,7 +562,7 @@ def run_fits_hybrid(curvatures, num_fit_trials, num_fits):
             c_obj[participant] = curvatures
             
         participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i], best_single, best_dual)]
-        res[i] = np.reshape(np.array(pool.starmap(hybrid_test_fit, participant_args)), (60, 2))
+        res[i] = np.reshape(np.array(pool.starmap(hybrid_test_fit, participant_args)), (60, 4))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
     return res   
