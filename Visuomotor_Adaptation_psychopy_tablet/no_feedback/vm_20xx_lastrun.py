@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2020.2.4),
-    on March 11, 2021, at 14:16
+    on March 15, 2021, at 11:30
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -83,7 +83,7 @@ defaultKeyboard = keyboard.Keyboard()
 # Initialize components for Routine "instructions"
 instructionsClock = core.Clock()
 Welcome = visual.TextStim(win=win, name='Welcome',
-    text='Welcome to Visuomotor Adaptation!\n\nYour task is to move a circle controlled by the pen to the target cross.  \n\nThe circle will disappear once you start to move and reappear as you cover the distance required to hit the target. \n\nOnce the circle reappears, you will be shown a score based on how close you were to the target. Maximize the score by trying to hit the target as many times as possible. \n\nMaximum score you can get on each trial is 31.\n\nScratch on the tab using the pen to proceed to a demo.',
+    text='Welcome to Visuomotor Adaptation!\n\nYour task is to move a circle controlled by the pen to the target cross.  \n\nThe circle will disappear once you start to move and reappear as you cover the distance required to hit the target. \n\nOnce the circle reappears, you will be shown a score based on quick you were in making your movement. Maximize the score by trying to hit the target as quickly as possible. \n\nMaximum score you can get on each trial is 100.\n\nScratch on the tab using the pen to proceed to a demo.',
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -190,7 +190,7 @@ demo_score_text = visual.TextStim(win=win, name='demo_score_text',
 # Initialize components for Routine "experiment_start"
 experiment_startClock = core.Clock()
 text_3 = visual.TextStim(win=win, name='text_3',
-    text='Experiment starts now!\n\nRemember you can maximize your score by being as close to the target as possible.\n\nScratch the trackpad to continue.',
+    text='Experiment starts now!\n\nRemember you can maximize your score by being as fast as possible.\n\nScratch the trackpad to continue.',
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -275,7 +275,7 @@ baseline_score_text = visual.TextStim(win=win, name='baseline_score_text',
 # Initialize components for Routine "break_1"
 break_1Clock = core.Clock()
 text_2 = visual.TextStim(win=win, name='text_2',
-    text="Take a break.\n\nRemember to try to maximize your score by getting close to the target as many times as possible.\n\nIf it helps, take your time to make the movement and be accurate.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
+    text="Take a break.\n\nRemember to try to maximize your score by doing your movement as fast times as possible.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -369,7 +369,7 @@ rotated_score_text = visual.TextStim(win=win, name='rotated_score_text',
 # Initialize components for Routine "break_2"
 break_2Clock = core.Clock()
 rotated_breaks = visual.TextStim(win=win, name='rotated_breaks',
-    text="Take a break.\n\nRemember to try to maximize your score by getting close to the target as many times as possible.\n\nIf it helps, take your time to make the movement and be accurate.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
+    text="Take a break.\n\nRemember to try to maximize your score by doing your movement as fast as possible.\n\nScratch the tablet to continue whenever you're ready.\n\n ",
     font='Arial',
     pos=(0, 0), height=0.04, wrapWidth=None, ori=0, 
     color='white', colorSpace='rgb', opacity=1, 
@@ -678,7 +678,7 @@ for thisTrial in trials:
         demo_fixation.pos = [0, 0]
         first = True
         jitter = np.random.uniform(0.5, 1.5)
-        myClock = core.Clock()
+        first_frame = True
         demo_target.setPos((target_x, target_y))
         demo_fixation.setPos((0, 0))
         # setup some python lists for storing info about the demo_mouse
@@ -713,12 +713,17 @@ for thisTrial in trials:
             frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
             # update/draw components on each frame
             win.mouseVisible = False
+            if first_frame:
+                trial_clock = core.Clock()
+                first_frame = False
             if demo_mouse.getPressed()[0]:
                 if first:
                     mouse_center = demo_mouse.getPos()
                     first = False
                 demo_fixation.opacity = 0
-                if euclidean_dist(demo_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
+                demo_fixation.pos = demo_mouse.getPos() - mouse_center
+                #if euclidean_dist(demo_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
+                if not demo_enclosing.contains(demo_fixation.pos):
                     demo_fixation.pos = demo_mouse.getPos() - mouse_center
                     demo_fixation.opacity = 1
                     continueRoutine = False
@@ -806,7 +811,7 @@ for thisTrial in trials:
                 thisComponent.setAutoDraw(False)
         demo_fixation.opacity = 1
         demo_fix_end_pos = demo_fixation.pos
-        score = myClock.getTime()
+        
         trials_2.addData('demo_enclosing_1.started', demo_enclosing_1.tStartRefresh)
         trials_2.addData('demo_enclosing_1.stopped', demo_enclosing_1.tStopRefresh)
         trials_2.addData('demo_enclosing.started', demo_enclosing.tStartRefresh)
@@ -836,7 +841,8 @@ for thisTrial in trials:
         ang_error = angular_dist(demo_fix_end_pos, demo_target_feedback.pos)
         #score = int((pi-ang_error)*10)
         #score = new_time - curr_time
-        score = int(100/score)
+        score = int(100/trial_clock.getTime())
+        first_frame = True
         demo_score_text.setText('Your score: ' + str(score))
         # keep track of which components have finished
         demo_feedbackComponents = [demo_enclosing_feedback_1, demo_enclosing_feedback, demo_target_feedback, demo_fixation_feedback, demo_score_text]
@@ -1108,7 +1114,7 @@ for thisBaseline_trial in baseline_trials:
     mouse_center = baseline_mouse.getPos()
     first = True
     jitter = np.random.uniform(0.5, 1.5)
-    baseline_clock = core.Clock()
+    first_frame = True
     # keep track of which components have finished
     baselineComponents = [baseline_enclosing_1, baseline_enclosing, baseline_target, baseline_fixation, baseline_mouse]
     for thisComponent in baselineComponents:
@@ -1187,6 +1193,9 @@ for thisBaseline_trial in baseline_trials:
             baseline_mouse.midButton.append(buttons[1])
             baseline_mouse.rightButton.append(buttons[2])
             baseline_mouse.time.append(baseline_mouse.mouseClock.getTime())
+        if first_frame:
+            trial_clock = core.Clock()
+            first_frame = False
         win.mouseVisible = False
         if baseline_mouse.getPressed()[0]:
             if first:
@@ -1196,6 +1205,7 @@ for thisBaseline_trial in baseline_trials:
             if euclidean_dist(baseline_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
                 baseline_fixation.pos = baseline_mouse.getPos() - mouse_center
                 baseline_fixation.opacity = 1
+                first_frame = True
                 continueRoutine = False
         else:
             first = True
@@ -1255,7 +1265,7 @@ for thisBaseline_trial in baseline_trials:
     baseline_fixation_feedback.setPos(baseline_fix_end_pos)
     ang_error = angular_dist(baseline_fix_end_pos, baseline_target_feedback.pos)
     #score = int((pi-ang_error)*10)
-    score = int(100/score)
+    score = int(100/trial_clock.getTime())
     baseline_score_text.setText('Your score: ' + str(score))
     # keep track of which components have finished
     baseline_feedbackComponents = [baseline_enclosing_feedback_1, baseline_enclosing_feedback, baseline_target_feedback, baseline_fixation_feedback, baseline_score_text]
@@ -1545,6 +1555,7 @@ for thisBlock in blocks:
         rotated_fixation.pos = [0, 0]
         first = True
         jitter = np.random.uniform(0.5, 1.5)
+        first_frame = True
         # keep track of which components have finished
         rotatedComponents = [rotated_enclosing_1, rotated_enclosing, rotated_target, rotated_fixation, rotated_mouse]
         for thisComponent in rotatedComponents:
@@ -1627,6 +1638,9 @@ for thisBlock in blocks:
                 rotated_mouse.midButton.append(buttons[1])
                 rotated_mouse.rightButton.append(buttons[2])
                 rotated_mouse.time.append(rotated_mouse.mouseClock.getTime())
+            if first_frame:
+                trial_clock = core.Clock()
+                first_frame = False
             win.mouseVisible = False
             if rotated_mouse.getPressed()[0]:
                 if first:
@@ -1637,6 +1651,7 @@ for thisBlock in blocks:
                     mouse_pos = rotated_mouse.getPos() - mouse_center
                     rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], rotation)
                     rotated_fixation.opacity = 1
+                    first_frame = True
                     continueRoutine = False
             else:
                 first = True
@@ -1684,6 +1699,7 @@ for thisBlock in blocks:
         block_trials.addData('rotated_mouse.stopped', rotated_mouse.tStop)
         rotated_fixation.opacity = 1
         rotated_fix_end_pos = rotated_fixation.pos
+        score = rotated_clock.getTime()
         # the Routine "rotated" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset()
         
@@ -1694,7 +1710,7 @@ for thisBlock in blocks:
         rotated_target_feedback.setPos((target_x, target_y))
         rotated_fixation_feedback.setPos(rotated_fix_end_pos)
         ang_error = angular_dist(rotated_fix_end_pos, rotated_target_feedback.pos)
-        score = int((pi-ang_error)*10)
+        score = int(100/trial_clock.getTime())
         
         rotated_score_text.setText('Your score: ' + str(score))
         # keep track of which components have finished
@@ -1955,6 +1971,7 @@ for thisTransfer_trial in transfer_trials:
     mouse_center = transfer_mouse.getPos()
     first = True
     jitter = np.random.uniform(0.5, 1.5)
+    first_frame = True
     transfer_target.setPos((target_x, target_y))
     transfer_fixation.setPos((0, 0))
     # setup some python lists for storing info about the transfer_mouse
@@ -1989,6 +2006,9 @@ for thisTransfer_trial in transfer_trials:
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
         win.mouseVisible = False
+        if first_frame:
+            trial_clock = core.Clock()
+            first_frame = False
         if transfer_mouse.getPressed()[0]:
             if first:
                 mouse_center = transfer_mouse.getPos()
@@ -1997,6 +2017,7 @@ for thisTransfer_trial in transfer_trials:
             if euclidean_dist(transfer_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
                 transfer_fixation.pos = transfer_mouse.getPos() - mouse_center
                 transfer_fixation.opacity = 1
+                first_frame = True
                 continueRoutine = False
         else:
             first = True
@@ -2082,6 +2103,7 @@ for thisTransfer_trial in transfer_trials:
             thisComponent.setAutoDraw(False)
     transfer_fixation.opacity = 1
     transfer_fix_end_pos = transfer_fixation.pos
+    score = transfer_clock.getTime()
     transfer_trials.addData('transfer_enclosing_1.started', transfer_enclosing_1.tStartRefresh)
     transfer_trials.addData('transfer_enclosing_1.stopped', transfer_enclosing_1.tStopRefresh)
     transfer_trials.addData('transfer_enclosing.started', transfer_enclosing.tStartRefresh)
@@ -2109,7 +2131,7 @@ for thisTransfer_trial in transfer_trials:
     transfer_target_feedback.setPos((target_x, target_y))
     transfer_fixation_feedback.setPos(transfer_fix_end_pos)
     ang_error = angular_dist(transfer_fix_end_pos, transfer_target_feedback.pos)
-    score = int((pi-ang_error)*10)
+    score = int(100/trial_clock.getTime())
     text_4.setText('Your score: ' + str(score))
     # keep track of which components have finished
     transfer_feedbackComponents = [transfer_enclosing_feedback_1, transfer_enclosing_feedback, transfer_target_feedback, transfer_fixation_feedback, text_4]
