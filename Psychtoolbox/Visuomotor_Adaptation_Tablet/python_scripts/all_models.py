@@ -294,8 +294,7 @@ def dual_residuals_sudden(params, num_trials, data_errors, train_indices):
     return residual_error
 
 def dual_residuals_gradual(params, num_trials, data_errors, train_indices):
-    #model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
-    model_errors = dual_model_gradual_avg(num_trials, params[0], params[1], params[2], params[3])[0]
+    model_errors = dual_model_gradual(num_trials, params[0], params[1], params[2], params[3])[0]
     model_errors_train = np.take(model_errors, train_indices[train_indices < len(model_errors)])
     data_errors_train = np.take(data_errors, train_indices[train_indices < len(model_errors)])
     #residual_error = np.sum(np.square(model_errors_train - data_errors_train))
