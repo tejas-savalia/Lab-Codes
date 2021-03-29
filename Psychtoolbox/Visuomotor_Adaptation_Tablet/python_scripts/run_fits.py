@@ -17,29 +17,48 @@ import sys
 def main(num_fit_trials):
     #curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
     #curvatures_smooth = curvatures_smooth/90
-    curvatures_smooth = pickle.load(open('ide_smooth.pickle', 'rb'))
 <<<<<<< HEAD
 
 =======
 >>>>>>> 95582d21f372a64a2889f23bf9cb4eae86096512
-    print("parallel curvatures successful")
-    print (curvatures_smooth)
 
-    print ("Curvatures Loaded. In Fit routine")
+    curvatures_smooth = pickle.load(open('auc_smooth.pickle', 'rb'))
+
+
+    print ("AUC Curvatures Loaded. In Fit routine")
     print (num_fit_trials)
 
     #%% Parallel run and dump fits
     
     fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    with open('fit_single_704_ide.pickle', 'wb') as f:
+    with open('fit_single_704_auc.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
     
     fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    with open('fit_dual_704_ide.pickle', 'wb') as f:
+    with open('fit_dual_704_auc.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
 
+    curvatures_smooth = pickle.load(open('mad_smooth.pickle', 'rb'))
+
+
+    print ("MAD Curvatures Loaded. In Fit routine")
+    print (num_fit_trials)
+
+    #%% Parallel run and dump fits
+    
+    fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    with open('fit_single_704_mad.pickle', 'wb') as f:
+        pickle.dump(fits, f)
+    f.close()
+    
+    fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    with open('fit_dual_704_mad.pickle', 'wb') as f:
+        pickle.dump(fits, f)
+    f.close()
+
+    
     #fits = run_fits_hybrid(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
     #with open('fit_hybrid_CV_704.pickle', 'wb') as f:
     #    pickle.dump(fits, f)
