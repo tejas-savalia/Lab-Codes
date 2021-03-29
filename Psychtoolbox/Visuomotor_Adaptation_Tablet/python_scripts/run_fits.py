@@ -17,12 +17,9 @@ import sys
 def main(num_fit_trials):
     #curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
     #curvatures_smooth = curvatures_smooth/90
-<<<<<<< HEAD
-
-=======
->>>>>>> 95582d21f372a64a2889f23bf9cb4eae86096512
 
     curvatures_smooth = pickle.load(open('auc_smooth.pickle', 'rb'))
+    curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)
 
 
     print ("AUC Curvatures Loaded. In Fit routine")
@@ -41,6 +38,7 @@ def main(num_fit_trials):
     f.close()
 
     curvatures_smooth = pickle.load(open('mad_smooth.pickle', 'rb'))
+    curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)
 
 
     print ("MAD Curvatures Loaded. In Fit routine")
