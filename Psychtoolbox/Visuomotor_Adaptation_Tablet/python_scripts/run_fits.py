@@ -59,7 +59,7 @@ def main(num_fit_trials):
     curvatures_smooth = pickle.load(open('ide_smooth.pickle', 'rb'))
     curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)    
     
-    print ("AUC Curvatures Loaded. In Fit routine")
+    print ("IDE Curvatures Loaded. In Fit routine")
     print (num_fit_trials)
 
     #%% Parallel run and dump fits
