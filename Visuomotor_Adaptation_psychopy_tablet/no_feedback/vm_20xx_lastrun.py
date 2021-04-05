@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2020.2.4),
-    on March 15, 2021, at 11:30
+    on March 30, 2021, at 23:41
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -839,9 +839,12 @@ for thisTrial in trials:
         demo_target_feedback.setPos((target_x, target_y))
         demo_fixation_feedback.setPos(demo_fix_end_pos)
         ang_error = angular_dist(demo_fix_end_pos, demo_target_feedback.pos)
+        print(ang_error)
         #score = int((pi-ang_error)*10)
         #score = new_time - curr_time
-        score = int(100/trial_clock.getTime())
+        score = np.min([100, int(100/trial_clock.getTime())])
+        if ang_error > pi/4:
+            score = 0
         first_frame = True
         demo_score_text.setText('Your score: ' + str(score))
         # keep track of which components have finished
@@ -1202,7 +1205,8 @@ for thisBaseline_trial in baseline_trials:
                 mouse_center = baseline_mouse.getPos()
                 first = False
             baseline_fixation.opacity = 0
-            if euclidean_dist(baseline_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
+            baseline_fixation.pos = baseline_mouse.getPos() - mouse_center
+            if not baseline_enclosing.contains(baseline_fixation.pos):
                 baseline_fixation.pos = baseline_mouse.getPos() - mouse_center
                 baseline_fixation.opacity = 1
                 first_frame = True
@@ -1647,7 +1651,9 @@ for thisBlock in blocks:
                     mouse_center = rotated_mouse.getPos()
                     first = False
                 rotated_fixation.opacity = 0
-                if euclidean_dist(rotated_mouse.getPos()- mouse_center, [0, 0]) > 0.41:
+                mouse_pos = rotated_mouse.getPos() - mouse_center
+                rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], rotation)
+                if not rotated_enclosing.contains(rotated_fixation.pos):
                     mouse_pos = rotated_mouse.getPos() - mouse_center
                     rotated_fixation.pos = rotate(mouse_pos[0], mouse_pos[1], rotation)
                     rotated_fixation.opacity = 1
@@ -2014,7 +2020,8 @@ for thisTransfer_trial in transfer_trials:
                 mouse_center = transfer_mouse.getPos()
                 first = False
             transfer_fixation.opacity = 0
-            if euclidean_dist(transfer_mouse.getPos() - mouse_center, [0, 0]) > 0.41:
+            transfer_fixation.pos = transfer_mouse.getPos() - mouse_center
+            if not transfer_enclosing.contains(transfer_fixation.pos):
                 transfer_fixation.pos = transfer_mouse.getPos() - mouse_center
                 transfer_fixation.opacity = 1
                 first_frame = True

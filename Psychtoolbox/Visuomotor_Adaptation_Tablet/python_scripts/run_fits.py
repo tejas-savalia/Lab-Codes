@@ -54,13 +54,23 @@ def main(num_fit_trials):
     #with open('fit_dual_CV_704_mad.pickle', 'wb') as f:
     #    pickle.dump(fits, f)
     #f.close()
-
-    
-    curvatures_smooth = pickle.load(open('ide_smooth.pickle', 'rb'))
+    curvatures_smooth = pickle.load(open('avg_smooth.pickle', 'rb'))
     curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)    
     
-    print ("IDE Curvatures Loaded. In Fit routine")
+    print ("AVG Curvatures Loaded. In Fit routine")
     print (num_fit_trials)
+    
+    fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    with open('fit_dual_CV_704_ide.pickle', 'wb') as f:
+        pickle.dump(fits, f)
+    f.close()
+
+    
+    #curvatures_smooth = pickle.load(open('ide_smooth.pickle', 'rb'))
+    #curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)    
+    
+    #print ("IDE Curvatures Loaded. In Fit routine")
+    #print (num_fit_trials)
 
     #%% Parallel run and dump fits
     
@@ -69,10 +79,10 @@ def main(num_fit_trials):
     #    pickle.dump(fits, f)
     #f.close()
     
-    fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    with open('fit_dual_CV_704_ide.pickle', 'wb') as f:
-        pickle.dump(fits, f)
-    f.close()
+    #fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_dual_CV_704_ide.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
 
     
     #fits = run_fits_hybrid(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))

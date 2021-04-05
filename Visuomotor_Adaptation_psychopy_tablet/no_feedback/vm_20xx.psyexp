@@ -907,8 +907,8 @@
         <Param name="Before JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin JS Experiment" updates="constant" val="" valType="extendedCode"/>
-        <Param name="Begin JS Routine" updates="constant" val="ang_error = angular_dist(demo_fix_end_pos, demo_target_feedback.pos);&amp;#10;score = Number.parseInt((100 / trial_clock.getTime()));&amp;#10;first_frame = true;&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin Routine" updates="constant" val="ang_error = angular_dist(demo_fix_end_pos, demo_target_feedback.pos)&amp;#10;#score = int((pi-ang_error)*10)&amp;#10;#score = new_time - curr_time&amp;#10;score = int(100/trial_clock.getTime())&amp;#10;first_frame = True" valType="extendedCode"/>
+        <Param name="Begin JS Routine" updates="constant" val="ang_error = angular_dist(demo_fix_end_pos, demo_target_feedback.pos);&amp;#10;console.log(ang_error);&amp;#10;score = np.min([100, Number.parseInt((100 / trial_clock.getTime()))]);&amp;#10;if ((ang_error &gt; (pi / 4))) {&amp;#10;    score = 0;&amp;#10;}&amp;#10;first_frame = true;&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin Routine" updates="constant" val="ang_error = angular_dist(demo_fix_end_pos, demo_target_feedback.pos)&amp;#10;print(ang_error)&amp;#10;#score = int((pi-ang_error)*10)&amp;#10;#score = new_time - curr_time&amp;#10;score = np.min([100, int(100/trial_clock.getTime())])&amp;#10;if ang_error &gt; pi/4:&amp;#10;    score = 0&amp;#10;first_frame = True" valType="extendedCode"/>
         <Param name="Code Type" updates="None" val="Auto-&gt;JS" valType="str"/>
         <Param name="Each Frame" updates="constant" val="" valType="extendedCode"/>
         <Param name="Each JS Frame" updates="constant" val="" valType="extendedCode"/>
@@ -1050,8 +1050,8 @@
         <Param name="Before JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin JS Experiment" updates="constant" val="" valType="extendedCode"/>
-        <Param name="Begin JS Routine" updates="constant" val="ang_error = angular_dist(baseline_fix_end_pos, baseline_target_feedback.pos);&amp;#10;score = Number.parseInt((100 / trial_clock.getTime()));&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin Routine" updates="constant" val="ang_error = angular_dist(baseline_fix_end_pos, baseline_target_feedback.pos)&amp;#10;#score = int((pi-ang_error)*10)&amp;#10;score = int(100/trial_clock.getTime())" valType="extendedCode"/>
+        <Param name="Begin JS Routine" updates="constant" val="ang_error = angular_dist(baseline_fix_end_pos, baseline_target_feedback.pos);&amp;#10;score = np.min([100, Number.parseInt((100 / trial_clock.getTime()))]);&amp;#10;if ((ang_error &gt; (pi / 4))) {&amp;#10;    score = 0;&amp;#10;}&amp;#10;first_frame = true;&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin Routine" updates="constant" val="ang_error = angular_dist(baseline_fix_end_pos, baseline_target_feedback.pos)&amp;#10;#score = int((pi-ang_error)*10)&amp;#10;score = np.min([100, int(100/trial_clock.getTime())])&amp;#10;if ang_error &gt; pi/4:&amp;#10;    score = 0&amp;#10;first_frame = True" valType="extendedCode"/>
         <Param name="Code Type" updates="None" val="Auto-&gt;JS" valType="str"/>
         <Param name="Each Frame" updates="constant" val="" valType="extendedCode"/>
         <Param name="Each JS Frame" updates="constant" val="" valType="extendedCode"/>
@@ -1193,8 +1193,8 @@
         <Param name="Before JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin JS Experiment" updates="constant" val="" valType="extendedCode"/>
-        <Param name="Begin JS Routine" updates="constant" val="ang_error = angular_dist(rotated_fix_end_pos, rotated_target_feedback.pos);&amp;#10;score = Number.parseInt((100 / trial_clock.getTime()));&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin Routine" updates="constant" val="ang_error = angular_dist(rotated_fix_end_pos, rotated_target_feedback.pos)&amp;#10;score = int(100/trial_clock.getTime())&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin JS Routine" updates="constant" val="ang_error = angular_dist(rotated_fix_end_pos, rotated_target_feedback.pos);&amp;#10;score = Number.parseInt((100 / trial_clock.getTime()));&amp;#10;score = np.min([100, Number.parseInt((100 / trial_clock.getTime()))]);&amp;#10;if ((ang_error &gt; (pi / 4))) {&amp;#10;    score = 0;&amp;#10;}&amp;#10;first_frame = true;&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin Routine" updates="constant" val="ang_error = angular_dist(rotated_fix_end_pos, rotated_target_feedback.pos)&amp;#10;score = int(100/trial_clock.getTime())&amp;#10;score = np.min([100, int(100/trial_clock.getTime())])&amp;#10;if ang_error &gt; pi/4:&amp;#10;    score = 0&amp;#10;first_frame = True" valType="extendedCode"/>
         <Param name="Code Type" updates="None" val="Auto-&gt;JS" valType="str"/>
         <Param name="Each Frame" updates="constant" val="" valType="extendedCode"/>
         <Param name="Each JS Frame" updates="constant" val="" valType="extendedCode"/>
@@ -1336,8 +1336,8 @@
         <Param name="Before JS Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin Experiment" updates="constant" val="" valType="extendedCode"/>
         <Param name="Begin JS Experiment" updates="constant" val="" valType="extendedCode"/>
-        <Param name="Begin JS Routine" updates="constant" val="ang_error = angular_dist(transfer_fix_end_pos, transfer_target_feedback.pos);&amp;#10;score = Number.parseInt((100 / trial_clock.getTime()));&amp;#10;" valType="extendedCode"/>
-        <Param name="Begin Routine" updates="constant" val="ang_error = angular_dist(transfer_fix_end_pos, transfer_target_feedback.pos)&amp;#10;score = int(100/trial_clock.getTime())" valType="extendedCode"/>
+        <Param name="Begin JS Routine" updates="constant" val="ang_error = angular_dist(transfer_fix_end_pos, transfer_target_feedback.pos);&amp;#10;score = Number.parseInt((100 / trial_clock.getTime()));&amp;#10;score = np.min([100, Number.parseInt((100 / trial_clock.getTime()))]);&amp;#10;if ((ang_error &gt; (pi / 4))) {&amp;#10;    score = 0;&amp;#10;}&amp;#10;first_frame = true;&amp;#10;" valType="extendedCode"/>
+        <Param name="Begin Routine" updates="constant" val="ang_error = angular_dist(transfer_fix_end_pos, transfer_target_feedback.pos)&amp;#10;score = int(100/trial_clock.getTime())&amp;#10;score = np.min([100, int(100/trial_clock.getTime())])&amp;#10;if ang_error &gt; pi/4:&amp;#10;    score = 0&amp;#10;first_frame = True" valType="extendedCode"/>
         <Param name="Code Type" updates="None" val="Auto-&gt;JS" valType="str"/>
         <Param name="Each Frame" updates="constant" val="" valType="extendedCode"/>
         <Param name="Each JS Frame" updates="constant" val="" valType="extendedCode"/>
