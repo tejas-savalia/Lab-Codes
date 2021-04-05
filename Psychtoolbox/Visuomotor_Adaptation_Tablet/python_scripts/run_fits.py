@@ -61,10 +61,14 @@ def main(num_fit_trials):
     print (num_fit_trials)
     
     fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    with open('fit_dual_CV_704_ide.pickle', 'wb') as f:
+    with open('fit_dual_CV_704_avg.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
 
+    fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    with open('fit_single_CV_704_avg.pickle', 'wb') as f:
+        pickle.dump(fits, f)
+    f.close()
     
     #curvatures_smooth = pickle.load(open('ide_smooth.pickle', 'rb'))
     #curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)    
