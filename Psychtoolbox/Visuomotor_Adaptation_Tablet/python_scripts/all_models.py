@@ -174,7 +174,7 @@ def dual_model_sudden_alpha(num_trials, Af, Bf, As, Bs, alpha):
             fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
             slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
 
-        rotation_est[trial+1] = alpha*fast_est[trial+1] + (2-alpha)*slow_est[trial+1]
+        rotation_est[trial+1] = alpha*fast_est[trial+1] + (2 - alpha)*slow_est[trial+1]
         #print (rotation_est)
     errors[num_trials-1] = rotation_est[num_trials-1]
     return errors, rotation_est, fast_est, slow_est
@@ -201,7 +201,7 @@ def dual_model_gradual_alpha(num_trials, Af, Bf, As, Bs, alpha):
             fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
             slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
 
-        rotation_est[trial+1] = alpha*fast_est[trial+1] + (2-alpha)*slow_est[trial+1]
+        rotation_est[trial+1] = alpha*fast_est[trial+1] + (2 - alpha)*slow_est[trial+1]
         #print (rotation_est)
     errors[num_trials-1] = rotation_est[num_trials-1]
 
@@ -418,12 +418,14 @@ def dual_alpha_test_fit(participant, curvatures, num_fit_trials, train_indices, 
             fits = scipy.optimize.basinhopping(dual_residuals_sudden_alpha, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, fit_dual_params), 'method':'Nelder-Mead'})
 
             alpha = fits.x[0]
+
             epsilon = fits.x[1]
             V = fits.fun
         else:
             fits = scipy.optimize.basinhopping(dual_residuals_gradual_alpha, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, fit_dual_params), 'method':'Nelder-Mead'})
 
             alpha = fits.x[0]
+
             epsilon = fits.x[1]
             V = fits.fun
             
@@ -458,26 +460,26 @@ def hybrid_test_fit(participant, curvatures, num_fit_trials, train_indices, best
     
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     #starting_points = np.array([[0.9, 0.2, 0.9, 0.3, 0.99, 0.01, 0.5, 0.5]])
-    starting_points = np.array([[0.5, 0.01]])
+    starting_points = np.array([[0.5]])
     for initial_point in starting_points:
         if participant%4 == 0 or participant%4 == 1:      
-            fits = scipy.optimize.basinhopping(hybrid_residuals_sudden, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, best_single[participant][:2], best_dual[participant][:4]), 'method':'Nelder-Mead'})
+            fits = scipy.optimize.basinhopping(hybrid_residuals_sudden, x0 = [initial_point[0]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, best_single[participant][:2], best_dual[participant][:4]), 'method':'Nelder-Mead'})
             #fits = scipy.optimize.minimize(hybrid_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4], initial_point[5], initial_point[6], initial_point[7]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
 
 
             alpha = fits.x[0]
-            epsilon = fits.x[1]
+
             V = fits.fun
         else:
-            fits = scipy.optimize.basinhopping(hybrid_residuals_gradual, x0 = [initial_point[0], initial_point[1]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, best_single[participant][:2], best_dual[participant][:4]), 'method':'Nelder-Mead'})
+            fits = scipy.optimize.basinhopping(hybrid_residuals_gradual, x0 = [initial_point[0]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices, best_single[participant][:2], best_dual[participant][:4]), 'method':'Nelder-Mead'})
 
             #fits = scipy.optimize.minimize(hybrid_residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4], initial_point[5], initial_point[6], initial_point[7]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
 
             alpha = fits.x[0]
-            epsilon = fits.x[1]
+
             V = fits.fun
     print (participant, V)
-    return alpha, V, epsilon, train_indices
+    return alpha, V, train_indices
 
 
 
@@ -510,7 +512,7 @@ def run_fits_dual_alpha(curvatures, num_fit_trials, num_fits):
         for participant in range(60):
             c_obj[participant] = curvatures
         participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i], fit_dual_params[i])]
-        res[i] = np.reshape(np.array(pool.starmap(dual_alpha_test_fit, participant_args)), (60, 8))
+        res[i] = np.reshape(np.array(pool.starmap(dual_alpha_test_fit, participant_args)), (60, 4))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
     return res   
