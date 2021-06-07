@@ -113,13 +113,16 @@ def dual_model_sudden(num_trials, Af, Bf, As, Bs):
             rotation = 1.0
             errors[trial] = rotation - rotation_est[trial]
             fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+            #slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+            slow_est[trial+1] = As*slow_est[trial] + Bs*(errors[trial] - Af*fast_est[trial])
+            
         else:
             rotation = 0
             errors[trial] = rotation_est[trial]
         #print(errors[trial])
             fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
+            #slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
+            slow_est[trial+1] = As*slow_est[trial] - Bs*(errors[trial] - Af*fast_est[trial])
 
         rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
         #print (rotation_est)
@@ -141,12 +144,15 @@ def dual_model_gradual(num_trials, Af, Bf, As, Bs):
                 rotation = 1.0
             errors[trial] = rotation - rotation_est[trial]
             fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+            #slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+            slow_est[trial+1] = As*slow_est[trial] + Bs*(errors[trial] - Af*fast_est[trial])
+
         else:
             rotation = 0
             errors[trial] = rotation_est[trial] 
             fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
+            #slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
+            slow_est[trial+1] = As*slow_est[trial] - Bs*(errors[trial] - Af*fast_est[trial])
 
         rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
         #print (rotation_est)
