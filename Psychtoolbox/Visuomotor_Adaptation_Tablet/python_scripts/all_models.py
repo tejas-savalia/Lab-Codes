@@ -113,16 +113,16 @@ def dual_model_sudden(num_trials, Af, Bf, As, Bs):
             rotation = 1.0
             errors[trial] = rotation - rotation_est[trial]
             fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
-            #slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] + Bs*(errors[trial] - Af*fast_est[trial])
+            slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+            #slow_est[trial+1] = As*slow_est[trial] + Bs*(errors[trial] - Af*fast_est[trial])
             
         else:
             rotation = 0
             errors[trial] = rotation_est[trial]
         #print(errors[trial])
             fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
-            #slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] - Bs*(errors[trial] - Af*fast_est[trial])
+            slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
+            #slow_est[trial+1] = As*slow_est[trial] - Bs*(errors[trial] - Af*fast_est[trial])
 
         rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
         #print (rotation_est)
@@ -144,15 +144,15 @@ def dual_model_gradual(num_trials, Af, Bf, As, Bs):
                 rotation = 1.0
             errors[trial] = rotation - rotation_est[trial]
             fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
-            #slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] + Bs*(errors[trial] - Af*fast_est[trial])
+            slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
+            #slow_est[trial+1] = As*slow_est[trial] + Bs*(errors[trial] - Af*fast_est[trial])
 
         else:
             rotation = 0
             errors[trial] = rotation_est[trial] 
             fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
-            #slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] - Bs*(errors[trial] - Af*fast_est[trial])
+            slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
+            #slow_est[trial+1] = As*slow_est[trial] - Bs*(errors[trial] - Af*fast_est[trial])
 
         rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
         #print (rotation_est)
@@ -496,6 +496,7 @@ def hybrid_test_fit(participant, curvatures, num_fit_trials, train_indices, best
 
 def run_fits_dual(curvatures, num_fit_trials, num_fits):
     train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    train_indices = np.hstack((train_indices, train_indices, train_indices, train_indices))
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
@@ -526,6 +527,8 @@ def run_fits_dual_alpha(curvatures, num_fit_trials, num_fits):
 
 def run_fits_single(curvatures, num_fit_trials, num_fits):
     train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    train_indices = np.hstack((train_indices, train_indices, train_indices, train_indices))
+
     print(train_indices[0].shape)
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
