@@ -525,32 +525,34 @@ def run_fits_dual_alpha(curvatures, num_fit_trials, num_fits):
     return res   
 
 
-def run_fits_single(curvatures, num_fit_trials, num_fits):
-    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
-    train_indices = np.hstack((train_indices, train_indices, train_indices, train_indices))
+def run_fits_single(curvatures, num_fit_trials, num_fits, num_participants):
+    #train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    train_indices = np.array([np.arange(704)])
 
     print(train_indices[0].shape)
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
-        c_obj = np.zeros(60, dtype = object)
-        for participant in range(60):
+#Change 400 to 60 for normal fits
+        c_obj = np.zeros(num_participants, dtype = object)
+        for participant in range(num_participants):
             c_obj[participant] = curvatures
-        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
-        res[i] = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (60, 5))
+        participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)],  np.repeat(num_fit_trials, num_participants), train_indices[i])]
+        res[i] = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (num_participants, 5))
         print ("Mean Res in Single: ", i, np.mean(res[i][:, -3]))
     return res   
 
-def run_fits_dual(curvatures, num_fit_trials, num_fits):
-    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+def run_fits_dual(curvatures, num_fit_trials, num_fits, num_participants):
+    #train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    train_indices = np.array([np.arange(704)])
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
-        c_obj = np.zeros(60, dtype = object)
-        for participant in range(60):
+        c_obj = np.zeros(num_participants, dtype = object)
+        for participant in range(num_participants):
             c_obj[participant] = curvatures
-        participant_args = [x for x in zip(range(60), c_obj[range(60)],  np.repeat(num_fit_trials, 60), train_indices[i])]
-        res[i] = np.reshape(np.array(pool.starmap(dual_test_fit, participant_args)), (60, 7))
+        participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)],  np.repeat(num_fit_trials, num_participants), train_indices[i])]
+        res[i] = np.reshape(np.array(pool.starmap(dual_test_fit, participant_args)), (num_participants, 7))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
     return res   
