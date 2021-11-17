@@ -526,8 +526,8 @@ def run_fits_dual_alpha(curvatures, num_fit_trials, num_fits):
 
 
 def run_fits_single(curvatures, num_fit_trials, num_fits, num_participants):
-    #train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
-    train_indices = np.array([np.arange(704)])
+    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    #train_indices = np.array([np.arange(704)])
 
     print(train_indices[0].shape)
     pool = Pool()
@@ -543,8 +543,8 @@ def run_fits_single(curvatures, num_fit_trials, num_fits, num_participants):
     return res   
 
 def run_fits_dual(curvatures, num_fit_trials, num_fits, num_participants):
-    #train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
-    train_indices = np.array([np.arange(704)])
+    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    #train_indices = np.array([np.arange(num_participants)])
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
     for i in range(num_fits):
