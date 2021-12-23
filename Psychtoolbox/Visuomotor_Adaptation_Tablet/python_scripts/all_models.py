@@ -390,27 +390,32 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
-    starting_points = np.array([[0.9, 0.3, 0.99, 0.01, 0.05]])
-    for initial_point in starting_points:
-        if participant%4 == 0 or participant%4 == 1:      
-            fits = scipy.optimize.basinhopping(dual_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
+    #Starting points from fits on group average data
+    starting_points = np.array([[5.21669122e-01,  1.73886947e-01,  5.21669136e-01,  1.73886084e-01,
+        9.99617187e-02], [5.18007232e-01,  2.25765690e-01,  9.98320410e-01,  5.56363200e-03,
+        3.92042720e-02], [2.65793879e-07,  3.16209104e-01,  9.97065176e-01,  6.42666668e-03,
+        5.90776470e-02], [2.67461654e-01,  3.05046179e-02,  9.93525435e-01,  3.05045296e-02,
+        2.72144879e-02]])
+    initial_point = starting_points[participant%4]
+    if participant%4 == 0: or participant%4 == 1:      
+        fits = scipy.optimize.basinhopping(dual_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
 
-            Af = fits.x[0]
-            Bf = fits.x[1]
-            As = fits.x[2]
-            Bs = fits.x[3]
-            epsilon = fits.x[4]
-            V = fits.fun
-        else:
-            fits = scipy.optimize.basinhopping(dual_residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
-            Af = fits.x[0]
-            Bf = fits.x[1]
-            As = fits.x[2]
-            Bs = fits.x[3]
-            epsilon = fits.x[4]
-            V = fits.fun
-            
-        print (participant, V)
+        Af = fits.x[0]
+        Bf = fits.x[1]
+        As = fits.x[2]
+        Bs = fits.x[3]
+        epsilon = fits.x[4]
+        V = fits.fun
+    else:
+        fits = scipy.optimize.basinhopping(dual_residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
+        Af = fits.x[0]
+        Bf = fits.x[1]
+        As = fits.x[2]
+        Bs = fits.x[3]
+        epsilon = fits.x[4]
+        V = fits.fun
+
+    print (participant, V)
     return Af, Bf, As, Bs, V, epsilon, train_indices
 
 def dual_alpha_test_fit(participant, curvatures, num_fit_trials, train_indices, fit_dual_params):
@@ -442,23 +447,26 @@ def dual_alpha_test_fit(participant, curvatures, num_fit_trials, train_indices, 
 def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
-    starting_points = np.array([[0.9, 0.2, 0.5]])
-    for initial_point in starting_points:
-        if participant%4 == 0 or participant%4 == 1:      
-            fits = scipy.optimize.basinhopping(single_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
+    starting_points = np.array([[9.95175980e-01,  4.75713350e-03,  4.69351985e-02], 
+                               [9.96171356e-01,  1.04296035e-02,  6.94023005e-02], 
+                               [9.95710143e-01,  9.68652833e-03,  5.04291985e-02], 
+                               [9.93113960e-01,  3.22839645e-02,  2.69776936e-02]])
+    initial_point = starting_points[participant%4]
+    if participant%4 == 0 or participant%4 == 1:      
+        fits = scipy.optimize.basinhopping(single_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
 
-            A = fits.x[0]
-            B = fits.x[1]
-            epsilon = fits.x[2]
-            V = fits.fun
-        else:
-            fits = scipy.optimize.basinhopping(single_residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
-            
-            A = fits.x[0]
-            B = fits.x[1]
-            epsilon = fits.x[2]
-            V = fits.fun
-        print (participant, V)
+        A = fits.x[0]
+        B = fits.x[1]
+        epsilon = fits.x[2]
+        V = fits.fun
+    else:
+        fits = scipy.optimize.basinhopping(single_residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
+
+        A = fits.x[0]
+        B = fits.x[1]
+        epsilon = fits.x[2]
+        V = fits.fun
+    print (participant, V)
     return A, B, V, epsilon, train_indices
 
 def hybrid_test_fit(participant, curvatures, num_fit_trials, train_indices, best_single, best_dual):
