@@ -397,7 +397,7 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
         5.90776470e-02], [2.67461654e-01,  3.05046179e-02,  9.93525435e-01,  3.05045296e-02,
         2.72144879e-02]])
     initial_point = starting_points[participant%4]
-    if participant%4 == 0: or participant%4 == 1:      
+    if participant%4 == 0 or participant%4 == 1:      
         fits = scipy.optimize.basinhopping(dual_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], minimizer_kwargs={'args': (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), 'method':'Nelder-Mead'})
 
         Af = fits.x[0]
