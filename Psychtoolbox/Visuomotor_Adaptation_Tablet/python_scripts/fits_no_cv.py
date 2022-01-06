@@ -147,12 +147,16 @@ def dual_residuals_gradual(params, num_trials, data_errors):
 def fit_routine(participant, curvature):
     single_neg2ll = 1000000
     dual_neg2ll = 1000000
-    for i in range(100):
+    A = [0.001, 0.01, 0.1, 0.5, 0.9]
+    B = [0.001, 0.01, 0.1, 0.5, 0.9]
+    sigma = [1, 0.5, 0.05]
+    single_starting_points = np.array(np.meshgrid(A, B, sigma)).reshape(3, 75).T
+    for i in range(75):
         if participant%4 == 0 or participant%4 == 1:        
-            fit = scipy.optimize.minimize(single_residuals_sudden, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')
+            fit = scipy.optimize.minimize(single_residuals_sudden, x0 = [single_starting_points[i][0], single_starting_points[i][1], single_starting_points[i][2]], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')
             #fit = scipy.optimize.basinhopping(single_residuals_sudden, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], minimizer_kwargs={'args':(640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), 'method' : 'Nelder-Mead'})
         else:
-            fit = scipy.optimize.minimize(single_residuals_gradual, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')            
+            fit = scipy.optimize.minimize(single_residuals_gradual, x0 = x0 = [single_starting_points[i][0], single_starting_points[i][1], single_starting_points[i][2]], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')            
             #fit = scipy.optimize.basinhopping(single_residuals_gradual, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], minimizer_kwargs={'args':(640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), 'method' : 'Nelder-Mead'})
         if fit.fun < single_neg2ll:            
             A = fit.x[0]
@@ -160,6 +164,12 @@ def fit_routine(participant, curvature):
             single_sigma = fit.x[2]
             single_neg2ll = fit.fun
             print("Participant, i, Single neg2ll: ", participant, i, single_neg2ll)
+    Af = [0.001, 0.01, 0.1, 0.5, 0.9]
+    Bf = [0.001, 0.01, 0.1, 0.5, 0.9]
+    sigma = [1, 0.5, 0.05]
+    single_starting_points = np.array(np.meshgrid(A, B, sigma)).reshape(5, 1875).T
+    
+    for i in range(1875):
 
         if participant%4 == 0 or participant%4 == 1:        
             fit = scipy.optimize.minimize(dual_residuals_sudden, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')

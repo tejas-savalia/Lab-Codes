@@ -396,12 +396,12 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
     #    3.92042720e-02], [2.65793879e-07,  3.16209104e-01,  9.97065176e-01,  6.42666668e-03,
     #    5.90776470e-02], [2.67461654e-01,  3.05046179e-02,  9.93525435e-01,  3.05045296e-02,
     #    2.72144879e-02]])
-    Af = [0.001, 0.01, 0.1, 0.5, 0.9]
-    Bf = [0.001, 0.01, 0.1, 0.5, 0.9]
-    As = [0.001, 0.01, 0.1, 0.5, 0.9]
-    Bs = [0.001, 0.01, 0.1, 0.5, 0.9]
-    sigma = [1, 0.5, 0.05]
-    starting_points = np.array(np.meshgrid(Af, Bf, As, Bs, sigma)).reshape(5, 5*5*5*5*3).T
+    Af = [0.001, 0.1, 0.9]
+    Bf = [0.001, 0.1, 0.9]
+    As = [0.001, 0.1, 0.9]
+    Bs = [0.001, 0.1, 0.9]
+    sigma = [1, 0.05]
+    starting_points = np.array(np.meshgrid(Af, Bf, As, Bs, sigma)).reshape(5, 3*3*3*3*2).T
     #initial_point = starting_points[participant%4]
     V = 100000
     for initial_point in starting_points:
@@ -424,7 +424,7 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
                 epsilon = fits.x[4]
                 V = fits.fun
 
-        print (participant, V)
+    print (participant, V)
     return Af, Bf, As, Bs, V, epsilon, train_indices
 
 def dual_alpha_test_fit(participant, curvatures, num_fit_trials, train_indices, fit_dual_params):
@@ -461,10 +461,10 @@ def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     #                           [9.95710143e-01,  9.68652833e-03,  5.04291985e-02], 
     #                           [9.93113960e-01,  3.22839645e-02,  2.69776936e-02]])
     #initial_point = starting_points[participant%4]
-    A = [0.001, 0.01, 0.1, 0.5, 0.9]
-    B = [0.001, 0.01, 0.1, 0.5, 0.9]
-    sigma = [1, 0.5, 0.05]
-    starting_points = np.array(np.meshgrid(A, B, sigma)).reshape(3, 5*5*3).T
+    A = [0.001, 0.1, 0.9]
+    B = [0.001, 0.1, 0.9]
+    sigma = [1, 0.05]
+    starting_points = np.array(np.meshgrid(A, B, sigma)).reshape(3, 3*3*2).T
     V = 100000
     for initial_point in starting_points:
         if participant%4 == 0 or participant%4 == 1:      
@@ -481,7 +481,7 @@ def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
                 B = fits.x[1]
                 epsilon = fits.x[2]
                 V = fits.fun
-        print (participant, V)
+    print (participant, V)
     return A, B, V, epsilon, train_indices
 
 def hybrid_test_fit(participant, curvatures, num_fit_trials, train_indices, best_single, best_dual):
