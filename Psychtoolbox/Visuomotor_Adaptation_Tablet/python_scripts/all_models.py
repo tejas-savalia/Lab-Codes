@@ -484,6 +484,8 @@ def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     print (participant, V)
     return A, B, V, epsilon, train_indices
 
+
+
 def hybrid_test_fit(participant, curvatures, num_fit_trials, train_indices, best_single, best_dual):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     
