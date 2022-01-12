@@ -388,7 +388,8 @@ def hybrid_residuals_gradual(params, num_trials, data_errors, train_indices, sin
 
 def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
-    
+    starting_params = pickle.load(open('dual_start_params_forcv.pickle', 'rb'))
+
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     #Starting points from fits on group average data
     #starting_points = np.array([[5.21669122e-01,  1.73886947e-01,  5.21669136e-01,  1.73886084e-01,
@@ -401,28 +402,29 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
     As = [0.001, 0.1, 0.9]
     Bs = [0.001, 0.1, 0.9]
     sigma = [1, 0.05]
-    starting_points = np.array(np.meshgrid(Af, Bf, As, Bs, sigma)).reshape(5, 3*3*3*3*2).T
+    #starting_points = np.array(np.meshgrid(Af, Bf, As, Bs, sigma)).reshape(5, 3*3*3*3*2).T
     #initial_point = starting_points[participant%4]
+    starting_point = starting_params[participant]
     V = 100000
-    for initial_point in starting_points:
-        if participant%4 == 0 or participant%4 == 1:      
-            fits = scipy.optimize.minimize(dual_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
-            if fits.fun < V:
-                Af = fits.x[0]
-                Bf = fits.x[1]
-                As = fits.x[2]
-                Bs = fits.x[3]
-                epsilon = fits.x[4]
-                V = fits.fun
-        else:
-            fits = scipy.optimize.minimize(dual_residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2], initial_point[3], initial_point[4]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
-            if fits.fun < V:
-                Af = fits.x[0]
-                Bf = fits.x[1]
-                As = fits.x[2]
-                Bs = fits.x[3]
-                epsilon = fits.x[4]
-                V = fits.fun
+    #for initial_point in starting_points:
+    if participant%4 == 0 or participant%4 == 1:      
+        fits = scipy.optimize.minimize(dual_residuals_sudden, x0 = starting_point, args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+        if fits.fun < V:
+            Af = fits.x[0]
+            Bf = fits.x[1]
+            As = fits.x[2]
+            Bs = fits.x[3]
+            epsilon = fits.x[4]
+            V = fits.fun
+    else:
+        fits = scipy.optimize.minimize(dual_residuals_gradual, x0 = starting_point, args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+        if fits.fun < V:
+            Af = fits.x[0]
+            Bf = fits.x[1]
+            As = fits.x[2]
+            Bs = fits.x[3]
+            epsilon = fits.x[4]
+            V = fits.fun
 
     print (participant, V)
     return Af, Bf, As, Bs, V, epsilon, train_indices
@@ -455,6 +457,8 @@ def dual_alpha_test_fit(participant, curvatures, num_fit_trials, train_indices, 
 
 def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
+    starting_params = pickle.load(open('single_start_params_forcv.pickle', 'rb'))
+
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     #starting_points = np.array([[9.95175980e-01,  4.75713350e-03,  4.69351985e-02], 
     #                           [9.96171356e-01,  1.04296035e-02,  6.94023005e-02], 
@@ -464,23 +468,23 @@ def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     A = [0.001, 0.1, 0.9]
     B = [0.001, 0.1, 0.9]
     sigma = [1, 0.05]
-    starting_points = np.array(np.meshgrid(A, B, sigma)).reshape(3, 3*3*2).T
+    starting_point = starting_params[participant]
     V = 100000
-    for initial_point in starting_points:
-        if participant%4 == 0 or participant%4 == 1:      
-            fits = scipy.optimize.minimize(single_residuals_sudden, x0 = [initial_point[0], initial_point[1], initial_point[2]], args =  (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
-            if fits.fun < V:
-                A = fits.x[0]
-                B = fits.x[1]
-                epsilon = fits.x[2]
-                V = fits.fun
-        else:
-            fits = scipy.optimize.minimize(single_residuals_gradual, x0 = [initial_point[0], initial_point[1], initial_point[2]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
-            if fits.fun < V:
-                A = fits.x[0]
-                B = fits.x[1]
-                epsilon = fits.x[2]
-                V = fits.fun
+    #for initial_point in starting_points:
+    if participant%4 == 0 or participant%4 == 1:      
+        fits = scipy.optimize.minimize(single_residuals_sudden, x0 = starting_point, args =  (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+        if fits.fun < V:
+            A = fits.x[0]
+            B = fits.x[1]
+            epsilon = fits.x[2]
+            V = fits.fun
+    else:
+        fits = scipy.optimize.minimize(single_residuals_gradual, x0 = starting_point, args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+        if fits.fun < V:
+            A = fits.x[0]
+            B = fits.x[1]
+            epsilon = fits.x[2]
+            V = fits.fun
     print (participant, V)
     return A, B, V, epsilon, train_indices
 
@@ -551,7 +555,7 @@ def run_fits_dual_alpha(curvatures, num_fit_trials, num_fits):
 
 
 def run_fits_single(curvatures, num_fit_trials, num_fits, num_participants):
-    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    train_indices = pickle.load(open('train_indices_640.pickle', 'rb'))
     #train_indices = np.array([np.arange(704)])
 
     print(train_indices[0].shape)
@@ -568,7 +572,9 @@ def run_fits_single(curvatures, num_fit_trials, num_fits, num_participants):
     return res   
 
 def run_fits_dual(curvatures, num_fit_trials, num_fits, num_participants):
-    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    train_indices = pickle.load(open('train_indices_640.pickle', 'rb'))
+    starting_params = pickle.load(open('single_start_params_forcv.pickle', 'rb'))
+
     #train_indices = np.array([np.arange(num_participants)])
     pool = Pool()
     res = np.zeros(num_fits, dtype = object)
@@ -583,7 +589,7 @@ def run_fits_dual(curvatures, num_fit_trials, num_fits, num_participants):
     return res   
 
 def run_fits_hybrid(curvatures, num_fit_trials, num_fits):
-    train_indices = pickle.load(open('train_indices_704.pickle', 'rb'))
+    train_indices = pickle.load(open('train_indices_640.pickle', 'rb'))
     best_single = pickle.load(open('fit_single_CV_704.pickle', 'rb'))
     best_dual = pickle.load(open('fit_dual_CV_704.pickle', 'rb'))
     
