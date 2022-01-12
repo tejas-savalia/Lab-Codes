@@ -212,14 +212,14 @@ def single_gridsearch(participant, curvatures):
                 epsilon = sigma
                 V = newV
         else:
-                newV = single_residuals_gradual(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:])))
+            newV = single_residuals_gradual(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:])))
             if newV < V:
                 A = A
                 B = B
                 epsilon = sigma
                 V = newV
     print (participant, V)
-    return A, B, V, epsilon, train_indices
+    return A, B, V, epsilon
 
 def dual_gridsearch(participant, curvatures):
     num_fit_trials = 640
@@ -257,7 +257,7 @@ def dual_gridsearch(participant, curvatures):
                 epsilon = sigma
                 V = newV
     print (participant, V)
-    return Af, Bf, As, Bs, V, epsilon, train_indices
+    return Af, Bf, As, Bs, V, epsilon
 
                                                                  
 def run_fits_nocv(curvatures, num_fit_trials):
@@ -289,7 +289,7 @@ def single_gridsearch_run(curvatures, num_fit_trials):
     for participant in range(num_participants):
         c_obj[participant] = curvatures
     participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)])]
-    res = np.reshape(np.array(pool.starmap(single_gridsearch, participant_args)), (num_participants, 2))
+    res = np.reshape(np.array(pool.starmap(single_gridsearch, participant_args)), (num_participants, 4))
     #res = np.reshape(np.array(pool.starmap(fit_routine, participant_args)), (num_participants, 2))
     #res = np.reshape(np.array(pool.starmap(fit_routine, participant_args)), (num_participants, 2))
     #print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
@@ -308,7 +308,7 @@ def dual_gridsearch_run(curvatures, num_fit_trials):
     for participant in range(num_participants):
         c_obj[participant] = curvatures
     participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)])]
-    res = np.reshape(np.array(pool.starmap(dual_gridsearch, participant_args)), (num_participants, 2))
+    res = np.reshape(np.array(pool.starmap(dual_gridsearch, participant_args)), (num_participants, 6))
     #res = np.reshape(np.array(pool.starmap(fit_routine, participant_args)), (num_participants, 2))
     #res = np.reshape(np.array(pool.starmap(fit_routine, participant_args)), (num_participants, 2))
     #print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
