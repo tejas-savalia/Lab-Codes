@@ -12,52 +12,105 @@ from scipy.ndimage import gaussian_filter1d
 from all_models import *
 #from transfer_models import *
 import sys
+from fits_no_cv import *
 
 # %%
 def main(num_fit_trials):
-    curvatures_smooth = pickle.load(open('curvatures_smooth.pickle', 'rb'))
-    curvatures_smooth = curvatures_smooth/(np.pi/2)
-    print("parallel curvatures successful")
-    print (curvatures_smooth)
+    curvatures_smooth = pickle.load(open('curvatures_smooth_all.pickle', 'rb'))
+    #curvatures_smooth = curvatures_smooth/90
+    #curvatures_smooth = pickle.load(open('mean_drawn_grouperrors.pickle', 'rb'))
+    #curvatures_smooth = curvatures_smooth/90
 
-    print ("Curvatures Loaded. In Fit routine")
-    print (num_fit_trials)
+    #curvatures_smooth = pickle.load(open('auc_smooth.pickle', 'rb'))
+    #curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)    
+    
+    #print ("AUC Curvatures Loaded. In Fit routine")
+    #print (num_fit_trials)
 
     #%% Parallel run and dump fits
     
-    #fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]), int(num_fit_trials[3]))
-    #with open('fit_single_CV_704.pickle', 'wb') as f:
+    #fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_single_CV_704_auc.pickle', 'wb') as f:
     #    pickle.dump(fits, f)
     #f.close()
     
-    fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]), int(num_fit_trials[3]))
-    with open('fit_dual_CV_704.pickle', 'wb') as f:
+    #fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_dual_CV_704_auc.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
+
+    #curvatures_smooth = pickle.load(open('mad_smooth.pickle', 'rb'))
+    #curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)
+
+
+    #print ("MAD Curvatures Loaded. In Fit routine")
+    #print (num_fit_trials)
+
+    #%% Parallel run and dump fits
+    
+    #fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_single_CV_704_mad.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
+    
+    #fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_dual_CV_704_mad.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
+    #curvatures_smooth = pickle.load(open('avg_smooth.pickle', 'rb'))
+    #curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)    
+    
+    #print ("AVG Curvatures Loaded. In Fit routine")
+    #print (num_fit_trials)
+    
+    #fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_dual_CV_704_avg.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
+
+    #fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_single_CV_704_avg.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
+    
+    #curvatures_smooth = pickle.load(open('ide_smooth.pickle', 'rb'))
+    #curvatures_smooth = curvatures_smooth/np.nanmax(curvatures_smooth)    
+    
+    #print ("IDE Curvatures Loaded. In Fit routine")
+    #print (num_fit_trials)
+
+    #%% Parallel run and dump fits
+    
+    #fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_single_CV_704_ide.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
+    
+    #fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
+    #with open('fit_dual_CV_704_ide.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
+
+    fits = dual_gridsearch_run(curvatures_smooth, int(num_fit_trials[1]))
+    with open('fit_dual_CV_640_bestfit_starting_point.pickle', 'wb') as f:
+        pickle.dump(fits, f)
+    f.close()
+    print('Dual Done')
+    fits = single_gridsearch_run(curvatures_smooth, int(num_fit_trials[1]))
+    with open('fit_single_CV_640_bestfit_starting_point.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
 
-    #fits = run_fits_dual_avg(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_dual_fastavg_CV_704.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
-
-    #fits = run_fits_mixed(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_mixed_CV_704.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
     
-    #fits = run_fits_dual_six_params(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_mixed_CV_704.pickle', 'wb') as f:
+    #fits = run_fits_dual(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]), int(num_fit_trials[3]))
+    #with open('fit_dual_CV_640_bestfit_starting_point.pickle', 'wb') as f:
+    #    pickle.dump(fits, f)
+    #f.close()
+    #fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]), int(num_fit_trials[3]))
+    #with open('fit_single_CV_640_bestfit_starting_point.pickle', 'wb') as f:
     #    pickle.dump(fits, f)
     #f.close()
 
-    #fits = run_fits_dual_transfer(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_dual_CV_transfer.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
-    #fits = run_fits_single_transfer(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]))
-    #with open('fit_single_CV_transfer.pickle', 'wb') as f:
-    #    pickle.dump(fits, f)
-    #f.close()
 
 
 if __name__ == '__main__':
