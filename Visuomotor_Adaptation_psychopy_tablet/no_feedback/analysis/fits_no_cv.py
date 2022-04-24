@@ -207,16 +207,16 @@ def single_gridsearch(participant, curvatures):
         if participant%2 == 0:      
             newV = single_residuals_sudden(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1])))
             if newV < V:
-                A = A
-                B = B
-                epsilon = sigma
+                A = initial_point[0]
+                B = initial_point[1]
+                epsilon = initial_point[2]
                 V = newV
         else:
             newV = single_residuals_gradual(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:])))
             if newV < V:
-                A = A
-                B = B
-                epsilon = sigma
+                A = initial_point[0]
+                B = initial_point[1]
+                epsilon = initial_point[2]
                 V = newV
     print (participant, V)
     return A, B, V, epsilon
@@ -241,20 +241,20 @@ def dual_gridsearch(participant, curvatures):
         if participant%2 == 0:      
             newV = dual_residuals_sudden(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1])))
             if newV < V:
-                As = As
-                Bs = Bs
-                Af = Af
-                Bf = Bf
-                epsilon = sigma
+                As = initial_point[2]
+                Bs = initial_point[3]
+                Af = initial_point[0]
+                Bf = initial_point[1]
+                epsilon = initial_point[4]
                 V = newV
         else:
             newV = dual_residuals_gradual(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1])))
             if newV < V:
-                As = As
-                Bs = Bs
-                Af = Af
-                Bf = Bf
-                epsilon = sigma
+                As = initial_point[2]
+                Bs = initial_point[3]
+                Af = initial_point[0]
+                Bf = initial_point[1]
+                epsilon = initial_point[4]
                 V = newV
     print (participant, V)
     return Af, Bf, As, Bs, V, epsilon

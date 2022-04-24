@@ -322,8 +322,7 @@ def dual_residuals_gradual(params, num_trials, data_errors, train_indices):
 
 def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
-    #print(curvatures)
-    #starting_params = pickle.load(open('dual_start_params_forcv.pickle', 'rb'))
+    starting_params = pickle.load(open('fit_dual_CV_640_bestfit_starting_point.pickle', 'rb'))
 
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     #Starting points from fits on group average data
@@ -339,11 +338,10 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
     sigma = [1, 0.05]
     #starting_points = np.array(np.meshgrid(Af, Bf, As, Bs, sigma)).reshape(5, 3*3*3*3*2).T
     #initial_point = starting_points[participant%4]
-    #starting_point = starting_params[participant]
-    starting_point  = [0.001, 0.9, 0.01, 0.1, 0.05] 
+    starting_point = starting_params[participant]
     #V = 100000
     #for initial_point in starting_points:
-    if participant%2 == 0:      
+    if participant%4 == 0 or participant%4 == 1:      
         fits = scipy.optimize.minimize(dual_residuals_sudden, x0 = starting_point, args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
         #if fits.fun < V:
         Af = fits.x[0]
@@ -368,7 +366,7 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
 
 def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
-    #starting_params = pickle.load(open('single_start_params_forcv.pickle', 'rb'))
+    starting_params = pickle.load(open('fit_single_CV_640_bestfit_starting_point.pickle', 'rb'))
 
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     #starting_points = np.array([[9.95175980e-01,  4.75713350e-03,  4.69351985e-02], 
@@ -379,12 +377,10 @@ def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     A = [0.001, 0.1, 0.9]
     B = [0.001, 0.1, 0.9]
     sigma = [1, 0.05]
-    #starting_point = starting_params[participant]
-    starting_point = [0.001, 0.1, 0.9]
-
+    starting_point = starting_params[participant]
     V = 100000
     #for initial_point in starting_points:
-    if participant%2 == 0:      
+    if participant%4 == 0 or participant%4 == 1:      
         fits = scipy.optimize.minimize(single_residuals_sudden, x0 = starting_point, args =  (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
         if fits.fun < V:
             A = fits.x[0]
