@@ -143,7 +143,7 @@ def dual_residuals_gradual(params, num_trials, data_errors):
 
 # In[4]:
 
-"""
+
 def fit_routine(participant, curvature):
     single_neg2ll = 1000000
     dual_neg2ll = 1000000
@@ -152,30 +152,35 @@ def fit_routine(participant, curvature):
     sigma = [1, 0.5, 0.05]
     single_starting_points = np.array(np.meshgrid(A, B, sigma)).reshape(3, 75).T
     for i in range(75):
-        if participant%4 == 0 or participant%4 == 1:        
+        if participant%2 == 0:        
             fit = scipy.optimize.minimize(single_residuals_sudden, x0 = [single_starting_points[i][0], single_starting_points[i][1], single_starting_points[i][2]], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')
             #fit = scipy.optimize.basinhopping(single_residuals_sudden, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], minimizer_kwargs={'args':(640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), 'method' : 'Nelder-Mead'})
         else:
-            fit = scipy.optimize.minimize(single_residuals_gradual, x0 = x0 = [single_starting_points[i][0], single_starting_points[i][1], single_starting_points[i][2]], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')            
+            fit = scipy.optimize.minimize(single_residuals_gradual, x0 = [single_starting_points[i][0], single_starting_points[i][1], single_starting_points[i][2]], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')            
             #fit = scipy.optimize.basinhopping(single_residuals_gradual, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], minimizer_kwargs={'args':(640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), 'method' : 'Nelder-Mead'})
         if fit.fun < single_neg2ll:            
             A = fit.x[0]
             B = fit.x[1]
             single_sigma = fit.x[2]
             single_neg2ll = fit.fun
-            print("Participant, i, Single neg2ll: ", participant, i, single_neg2ll)
+    print("Participant, i, Single neg2ll: ", participant, i, single_neg2ll)
+            
+            
     Af = [0.001, 0.01, 0.1, 0.5, 0.9]
     Bf = [0.001, 0.01, 0.1, 0.5, 0.9]
+    As = [0.001, 0.01, 0.1, 0.5, 0.9]
+    Bs = [0.001, 0.01, 0.1, 0.5, 0.9]
+
     sigma = [1, 0.5, 0.05]
-    single_starting_points = np.array(np.meshgrid(A, B, sigma)).reshape(5, 1875).T
+    dual_starting_points = np.array(np.meshgrid(Af, Bf, As, Bs, sigma)).reshape(5, 1875).T
     
     for i in range(1875):
 
-        if participant%4 == 0 or participant%4 == 1:        
-            fit = scipy.optimize.minimize(dual_residuals_sudden, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')
+        if participant%2 == 0:        
+            fit = scipy.optimize.minimize(dual_residuals_sudden, x0 = [dual_starting_points[i]], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')
             #fit = scipy.optimize.basinhopping(dual_residuals_sudden, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], minimizer_kwargs={'args' : (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), 'method' : 'Nelder-Mead'})
         else:
-            fit = scipy.optimize.minimize(dual_residuals_gradual, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')            
+            fit = scipy.optimize.minimize(dual_residuals_gradual, x0 = [dual_starting_points[i]], args = (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), method = 'Nelder-Mead')            
             #fit = scipy.optimize.basinhopping(dual_residuals_gradual, x0 = [np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1), np.random.uniform(0, 1)], minimizer_kwargs={'args' : (640, np.nan_to_num(np.ravel(curvature[participant][1:-1]), nan = np.nanmedian(curvature[participant][1:-1]))), 'method' : 'Nelder-Mead'})
         if fit.fun < dual_neg2ll:
             Af = fit.x[0]
@@ -185,10 +190,10 @@ def fit_routine(participant, curvature):
 
             dual_sigma = fit.x[4]
             dual_neg2ll = fit.fun
-            print("Participant, i, Dual neg2ll: ", participant, i, dual_neg2ll)
+    print("Participant, i, Dual neg2ll: ", participant, i, dual_neg2ll)
     
     return [A, B, single_sigma, single_neg2ll], [Af, Bf, As, Bs, dual_sigma, dual_neg2ll] 
-"""
+
 def single_gridsearch(participant, curvatures):
     num_fit_trials = 640
     #train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
@@ -198,31 +203,42 @@ def single_gridsearch(participant, curvatures):
     #                           [9.95710143e-01,  9.68652833e-03,  5.04291985e-02], 
     #                           [9.93113960e-01,  3.22839645e-02,  2.69776936e-02]])
     #initial_point = starting_points[participant%4]
-    A = np.arange(0.1, 0.99, 0.1)
-    B = np.arange(0.1, 0.99, 0.1)
-    sigma = np.arange(0.1, 0.99, 0.1)
+    A = np.arange(0.1, 0.99, 0.25)
+    B = np.arange(0.1, 0.99, 0.25)
+    sigma = np.arange(0.1, 0.99, 0.25)
     starting_points = np.array(np.meshgrid(A, B, sigma)).reshape(3, len(A)*len(B)*len(sigma)).T
     V = 100000
     for initial_point in starting_points:
         if participant%2 == 0:      
-            newV = single_residuals_sudden(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1])))
-            if newV < V:
-                A = initial_point[0]
-                B = initial_point[1]
-                epsilon = initial_point[2]
-                V = newV
+            fit = scipy.optimize.basinhopping(single_residuals_sudden, x0 = [initial_point], 
+                                              optimizer_kwargs = {'args' : (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method' : 'Nelder-Mead'})
+            #fit = scipy.optimize.minimize(single_residuals_sudden, x0 = [initial_point], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')
+
+            if fit.fun < V:
+                A = fit.x[0]
+                B = fit.x[1]
+                epsilon = fit.x[2]
+                V = fit.fun
         else:
-            newV = single_residuals_gradual(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:])))
-            if newV < V:
-                A = initial_point[0]
-                B = initial_point[1]
-                epsilon = initial_point[2]
-                V = newV
+            fit = scipy.optimize.basinhopping(single_residuals_gradual, x0 = [initial_point], 
+                                              optimizer_kwargs = {'args' : (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method' : 'Nelder-Mead'})
+
+            #fit = scipy.optimize.minimize(single_residuals_gradual, x0 = [initial_point], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')     
+
+            if fit.fun < V:
+                A = fit.x[0]
+                B = fit.x[1]
+                epsilon = fit.x[2]
+                V = fit.fun
     print (participant, V)
     return A, B, V, epsilon
 
 def dual_gridsearch(participant, curvatures):
     num_fit_trials = 640
+    single_fits = pickle.load(open('fit_single_640_starting_point.pickle', 'rb'))
+    Af = single_fits[participant][0]
+    Bf = single_fits[participant][1]
+ 
     #train_length = num_fit_trials - int(np.floor(num_fit_trials/10.0))
     #train_indices = np.random.choice(num_fit_trials, train_length, replace = False)
     #starting_points = np.array([[9.95175980e-01,  4.75713350e-03,  4.69351985e-02], 
@@ -230,32 +246,36 @@ def dual_gridsearch(participant, curvatures):
     #                           [9.95710143e-01,  9.68652833e-03,  5.04291985e-02], 
     #                           [9.93113960e-01,  3.22839645e-02,  2.69776936e-02]])
     #initial_point = starting_points[participant%4]
-    As = np.arange(0.1, 0.99, 0.1)
-    Bs = np.arange(0.1, 0.99, 0.1)
-    Af = np.arange(0.1, 0.99, 0.1)
-    Bf = np.arange(0.1, 0.99, 0.1)                                                 
-    sigma = np.arange(0.1, 0.99, 0.1)
-    starting_points = np.array(np.meshgrid(Af, Bf, As, Bs, sigma)).reshape(5, len(Af)*len(Bf)*len(As)*len(Bs)*len(sigma)).T
-    V = 100000
+    #As = np.arange(0.1, 0.99, 0.25)
+    #Bs = np.arange(0.1, 0.99, 0.25)
+    #Af = np.arange(0.1, 0.99, 0.25)
+    #Bf = np.arange(0.1, 0.99, 0.25)                                                 
+    #sigma = np.arange(0.1, 0.99, 0.25)
+    #starting_points = np.array(np.meshgrid(Af, Bf, As, Bs, sigma)).reshape(5, len(Af)*len(Bf)*len(As)*len(Bs)*len(sigma)).T
+    starting_points = [[Af, Bf, 0.999, 0.001, single_fits[participant][3]]]
+    #V = 100000
     for initial_point in starting_points:
-        if participant%2 == 0:      
-            newV = dual_residuals_sudden(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1])))
-            if newV < V:
-                As = initial_point[2]
-                Bs = initial_point[3]
-                Af = initial_point[0]
-                Bf = initial_point[1]
-                epsilon = initial_point[4]
-                V = newV
+        if participant%2 == 0:   
+            fit = scipy.optimize.basinhopping(dual_residuals_sudden, x0 = [initial_point], 
+                                              minimizer_kwargs = {'args' : (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method' : 'Nelder-Mead'})
+            #fit = scipy.optimize.minimize(dual_residuals_sudden, x0 = [initial_point], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')
+            Af = fit.x[0]
+            Bf = fit.x[1]
+            As = fit.x[2]
+            Bs = fit.x[3]
+            epsilon = fit.x[4]
+            V = fit.fun
         else:
-            newV = dual_residuals_gradual(initial_point, num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1])))
-            if newV < V:
-                As = initial_point[2]
-                Bs = initial_point[3]
-                Af = initial_point[0]
-                Bf = initial_point[1]
-                epsilon = initial_point[4]
-                V = newV
+            fit = scipy.optimize.basinhopping(dual_residuals_gradual, x0 = [initial_point], 
+                                              minimizer_kwargs = {'args' : (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), 'method' : 'Nelder-Mead'})
+            #fit = scipy.optimize.minimize(dual_residuals_gradual, x0 = [initial_point], args = (640, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:-1]))), method = 'Nelder-Mead')
+            #if fit.fun < V:
+            Af = fit.x[0]
+            Bf = fit.x[1]
+            As = fit.x[2]
+            Bs = fit.x[3]
+            epsilon = fit.x[4]
+            V = fit.fun
     print (participant, V)
     return Af, Bf, As, Bs, V, epsilon
 
@@ -266,7 +286,7 @@ def run_fits_nocv(curvatures, num_fit_trials):
     pool = Pool()
     #res = np.zeros(num_fits, dtype = object)
     #for i in range(num_fits):
-    num_participants = 60
+    num_participants = 64
     c_obj = np.zeros(num_participants, dtype = object)
     for participant in range(num_participants):
         c_obj[participant] = curvatures

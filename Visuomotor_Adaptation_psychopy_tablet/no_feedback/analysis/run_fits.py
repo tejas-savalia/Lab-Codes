@@ -92,12 +92,12 @@ def main(num_fit_trials):
     #f.close()
 
     fits = dual_gridsearch_run(curvatures_smooth, int(num_fit_trials[1]))
-    with open('fit_dual_CV_640_bestfit_starting_point.pickle', 'wb') as f:
+    with open('fit_dual_640_starting_point.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
-    print('Dual Done')
+    #print('Dual Done')
     fits = single_gridsearch_run(curvatures_smooth, int(num_fit_trials[1]))
-    with open('fit_single_CV_640_bestfit_starting_point.pickle', 'wb') as f:
+    with open('fit_single_640_starting_point.pickle', 'wb') as f:
         pickle.dump(fits, f)
     f.close()
 
@@ -106,6 +106,8 @@ def main(num_fit_trials):
     #with open('fit_dual_CV_640_bestfit_starting_point.pickle', 'wb') as f:
     #    pickle.dump(fits, f)
     #f.close()
+    #print('Dual Done')
+
     #fits = run_fits_single(curvatures_smooth, int(num_fit_trials[1]), int(num_fit_trials[2]), int(num_fit_trials[3]))
     #with open('fit_single_CV_640_bestfit_starting_point.pickle', 'wb') as f:
     #    pickle.dump(fits, f)

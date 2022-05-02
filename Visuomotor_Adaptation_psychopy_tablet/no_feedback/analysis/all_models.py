@@ -22,84 +22,6 @@ from scipy.ndimage import gaussian_filter1d
 
 # In[2]:
 
-def hybrid_sudden(num_trials, A, B, Af, Bf, As, Bs):
-    errors_dual = np.zeros((num_trials))
-    errors_single = np.zeros((num_trials))    
-    rotation = 1.0
-    fast_est = np.zeros((num_trials))
-    slow_est = np.zeros((num_trials))
-    dual_est = np.zeros((num_trials))
-    single_est = np.zeros((num_trials))
-    #rotation_est[0] = est
-    for trial in range(num_trials - 1):
-        if trial < 640:
-            rotation = 1.0
-            errors_dual[trial] = rotation - dual_est[trial]
-            errors_single[trial] = rotation - single_est[trial]
-        
-            fast_est[trial+1] = Af*fast_est[trial] + Bf*errors_dual[trial]
-            slow_est[trial+1] = As*slow_est[trial] + Bs*errors_dual[trial]
-            single_est[trial+1] = A*single_est[trial] + B*errors_single[trial]
-
-        else:
-            rotation = 0
-            errors_dual[trial] = errors_dual[trial]
-            errors_single[trial] = errors_single[trial]
-
-            #print(errors[trial])
-            fast_est[trial+1] = Af*fast_est[trial] - Bf*errors_dual[trial]
-            slow_est[trial+1] = As*slow_est[trial] - Bs*errors_dual[trial]
-            single_est[trial+1] = A*single_est[trial] - B*errors_single[trial]
-
-        dual_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
-        
-        #print (rotation_est)
-    errors_dual[num_trials-1] = dual_est[num_trials-1]
-    errors_single[num_trials-1] = single_est[num_trials-1]
-    
-    
-    return errors_single, errors_dual, single_est, dual_est
-
-
-def hybrid_gradual(num_trials, A, B, Af, Bf, As, Bs):
-    errors_dual = np.zeros((num_trials))
-    errors_single = np.zeros((num_trials))
-    fast_est = np.zeros((num_trials))
-    slow_est = np.zeros((num_trials))
-    dual_est = np.zeros((num_trials))
-    single_est = np.zeros((num_trials))
-    rotation = 0
-    for trial in range(num_trials - 1):
-        if trial < 640:
-            if trial%64 == 0:
-                rotation = rotation + 10/90.0
-            if rotation > 1.0:
-                rotation = 1.0
-            errors_dual[trial] = rotation - dual_est[trial]
-            errors_single[trial] = rotation - single_est[trial]
-            fast_est[trial+1] = Af*fast_est[trial] + Bf*errors_dual[trial]
-            slow_est[trial+1] = As*slow_est[trial] + Bs*errors_dual[trial]
-            single_est[trial+1] = A*single_est[trial] + B*errors_single[trial]
-
-        else:
-            rotation = 0
-            errors_dual[trial] = dual_est[trial] 
-            errors_single[trial] = single_est[trial]
-            fast_est[trial+1] = Af*fast_est[trial] - Bf*errors_dual[trial]
-            slow_est[trial+1] = As*slow_est[trial] - Bs*errors_dual[trial]
-            single_est[trial+1] = A*single_est[trial] - B*errors_single[trial]
-
-
-        dual_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
-        #print (rotation_est)
-        
-    errors_dual[num_trials-1] = dual_est[num_trials-1]
-    errors_single[num_trials-1] = single_est[num_trials-1]
-
-
-    return errors_single, errors_dual, single_est, dual_est
-
-
 
 def dual_model_sudden(num_trials, Af, Bf, As, Bs):
     errors = np.zeros((num_trials))
@@ -155,59 +77,6 @@ def dual_model_gradual(num_trials, Af, Bf, As, Bs):
             #slow_est[trial+1] = As*slow_est[trial] - Bs*(errors[trial] - Af*fast_est[trial])
 
         rotation_est[trial+1] = fast_est[trial+1] + slow_est[trial+1]
-        #print (rotation_est)
-    errors[num_trials-1] = rotation_est[num_trials-1]
-
-    return errors, rotation_est, fast_est, slow_est
-
-def dual_model_sudden_alpha(num_trials, Af, Bf, As, Bs, alpha):
-    errors = np.zeros((num_trials))
-    rotation = 1.0
-    fast_est = np.zeros((num_trials))
-    slow_est = np.zeros((num_trials))
-    rotation_est = np.zeros((num_trials))
-    #rotation_est[0] = est
-    for trial in range(num_trials - 1):
-        if trial < 640:
-            rotation = 1.0
-            errors[trial] = rotation - rotation_est[trial]
-            fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
-        else:
-            rotation = 0
-            errors[trial] = rotation_est[trial]
-        #print(errors[trial])
-            fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
-
-        rotation_est[trial+1] = alpha*fast_est[trial+1] + (2 - alpha)*slow_est[trial+1]
-        #print (rotation_est)
-    errors[num_trials-1] = rotation_est[num_trials-1]
-    return errors, rotation_est, fast_est, slow_est
-
-
-def dual_model_gradual_alpha(num_trials, Af, Bf, As, Bs, alpha):
-    errors = np.zeros((num_trials))
-    fast_est = np.zeros((num_trials))
-    slow_est = np.zeros((num_trials))
-    rotation_est = np.zeros((num_trials))
-    rotation = 0
-    for trial in range(num_trials - 1):
-        if trial < 640:
-            if trial%64 == 0:
-                rotation = rotation + 10/90.0
-            if rotation > 1.0:
-                rotation = 1.0
-            errors[trial] = rotation - rotation_est[trial]
-            fast_est[trial+1] = Af*fast_est[trial] + Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] + Bs*errors[trial]
-        else:
-            rotation = 0
-            errors[trial] = rotation_est[trial] 
-            fast_est[trial+1] = Af*fast_est[trial] - Bf*errors[trial]
-            slow_est[trial+1] = As*slow_est[trial] - Bs*errors[trial]
-
-        rotation_est[trial+1] = alpha*fast_est[trial+1] + (2 - alpha)*slow_est[trial+1]
         #print (rotation_est)
     errors[num_trials-1] = rotation_est[num_trials-1]
 
@@ -339,10 +208,11 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
     #starting_points = np.array(np.meshgrid(Af, Bf, As, Bs, sigma)).reshape(5, 3*3*3*3*2).T
     #initial_point = starting_points[participant%4]
     starting_point = starting_params[participant]
+    #print(starting_point)
     #V = 100000
     #for initial_point in starting_points:
-    if participant%4 == 0 or participant%4 == 1:      
-        fits = scipy.optimize.minimize(dual_residuals_sudden, x0 = starting_point, args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+    if participant%2 == 0:      
+        fits = scipy.optimize.minimize(dual_residuals_sudden, x0 = [starting_point[0], starting_point[1], starting_point[2], starting_point[3], starting_point[5]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
         #if fits.fun < V:
         Af = fits.x[0]
         Bf = fits.x[1]
@@ -351,7 +221,7 @@ def dual_test_fit(participant, curvatures, num_fit_trials, train_indices):
         epsilon = fits.x[4]
         V = fits.fun
     else:
-        fits = scipy.optimize.minimize(dual_residuals_gradual, x0 = starting_point, args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+        fits = scipy.optimize.minimize(dual_residuals_gradual, x0 = [starting_point[0], starting_point[1], starting_point[2], starting_point[3], starting_point[5]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
         #if fits.fun < V:
         Af = fits.x[0]
         Bf = fits.x[1]
@@ -374,21 +244,21 @@ def single_test_fit(participant, curvatures, num_fit_trials, train_indices):
     #                           [9.95710143e-01,  9.68652833e-03,  5.04291985e-02], 
     #                           [9.93113960e-01,  3.22839645e-02,  2.69776936e-02]])
     #initial_point = starting_points[participant%4]
-    A = [0.001, 0.1, 0.9]
+    #A = [0.001, 0.1, 0.9]
     B = [0.001, 0.1, 0.9]
     sigma = [1, 0.05]
     starting_point = starting_params[participant]
     V = 100000
     #for initial_point in starting_points:
     if participant%4 == 0 or participant%4 == 1:      
-        fits = scipy.optimize.minimize(single_residuals_sudden, x0 = starting_point, args =  (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+        fits = scipy.optimize.minimize(single_residuals_sudden, x0 = [starting_point[0], starting_point[1], starting_point[3]], args =  (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
         if fits.fun < V:
             A = fits.x[0]
             B = fits.x[1]
             epsilon = fits.x[2]
             V = fits.fun
     else:
-        fits = scipy.optimize.minimize(single_residuals_gradual, x0 = starting_point, args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
+        fits = scipy.optimize.minimize(single_residuals_gradual, x0 = [starting_point[0], starting_point[1], starting_point[3]], args = (num_fit_trials, np.nan_to_num(np.ravel(curvatures[participant][1:-1]), nan = np.nanmedian(curvatures[participant][1:])), train_indices), method = 'Nelder-Mead')
         if fits.fun < V:
             A = fits.x[0]
             B = fits.x[1]
@@ -418,7 +288,7 @@ def run_fits_single(curvatures, num_fit_trials, num_fits, num_participants):
         c_obj = np.zeros(num_participants, dtype = object)
         for participant in range(num_participants):
             c_obj[participant] = curvatures
-        participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)],  np.repeat(num_fit_trials, num_participants), train_indices[i])]
+        participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)],  np.repeat(num_fit_trials, num_participants), np.tile(train_indices[i], 64))]
         res[i] = np.reshape(np.array(pool.starmap(single_test_fit, participant_args)), (num_participants, 5))
         print ("Mean Res in Single: ", i, np.mean(res[i][:, -3]))
     return res   
@@ -435,7 +305,7 @@ def run_fits_dual(curvatures, num_fit_trials, num_fits, num_participants):
         c_obj = np.zeros(num_participants, dtype = object)
         for participant in range(num_participants):
             c_obj[participant] = curvatures
-        participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)],  np.repeat(num_fit_trials, num_participants), train_indices[i])]
+        participant_args = [x for x in zip(range(num_participants), c_obj[range(num_participants)],  np.repeat(num_fit_trials, num_participants), np.tile(train_indices[i], 64))]
         res[i] = np.reshape(np.array(pool.starmap(dual_test_fit, participant_args)), (num_participants, 7))
         print ("Mean Res in dual: ", i, np.mean(res[i][:, -3]))
 
